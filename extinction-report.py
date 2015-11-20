@@ -19,10 +19,17 @@ def generateDataset(filenames):
       - i.e. the third extinction happens after time step 400
 
     Extinction is defined as biomass == 0.
+    Cumulative biomass values include only biomass before extinction ,though
+    the model may cause the species' biomass to recover from extinction
+    
+    IMPORTANT: Assumes all datasets have the same set of nodeIds
     """
 
     # The maximum number of extinctions seen in any dataset
     maxExtinctions = 0
+
+    # The set of all nodeIds seen in any dataset
+    nodeIds = set()
 
     dataset = []
     for filename in filenames:
@@ -30,6 +37,7 @@ def generateDataset(filenames):
         f = open(filename, 'r')
         reader = csv.reader(f)
         extinctionTimesteps = []
+        cumulativeBiomassByNode = {} # Cumulative biomass by nodeID
         reader.__next__()  # Skip the header row
 
         numSpecies = 0
@@ -38,10 +46,17 @@ def generateDataset(filenames):
                 # Blank line: end of biomass data
                 break
             numSpecies += 1
+            cumulativeBiomass = 0
             for timestep, biomass in enumerate([int(float(x)) for x in row[1:]]):
                 if biomass == 0:
                     extinctionTimesteps.append(timestep)
                     break
+                cumulativeBiomass += biomass
+
+            nodeId = int(row[0].split('.')[1])
+            cumulativeBiomassByNode[nodeId] = cumulativeBiomass
+
+        nodeIds.update(cumulativeBiomassByNode.keys())
 
         # The next row should have the node config
         row = reader.__next__()
@@ -55,7 +70,7 @@ def generateDataset(filenames):
         # "good": 2 or fewer extinctions by time step 400
         #  - i.e. the third extinction happens after time step 400
 
-        USE_ORIGINAL_RULES = False
+        USE_ORIGINAL_RULES = True
 
         if USE_ORIGINAL_RULES:
             if len(extinctionTimesteps) <= 2:
@@ -87,18 +102,45 @@ def generateDataset(filenames):
                 elif timestep < 6:
                     resultClass = 'bad'
 
+        # Count the number of species surviving at timestep 20
+        surviving20 = numSpecies
+        for timestep in extinctionTimesteps:
+            if timestep > 20:
+                break
+            surviving20 -= 1
+
+        # Count the number of species surviving at timestep 1000
+        surviving1000 = numSpecies
+        for timestep in extinctionTimesteps:
+            if timestep > 1000:
+                break
+            surviving1000 -= 1
+
+        # Padded extinctionTimestepts out to numSpecies elements
+        for i in range(numSpecies - len(extinctionTimesteps)):
+            extinctionTimesteps.append(99999999)
+
         maxExtinctions = max(maxExtinctions, len(extinctionTimesteps))
+        avgBiomass = [b / 1000
+                for nId, b in sorted(cumulativeBiomassByNode.items())]
         dataset.append([os.path.basename(filename), nodeConfig, resultClass] +
-                extinctionTimesteps)
+                extinctionTimesteps +
+                [surviving20, surviving1000] +
+                avgBiomass)
+
+        # end for filename in filenames
+
     dataset.sort(reverse=True, key=lambda row: row[3:])
-    return dataset, maxExtinctions
+    return dataset, maxExtinctions, nodeIds
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Usage: python3 extinction-report.py file1.csv [file2.csv ...]")
         sys.exit(1)
-    dataset, maxExtinctions = generateDataset(sys.argv[1:])
+    dataset, maxExtinctions, nodeIds = generateDataset(sys.argv[1:])
     writer = csv.writer(sys.stdout)
     writer.writerow(['filename', 'nodeConfig', 'resultClass'] +
-            ['extinction' + str(i) for i in range(1, maxExtinctions + 1)])
+            ['extinction' + str(i) for i in range(1, maxExtinctions + 1)] +
+            ['surviving20', 'surviving1000'] +
+            ['avgBiomass' + str(nodeId) for nodeId in sorted(nodeIds)])
     writer.writerows(dataset)
