@@ -19,8 +19,6 @@ def generateDataset(filenames):
       - i.e. the third extinction happens after time step 400
 
     Extinction is defined as biomass == 0.
-    Cumulative biomass values include only biomass before extinction ,though
-    the model may cause the species' biomass to recover from extinction
     
     IMPORTANT: Assumes all datasets have the same set of nodeIds
     """
@@ -37,7 +35,13 @@ def generateDataset(filenames):
         f = open(filename, 'r')
         reader = csv.reader(f)
         extinctionTimesteps = []
-        cumulativeBiomassByNode = {} # Cumulative biomass by nodeID
+
+        # Cumulative pre-extinction biomass indexed by nodeID
+        cumulativeBiomassByNode = {}
+
+        # Cumulative biomass regardless of extinction, indexed by nodeID
+        cumulativeBiomass2ByNode = {}
+
         reader.__next__()  # Skip the header row
 
         numSpecies = 0
@@ -46,15 +50,21 @@ def generateDataset(filenames):
                 # Blank line: end of biomass data
                 break
             numSpecies += 1
-            cumulativeBiomass = 0
+            cumulativeBiomass = 0  # Cumulative biomass prior to extinction
+            cumulativeBiomass2 = 0 # Cumulative biomass regardless of extinction
+            extinct = False
             for timestep, biomass in enumerate([int(float(x)) for x in row[1:]]):
-                if biomass == 0:
-                    extinctionTimesteps.append(timestep)
-                    break
-                cumulativeBiomass += biomass
+                if not extinct:
+                    if biomass == 0:
+                        extinctionTimesteps.append(timestep)
+                        extinct = True
+                    else:
+                        cumulativeBiomass += biomass
+                cumulativeBiomass2 += biomass
 
             nodeId = int(row[0].split('.')[1])
             cumulativeBiomassByNode[nodeId] = cumulativeBiomass
+            cumulativeBiomass2ByNode[nodeId] = cumulativeBiomass2
 
         nodeIds.update(cumulativeBiomassByNode.keys())
 
@@ -121,12 +131,19 @@ def generateDataset(filenames):
             extinctionTimesteps.append(99999999)
 
         maxExtinctions = max(maxExtinctions, len(extinctionTimesteps))
+
+        # Average pre-extinction biomass (cumulative / 1000)
         avgBiomass = [b / 1000
                 for nId, b in sorted(cumulativeBiomassByNode.items())]
+
+        # Average biomass regardless of extinction (cumulative / 1000)
+        avgBiomass2 = [b / 1000
+                for nId, b in sorted(cumulativeBiomass2ByNode.items())]
+
         dataset.append([os.path.basename(filename), nodeConfig, resultClass] +
                 extinctionTimesteps +
                 [surviving20, surviving1000] +
-                avgBiomass)
+                avgBiomass + avgBiomass2)
 
         # end for filename in filenames
 
@@ -142,5 +159,6 @@ if __name__ == '__main__':
     writer.writerow(['filename', 'nodeConfig', 'resultClass'] +
             ['extinction' + str(i) for i in range(1, maxExtinctions + 1)] +
             ['surviving20', 'surviving1000'] +
-            ['avgBiomass' + str(nodeId) for nodeId in sorted(nodeIds)])
+            ['avgBiomass' + str(nodeId) for nodeId in sorted(nodeIds)] +
+            ['avgBiomass2_' + str(nodeId) for nodeId in sorted(nodeIds)])
     writer.writerows(dataset)
