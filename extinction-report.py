@@ -7,7 +7,24 @@ import sys
 import os.path
 import csv
 
-def generateDataset(filenames):
+def getSimNumberFromFilename(filename):
+    """
+    Based on a filename such as
+    ATN.csv
+    ATN_1.csv
+    ATN_123.csv
+    return the simulation number such as
+    0
+    1
+    123
+    """
+    split1 = filename.split('_')
+    if len(split1) == 1:
+        return 0
+    else:
+        return int(split1[1].split('.')[0])
+
+def generateDataset(setNumber, filenames):
     """
     Return the a dataset with one row per input file (ATN biomass CSV file).
     Each row describes the timesteps of extinction events.
@@ -31,6 +48,8 @@ def generateDataset(filenames):
 
     dataset = []
     for filename in filenames:
+
+        simNumber = getSimNumberFromFilename(filename)
 
         f = open(filename, 'r')
         reader = csv.reader(f)
@@ -140,23 +159,25 @@ def generateDataset(filenames):
         avgBiomass2 = [b / 1000
                 for nId, b in sorted(cumulativeBiomass2ByNode.items())]
 
-        dataset.append([os.path.basename(filename), nodeConfig, resultClass] +
+        dataset.append([os.path.basename(filename), setNumber, simNumber, nodeConfig, resultClass] +
                 extinctionTimesteps +
                 [surviving20, surviving1000] +
                 avgBiomass + avgBiomass2)
 
         # end for filename in filenames
 
-    dataset.sort(reverse=True, key=lambda row: row[3:])
+    dataset.sort(key=lambda row: row[2])
+    #dataset.sort(reverse=True, key=lambda row: row[3:])
     return dataset, maxExtinctions, nodeIds
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: python3 extinction-report.py file1.csv [file2.csv ...]")
+        print("Usage: python3 extinction-report.py set-number file1.csv [file2.csv ...]")
         sys.exit(1)
-    dataset, maxExtinctions, nodeIds = generateDataset(sys.argv[1:])
+    dataset, maxExtinctions, nodeIds = generateDataset(
+            int(sys.argv[1]), sys.argv[2:])
     writer = csv.writer(sys.stdout)
-    writer.writerow(['filename', 'nodeConfig', 'resultClass'] +
+    writer.writerow(['filename', 'setNumber', 'simNumber', 'nodeConfig', 'resultClass'] +
             ['extinction' + str(i) for i in range(1, maxExtinctions + 1)] +
             ['surviving20', 'surviving1000'] +
             ['avgBiomass' + str(nodeId) for nodeId in sorted(nodeIds)] +
