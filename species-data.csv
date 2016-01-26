@@ -1,0 +1,95 @@
+nodeId,name,trophicLevel
+1,"Crops; Decaying Material",1
+2,"Big Tree; Baobab; Acacia; Plant Juices",1
+3,"Baobab; Acacia; Fruits and Nectar; Big Tree",1
+4,"Grains and Seeds; Big Tree; Baobab; Acacia",1
+5,"Grass and Herbs",1
+7,"Trees and Shrubs; Baobab; Acacia; Big Tree",1
+8,"Thrips",2
+9,"Rove and Ground Beetles",2.51786
+10,"Orb-Weaver Spider",3.38753
+11,"Ants",2.16667
+12,"Harvester Termite",2
+13,"Flies",2
+14,"Crickets",2.125
+15,"Herbivorous True Bugs",2
+16,"Katydids",2.30357
+17,"Praying Mantis",3.25313
+18,"Centipede",3.29813
+19,"Cockroach",2
+20,"Dwarf Puddle Frog",3.28284
+21,"Millipede",2
+22,"Shrew",3.28284
+23,"Banana Pipistrelle",3
+24,"Scorpion",3.46251
+25,"Gray Flycatcher",3.13492
+26,"Yellow-Breasted Apalis",2.65786
+27,"Yellow-Bellied Eremomela",2.78074
+28,"Red-Faced Crombec",2
+29,"Three-Banded Plover",3.25434
+30,"Dwarf Epauletted Bat",2
+31,"Tree Mouse",2.38095
+32,"Mueller's Clawed Frog",2.94526
+33,"Cape Teal",2.29861
+34,"Cape Dwarf Gecko",3.23584
+35,"Crab",2.25
+36,"Creek Rat",2.72169
+37,"Catfish",2.5
+38,"Dwarf Sand Snake",3.79062
+39,"Pearl-Spotted Owlet",3.56358
+40,"Yellow-Throated Sandgrouse",2
+41,"Striped Weasel",3.52954
+42,"African Grey Hornbill",2.66657
+43,"Coqui Francolin",2.25
+44,"Rufous Beaked Snake",3.50856
+45,"Four Toed African Hedgehog",2.8657
+46,"Little Grebe",3.56238
+47,"White-Bellied Bustard",2.9194
+48,"Bush Hyrax",2
+49,"African Marsh Owl",3.66074
+50,"Dwarf Mongoose",2.94236
+51,"Hooded Vulture",3.50814
+52,"Smith's Red Hock Hare",2
+53,"African Fish Eagle",3.78486
+54,"Domestic Chicken",1
+55,"Greater Bushbaby",2.62173
+56,"Marabou Stork",3.58348
+57,"Southern Ground Hornbill",3.56295
+58,"Domestic Cat",1
+59,"Bat-Eared Fox",3.55142
+60,"Spot Necked Otter",3.375
+61,"Leopard Tortoise",2.78568
+62,"African White-Backed Vulture",1
+63,"Lappet-Faced Vulture",3.49293
+64,"Nile Monitor Lizard",3.48947
+65,"Kori Buskard",2.61792
+66,"Black and White Columbus Monkey",2.125
+67,"Black Backed Jackal",3.0235
+68,"Ground Pangolin",3.08333
+69,"Serval Cat",3.43754
+70,"African Clawless Otter",3.53891
+71,"Kirk's Dik-dik",2
+72,"Crested Porcupine",2
+73,"Oribi",2
+74,"African Wild Dog",3.30203
+75,"Black Mamba",3.57098
+76,"Domestic Dog",1
+77,"Striped Hyena",3.17092
+78,"Domestic Goat",1
+79,"Aardvark",3.08333
+80,"Leopard",3.42426
+81,"Domestic Sheep",1
+82,"Bohor Reedbuck",2
+83,"Bush Pig",2.33591
+84,"Human",1
+85,"Ostrich",2.125
+86,"Lion",3.22409
+87,"Topi",2
+88,"Buffalo",2
+89,"Southern Eland",2
+90,"Domestic Cattle",1
+91,"Nile Crocodile",3.63713
+92,"Masai Giraffe",2
+93,"Black Rhinoceros",2
+94,"Hippopotamus",2
+95,"African Elephant",2

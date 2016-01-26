@@ -12,6 +12,7 @@ calculated from the biomass data.
 import sys
 import os.path
 import csv
+from math import log2
 
 from nodeconfig_generator import parseNodeConfig
 
@@ -34,26 +35,43 @@ def getSimNumber(filename):
 
 def nodeConfigToParams(nodeConfig):
     """
-    Given a node config string, return a dictionary with one key-value pair for
-    each node-parameter pair, where the keys are named with the parameter name
-    with the node ID appended.
+    Given a node config as returned by parseNodeConfig(), return a dictionary
+    with one key-value pair for each node-parameter pair, where the keys are
+    named with the parameter name with the node ID appended.
     """
-    nodes = parseNodeConfig(nodeConfig)
     params = {}
-    for node in nodes:
+    for node in nodeConfig:
         for key, value in node.items():
             if key == 'nodeId':
                 continue
             params[key + str(node['nodeId'])] = value
     return params
 
+def getSpeciesData(filename):
+    """
+    Given the filename of the CSV containing species-level data (for all
+    species, rows unique by nodeId),
+    return a dict whose keys are node IDs and keys are dicts containing the data
+    for that species.
+    """
+
+    data = {}
+    with open(filename, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            data[int(row['nodeId'])] = {
+                'name': row['name'],
+                'trophicLevel': float(row['trophicLevel'])
+            }
+    return data
+
 def getSimulationData(filename):
     """
     Given a filename of an ATN CSV file,
-    return a tuple (nodeConfigAttributes, biomassData).
+    return a tuple (nodeConfig, nodeConfigAttributes, biomassData).
 
     nodeConfigAttributes is a dictionary with the node config parameters (as
-    returned by nodeConfigParams()).
+    returned by nodeConfigToParams()).
 
     biomassData is a dictionary mapping node ID to a list of biomass values over
     time.
@@ -74,14 +92,44 @@ def getSimulationData(filename):
 
         # The next row should have the node config
         row = reader.__next__()
-        nodeConfig = row[0].split(': ')[1]
+        nodeConfigStr = row[0].split(': ')[1]
+        nodeConfig = parseNodeConfig(nodeConfigStr)
         nodeConfigAttributes = nodeConfigToParams(nodeConfig)
 
-    return (nodeConfigAttributes, biomassData)
+    return (nodeConfig, nodeConfigAttributes, biomassData)
 
-def getOutputAttributes(biomassData):
+def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
     """
-    Given biomassData as returned by getSimulationData,
+    Calculate the average Ecosystem Score over all timesteps for the given data.
+    The calculations are taken from model.Ecosystem.updateEcosystemScore()
+    in WoB_Server.
+    """
+
+    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
+    cumulativeScore = 0
+    for timestep in range(numTimesteps):
+
+        # Calculate the Ecosystem Score for this timestep
+        biomass = 0
+        numSpecies = len(nodeConfig)
+        for node in nodeConfig:
+            nodeId = node['nodeId']
+            perUnitBiomass = node['perUnitBiomass']
+            totalBiomass = biomassData[nodeId][timestep]
+            biomass += perUnitBiomass * pow(totalBiomass / perUnitBiomass,
+                    speciesData[nodeId]['trophicLevel'])
+        if biomass > 0:
+            biomass = round(log2(biomass)) * 5
+        score = int(round(pow(biomass, 2) + pow(numSpecies, 2)))
+
+        cumulativeScore += score
+
+    return cumulativeScore / numTimesteps
+
+def getOutputAttributes(speciesData, nodeConfig, biomassData):
+    """
+    Given speciesData as returned by getSpeciesData,
+    nodeConfig and biomassData as returned by getSimulationData,
     return a dictionary of attributes whose keys are
     "<attributeName>_<nodeId>" for species-specific attributes and
     "<attributeName>"          for non-species-specific attributes
@@ -96,6 +144,7 @@ def getOutputAttributes(biomassData):
     -------------------------------
     surviving20: number of species surviving at timestep 20
     surviving1000: number of species surviving at timestep 1000
+    avgEcosystemScore: average EcosystemScore over all timesteps
     """
 
     # Output attributes
@@ -130,6 +179,8 @@ def getOutputAttributes(biomassData):
 
     out['surviving20'] = surviving20
     out['surviving1000'] = surviving1000
+    out['avgEcosystemScore'] = getAvgEcosystemScore(
+            speciesData, nodeConfig, biomassData)
 
     return out
 
@@ -141,6 +192,8 @@ if __name__ == '__main__':
     setNumber = int(sys.argv[1])
     outfilename = sys.argv[2]
     infilenames = sys.argv[3:]
+
+    speciesData = getSpeciesData('species-data.csv')
 
     outfile = None
     writer = None
@@ -157,9 +210,10 @@ if __name__ == '__main__':
                 'simNumber': simNumber,
                 }
         outrow.update(identifiers)
-        inputAttributes, biomassData = getSimulationData(infilename)
+        nodeConfig, inputAttributes, biomassData = getSimulationData(infilename)
         outrow.update(inputAttributes)
-        outputAttributes = getOutputAttributes(biomassData)
+        outputAttributes = getOutputAttributes(
+                speciesData, nodeConfig, biomassData)
         outrow.update(outputAttributes)
 
         if writer is None:
