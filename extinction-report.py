@@ -2,6 +2,7 @@
 
 # Ben Saylor
 # October 2015
+# NOTE: This script is replaced by create_feature_file.py
 
 import sys
 import os.path

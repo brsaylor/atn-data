@@ -2,7 +2,7 @@
 
 """
 Ben Saylor
-November 2015
+November 2015, January 2016
 
 Process a set of biomass data files (ATN*.csv) - one file per simulation -
 create a summary CSV file with one row per simulation with various features
@@ -15,6 +15,8 @@ import csv
 from math import log2
 
 from nodeconfig_generator import parseNodeConfig
+
+NO_EXTINCTION = 99999999
 
 def getSimNumber(filename):
     """
@@ -153,17 +155,19 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     numSpecies = len(biomassData)
     surviving20 = numSpecies
     surviving1000 = numSpecies
+    extinctionTimesteps = []
 
     for nodeId, biomassSeries in biomassData.items():
         numTimesteps = len(biomassSeries)
         cumulativeBiomass = 0
         cumulativeBiomass2 = 0
         extinct = False
-        out['extinction_' + str(nodeId)] = 99999999
+        out['extinction_' + str(nodeId)] = NO_EXTINCTION
         for timestep, biomass in enumerate(biomassSeries):
             if not extinct:
                 if biomass == 0:
                     out['extinction_' + str(nodeId)] = timestep
+                    extinctionTimesteps.append(timestep)
                     extinct = True
                     if timestep <= 20:
                         surviving20 -= 1
@@ -181,6 +185,27 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     out['surviving1000'] = surviving1000
     out['avgEcosystemScore'] = getAvgEcosystemScore(
             speciesData, nodeConfig, biomassData)
+
+    # Classify this simulation outcome as "bad" or "good" (or neither)
+    # "bad": more than 60% extinct in < 20 time steps
+    # "good": 2 or fewer extinctions by time step 400
+    #  - i.e. the third extinction happens after time step 400
+    extinctionTimesteps.sort()
+    if len(extinctionTimesteps) <= 2:
+        # Only two extinctions = good
+        resultClass = 'good'
+    else:
+        resultClass = ''
+        for i, timestep in enumerate(extinctionTimesteps):
+            numExtinct = (i + 1)
+            percentExtinct = numExtinct / numSpecies
+            if timestep < 20 and percentExtinct > 0.6:
+                resultClass = 'bad'
+                break
+            elif timestep > 400 and numExtinct == 3:
+                resultClass = 'good'
+                break
+    out['resultClass'] = resultClass
 
     return out
 
