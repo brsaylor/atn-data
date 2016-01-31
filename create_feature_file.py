@@ -117,7 +117,11 @@ def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
         for node in nodeConfig:
             nodeId = node['nodeId']
             perUnitBiomass = node['perUnitBiomass']
-            totalBiomass = biomassData[nodeId][timestep]
+
+            # Sometimes biomass can go slightly negative.
+            # Clip to 0 to avoid complex numbers in score calculation.
+            totalBiomass = max(0, biomassData[nodeId][timestep])
+
             biomass += perUnitBiomass * pow(totalBiomass / perUnitBiomass,
                     speciesData[nodeId]['trophicLevel'])
         if biomass > 0:
