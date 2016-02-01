@@ -14,6 +14,8 @@ import os.path
 import csv
 from math import log2
 
+import numpy as np
+
 from nodeconfig_generator import parseNodeConfig
 
 NO_EXTINCTION = 99999999
@@ -49,7 +51,7 @@ def nodeConfigToParams(nodeConfig):
             params[key + str(node['nodeId'])] = value
     return params
 
-def getSpeciesData(filename):
+def getSpeciesData(filename='species-data.csv'):
     """
     Given the filename of the CSV containing species-level data (for all
     species, rows unique by nodeId),
@@ -100,15 +102,16 @@ def getSimulationData(filename):
 
     return (nodeConfig, nodeConfigAttributes, biomassData)
 
-def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
+def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
     """
-    Calculate the average Ecosystem Score over all timesteps for the given data.
-    The calculations are taken from model.Ecosystem.updateEcosystemScore()
-    in WoB_Server.
+    Compute the Ecosystem Score for all timesteps for the given data and return
+    the score time series.  The calculations are taken from
+    model.Ecosystem.updateEcosystemScore() in WoB_Server.
     """
 
     numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
-    cumulativeScore = 0
+    scores = np.empty(numTimesteps)
+
     for timestep in range(numTimesteps):
 
         # Calculate the Ecosystem Score for this timestep
@@ -126,11 +129,12 @@ def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
                     speciesData[nodeId]['trophicLevel'])
         if biomass > 0:
             biomass = round(log2(biomass)) * 5
-        score = int(round(pow(biomass, 2) + pow(numSpecies, 2)))
+        scores[timestep] = int(round(pow(biomass, 2) + pow(numSpecies, 2)))
 
-        cumulativeScore += score
+    return scores
 
-    return cumulativeScore / numTimesteps
+def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
+    return ecosystemScoreSeries(speciesData, nodeConfig, biomassData).mean()
 
 def getOutputAttributes(speciesData, nodeConfig, biomassData):
     """
@@ -222,7 +226,7 @@ if __name__ == '__main__':
     outfilename = sys.argv[2]
     infilenames = sys.argv[3:]
 
-    speciesData = getSpeciesData('species-data.csv')
+    speciesData = getSpeciesData()
 
     outfile = None
     writer = None
