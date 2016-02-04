@@ -13,6 +13,8 @@ import re
 import json
 
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats, signal
 
 from create_feature_file import getSpeciesData, ecosystemScoreSeries
 from nodeconfig_generator import parseNodeConfig
@@ -66,12 +68,49 @@ def plotCsv(filename):
     #ax2.legend(['score'])  # gets drawn on top of main legend
     ax2.set_ylabel("score")
 
+    # Linear regression
+    t = np.arange(len(scores))
+    tn = len(scores) - 1
+    slope, intercept, r_value, p_value, std_err = stats.linregress(
+            t, scores)
+    ax2.plot([0, tn], [intercept, slope * tn + intercept])
+
+    # Regions between local "maxima" (may be plateaus due to rounding)
+    # To round off plateaus, do some smoothing by convolving with a Hanning
+    # window
+    smoothed = np.convolve(scores, np.hanning(20), mode='same')
+    maxIndices, = signal.argrelmax(smoothed)
+    maxValues = np.take(scores, maxIndices)
+    ax2.plot(maxIndices, maxValues, 'r^')
+    #
+    regions = np.split(scores, maxIndices)
+    regionAverages = [region.mean() for region in regions]
+    regionCenters = np.empty(len(regions))
+    tprev = 0
+    for i, t in enumerate(maxIndices):
+        regionCenters[i] = (tprev + t) / 2
+        tprev = t
+    regionCenters[-1] = (tprev + len(scores)) / 2
+    ax2.plot(regionCenters, regionAverages, 'ro')
+
     plt.title(filename)
     plt.show()
 
+    print("TREND MEASURES:")
+    print("sum of derivative: {}".format(sumDerivative(scores)))
+    print("linear regression: slope = {}, intercept = {}".format(
+        slope, intercept))
+    print("regionAverages[-2] - regionAverages[1] = {}".format(
+        regionAverages[-2] - regionAverages[1]))
+
+    print("\nSPECIES DATA:")
     printSpeciesData(speciesData, nodeConfig)
 
 def printSpeciesData(speciesData, nodeConfig):
+    """
+    Print out a formatted JSON representation of the node config and
+    species-level data
+    """
     dataByNodeId = {}
     for node in nodeConfig:
         nodeId = node['nodeId']
@@ -80,6 +119,12 @@ def printSpeciesData(speciesData, nodeConfig):
         data.update(speciesData[nodeId])
         dataByNodeId[nodeId] = data
     print(json.dumps(dataByNodeId, indent=4, sort_keys=True))
+
+# FIXME: Refactoring needed
+def sumDerivative(series):
+    # Note: sum of finite-difference derivative is last value minus first
+    # value
+    return series[-1] - series[0]
 
 if __name__ == '__main__':
     filenames = sys.argv[1:]
