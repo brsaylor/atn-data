@@ -75,6 +75,11 @@ def plotCsv(filename):
             t, scores)
     ax2.plot([0, tn], [intercept, slope * tn + intercept])
 
+    # Log-linear regression
+    logSlope, logIntercept, r_value, p_value, std_err = stats.linregress(
+            t, np.log(scores))
+    ax2.plot(t, np.e**(logSlope*t + logIntercept))
+
     # Regions between local "maxima" (may be plateaus due to rounding)
     # To round off plateaus, do some smoothing by convolving with a Hanning
     # window
@@ -100,8 +105,12 @@ def plotCsv(filename):
     print("sum of derivative: {}".format(sumDerivative(scores)))
     print("linear regression: slope = {}, intercept = {}".format(
         slope, intercept))
+    print("log-linear regression: slope = {}, intercept = {}".format(
+        logSlope, logIntercept))
     print("regionAverages[-2] - regionAverages[1] = {}".format(
         regionAverages[-2] - regionAverages[1]))
+    print("regionAverages[-2] / regionAverages[1] = {}".format(
+        regionAverages[-2] / regionAverages[1]))
 
     print("\nSPECIES DATA:")
     printSpeciesData(speciesData, nodeConfig)
