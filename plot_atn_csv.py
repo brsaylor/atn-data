@@ -111,6 +111,8 @@ def plotCsv(filename, scoreFunction):
         regionAverages[-2] - regionAverages[1]))
     print("regionAverages[-2] / regionAverages[1] = {}".format(
         regionAverages[-2] / regionAverages[1]))
+    print("average (excluding first timestep): {}".format(
+        scores[1:].mean()))
 
     print("\nSPECIES DATA:")
     printSpeciesData(speciesData, nodeConfig)
