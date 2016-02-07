@@ -21,7 +21,7 @@ from nodeconfig_generator import parseNodeConfig
 
 speciesData = None
 
-def plotCsv(filename):
+def plotCsv(filename, scoreFunction):
     global speciesData
     if speciesData is None:
         speciesData = getSpeciesData()
@@ -62,7 +62,7 @@ def plotCsv(filename):
         legend.append(speciesData[nodeId]['name'] + ' ' + nodeConfigSection)
     ax1.legend(legend)
 
-    scores = ecosystemScoreSeries(speciesData, nodeConfig, data)
+    scores = scoreFunction(speciesData, nodeConfig, data)
     ax2 = ax1.twinx()
     ax2.plot(scores, linewidth=2)
     #ax2.legend(['score'])  # gets drawn on top of main legend
