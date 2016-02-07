@@ -1,0 +1,2239 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="category" attr.type="string" for="node" id="d14" />
+  <key attr.name="node_id" attr.type="string" for="node" id="d13" />
+  <key attr.name="name" attr.type="string" for="node" id="d12" />
+  <key attr.name="species_id" attr.type="string" for="node" id="d11" />
+  <key attr.name="metabolism" attr.type="string" for="node" id="d10" />
+  <key attr.name="growth_rate" attr.type="string" for="node" id="d9" />
+  <key attr.name="biomass" attr.type="string" for="node" id="d8" />
+  <key attr.name="diet_type" attr.type="string" for="node" id="d7" />
+  <key attr.name="model_id" attr.type="string" for="node" id="d6" />
+  <key attr.name="carrying_capacity" attr.type="string" for="node" id="d5" />
+  <key attr.name="organism_type" attr.type="string" for="node" id="d4" />
+  <key attr.name="cost" attr.type="string" for="node" id="d3" />
+  <key attr.name="description" attr.type="string" for="node" id="d2" />
+  <key attr.name="trophic_level" attr.type="string" for="node" id="d1" />
+  <key attr.name="unlock" attr.type="string" for="node" id="d0" />
+  <graph edgedefault="directed">
+    <node id="1">
+      <data key="d0">7</data>
+      <data key="d1">3.08333</data>
+      <data key="d2">The aardvark is a medium-sized, burrowing, nocturnal mammal native to Africa. It is the only living species of the order Tubulidentata, although other prehistoric species and genera of Tubulidentata are known.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">1</data>
+      <data key="d7">1</data>
+      <data key="d8">66</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0821097</data>
+      <data key="d11">1</data>
+      <data key="d12">Aardvark</data>
+      <data key="d13">79</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="2">
+      <data key="d0">6</data>
+      <data key="d1">3.53891</data>
+      <data key="d2">The African clawless otter, also known as the cape clawless otter or groot otter, is the second largest freshwater species of otter. African clawless otters are found near permanent bodies of water in savannah and lowland forest areas.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">2</data>
+      <data key="d7">1</data>
+      <data key="d8">13</data>
+      <data key="d9">0</data>
+      <data key="d10">0.123252</data>
+      <data key="d11">2</data>
+      <data key="d12">African Clawless Otter</data>
+      <data key="d13">70</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="3">
+      <data key="d0">4</data>
+      <data key="d1">3.78486</data>
+      <data key="d2">The African Fish Eagle is a large species of eagle that is found throughout sub-Saharan Africa wherever large bodies of open water occur that have an abundant food supply. It is the national bird of Zimbabwe and Zambia.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">3</data>
+      <data key="d7">1</data>
+      <data key="d8">2.8</data>
+      <data key="d9">0</data>
+      <data key="d10">0.180922</data>
+      <data key="d11">3</data>
+      <data key="d12">African Fish Eagle</data>
+      <data key="d13">53</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="4">
+      <data key="d0">5</data>
+      <data key="d1">3.55142</data>
+      <data key="d2">The bat-eared fox is a canid of the African savanna, named for its large ears. Fossil records show this canid to first appear during the middle Pleistocene, about 800,000 years ago.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">4</data>
+      <data key="d7">1</data>
+      <data key="d8">3.35</data>
+      <data key="d9">0</data>
+      <data key="d10">0.172989</data>
+      <data key="d11">4</data>
+      <data key="d12">Bat-Eared Fox</data>
+      <data key="d13">59</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="5">
+      <data key="d0">6</data>
+      <data key="d1">3.0235</data>
+      <data key="d2">The black-backed jackal, also known as the silver-backed or red jackal, is a species of jackal which inhabits two areas of the African continent separated by roughly 900 km.</data>
+      <data key="d3">60</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">5</data>
+      <data key="d7">0</data>
+      <data key="d8">9.6</data>
+      <data key="d9">0</data>
+      <data key="d10">0.132957</data>
+      <data key="d11">5</data>
+      <data key="d12">Black Backed Jackal</data>
+      <data key="d13">67</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="6">
+      <data key="d0">7</data>
+      <data key="d1">3.57098</data>
+      <data key="d2">The black mamba, also called the common black mamba or black-mouthed mamba, is the longest venomous snake in Africa, averaging around 2.5 to 3.2 m in length, and sometimes growing to lengths of 4.45 m.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">6</data>
+      <data key="d7">1</data>
+      <data key="d8">1.59</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00871558</data>
+      <data key="d11">6</data>
+      <data key="d12">Black Mamba</data>
+      <data key="d13">75</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="7">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">The African buffalo is a large African bovine. It is not closely related to the slightly larger wild Asian water buffalo, but its ancestry remains unclear. Owing to its unpredictable nature which makes it highly dangerous to humans, it has not been domesticated unlike its Asian counterpart the domestic Asian water buffalo.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">7</data>
+      <data key="d7">2</data>
+      <data key="d8">1590</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0370622</data>
+      <data key="d11">7</data>
+      <data key="d12">Buffalo</data>
+      <data key="d13">88</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="8">
+      <data key="d0">1</data>
+      <data key="d1">2</data>
+      <data key="d2">Thrips are tiny, slender insects with fringed wings. Other common names for thrips include thunderflies, thunderbugs, storm flies, thunderblights, and corn lice.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">2</data>
+      <data key="d8">1.1</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00207749</data>
+      <data key="d11">8</data>
+      <data key="d12">Thrips</data>
+      <data key="d13">8</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="9">
+      <data key="d0">0</data>
+      <data key="d1">2.51786</data>
+      <data key="d2">The rove beetles are a large family of beetles, primarily distinguished by their short elytra that leave more than half of their abdomens exposed.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">1</data>
+      <data key="d8">0.071</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00412167</data>
+      <data key="d11">9</data>
+      <data key="d12">Rove and Ground Beetles</data>
+      <data key="d13">9</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="10">
+      <data key="d0">2</data>
+      <data key="d1">3.38753</data>
+      <data key="d2">The "typical" orb-weaver spiders are the most common group of builders of spiral wheel-shaped webs often found in gardens, fields and forests.</data>
+      <data key="d3">15</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">1</data>
+      <data key="d8">0.004</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00846004</data>
+      <data key="d11">10</data>
+      <data key="d12">Orb-Weaver Spider</data>
+      <data key="d13">10</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="11">
+      <data key="d0">0</data>
+      <data key="d1">2.16667</data>
+      <data key="d2">Ants are social insects of the family Formicidae and, along with the related wasps and bees, belong to the order Hymenoptera.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">0</data>
+      <data key="d8">0.000004</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0475743</data>
+      <data key="d11">11</data>
+      <data key="d12">Ants</data>
+      <data key="d13">11</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="12">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">Termites are a group of eusocial insects that, until recently, were classified at the taxonomic rank of order Isoptera, but are now accepted as the epifamily Termitoidae, of the cockroach order Blattodea.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">51</data>
+      <data key="d7">2</data>
+      <data key="d8">0.000002</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0565757</data>
+      <data key="d11">12</data>
+      <data key="d12">Harvester Termite</data>
+      <data key="d13">12</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="13">
+      <data key="d0">1</data>
+      <data key="d1">2</data>
+      <data key="d2">True flies are insects of the order Diptera. They possess a pair of wings on the mesothorax and a pair of halteres, derived from the hind wings, on the metathorax.</data>
+      <data key="d3">5</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">0</data>
+      <data key="d8">0.0000115</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0365353</data>
+      <data key="d11">13</data>
+      <data key="d12">Flies</data>
+      <data key="d13">13</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="14">
+      <data key="d0">2</data>
+      <data key="d1">2.125</data>
+      <data key="d2">Crickets, family Gryllidae, are insects somewhat related to grasshoppers, and more closely related to katydids or bush crickets. They have somewhat flattened bodies and long antennae. There are about 900 species of crickets.</data>
+      <data key="d3">14</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">0</data>
+      <data key="d8">20</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00100607</data>
+      <data key="d11">14</data>
+      <data key="d12">Crickets</data>
+      <data key="d13">14</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="15">
+      <data key="d0">2</data>
+      <data key="d1">2</data>
+      <data key="d2">An order of insects also known as the Hemiptera, comprising around 50,000-80,000 species of cicadas, aphids, planthoppers, leafhoppers, shield bugs, and others.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">2</data>
+      <data key="d8">0.071</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00412167</data>
+      <data key="d11">15</data>
+      <data key="d12">Herbivorous True Bugs</data>
+      <data key="d13">15</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="16">
+      <data key="d0">1</data>
+      <data key="d1">2.30357</data>
+      <data key="d2">The Katydids is part of the suborder Ensifera and the only family in the superfamily Tettigonioidea. They are also known as long-horned grasshoppers, although they are more closely related to crickets than to grasshoppers.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">1</data>
+      <data key="d8">0.9</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00218437</data>
+      <data key="d11">16</data>
+      <data key="d12">Katydids</data>
+      <data key="d13">16</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="17">
+      <data key="d0">2</data>
+      <data key="d1">3.25313</data>
+      <data key="d2">The praying mantis is named for its prominent front legs, which are bent and held together at an angle that suggests the position of prayer. The larger group of these insects is more properly called the praying mantids. Mantis refers to the genus mantis, to which only some praying mantids belong.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">34</data>
+      <data key="d7">1</data>
+      <data key="d8">0.17</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00331341</data>
+      <data key="d11">17</data>
+      <data key="d12">Praying Mantis</data>
+      <data key="d13">17</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="18">
+      <data key="d0">0</data>
+      <data key="d1">3.29813</data>
+      <data key="d2">Centipedes are arthropods belonging to the class Chilopoda of the subphylum Myriapoda. They are elongated metameric animals with one pair of legs per body segment.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">12</data>
+      <data key="d7">1</data>
+      <data key="d8">0.00014</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0195594</data>
+      <data key="d11">18</data>
+      <data key="d12">Centipede</data>
+      <data key="d13">18</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="19">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">Cockroaches are insects of the order Blattaria or Blattodea, of which about 30 species out of 4,500 total are associated with human habitations. About four species are well known as pests.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">1</data>
+      <data key="d8">20</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00100607</data>
+      <data key="d11">19</data>
+      <data key="d12">Cockroach</data>
+      <data key="d13">19</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="20">
+      <data key="d0">1</data>
+      <data key="d1">3.28284</data>
+      <data key="d2">The Dwarf Puddle Frog is a species of frog in the Petropedetidae family. </data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">23</data>
+      <data key="d7">1</data>
+      <data key="d8">0.04</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0218842</data>
+      <data key="d11">20</data>
+      <data key="d12">Dwarf Puddle Frog</data>
+      <data key="d13">20</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="21">
+      <data key="d0">1</data>
+      <data key="d1">2</data>
+      <data key="d2">Millipedes are arthropods that have two pairs of legs per segment. Each segment that has two pairs of legs is a result of two single segments fused together as one.</data>
+      <data key="d3">15</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">65</data>
+      <data key="d7">0</data>
+      <data key="d8">0.2</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00318149</data>
+      <data key="d11">21</data>
+      <data key="d12">Millipede</data>
+      <data key="d13">21</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="22">
+      <data key="d0">0</data>
+      <data key="d1">3.28284</data>
+      <data key="d2">A shrew or shrew mouse is a small molelike mammal classified in the order Soricomorpha. True shrews are also not to be confused with West Indies shrews, treeshrews, otter shrews, or elephant shrews, which belong to different families or orders.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">49</data>
+      <data key="d7">1</data>
+      <data key="d8">0.68</data>
+      <data key="d9">0</data>
+      <data key="d10">0.257723</data>
+      <data key="d11">22</data>
+      <data key="d12">Shrew</data>
+      <data key="d13">22</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="23">
+      <data key="d0">0</data>
+      <data key="d1">3</data>
+      <data key="d2">The Banana Pipistrelle is a species of vesper bat in the Vespertilionidae family.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">42</data>
+      <data key="d7">1</data>
+      <data key="d8">0.003</data>
+      <data key="d9">0</data>
+      <data key="d10">1</data>
+      <data key="d11">23</data>
+      <data key="d12">Banana Pipistrelle</data>
+      <data key="d13">23</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="24">
+      <data key="d0">1</data>
+      <data key="d1">3.46251</data>
+      <data key="d2">Scorpions are predatory arthropod animals of the order Scorpiones within the class Arachnida. They have eight legs and are easily recognized by the pair of grasping claws and the narrow, segmented tail.</data>
+      <data key="d3">15</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">47</data>
+      <data key="d7">1</data>
+      <data key="d8">0.005</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00800102</data>
+      <data key="d11">24</data>
+      <data key="d12">Scorpion</data>
+      <data key="d13">24</data>
+      <data key="d14">Insect</data>
+    </node>
+    <node id="25">
+      <data key="d0">3</data>
+      <data key="d1">3.13492</data>
+      <data key="d2">The African Grey Flycatcher is a species of bird in the Muscicapidae family.</data>
+      <data key="d3">15</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">66</data>
+      <data key="d7">1</data>
+      <data key="d8">0.0125</data>
+      <data key="d9">0</data>
+      <data key="d10">0.699927</data>
+      <data key="d11">25</data>
+      <data key="d12">Gray Flycatcher</data>
+      <data key="d13">25</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="26">
+      <data key="d0">0</data>
+      <data key="d1">2.65786</data>
+      <data key="d2">The Yellow-breasted Apalis is a species of bird in the Cisticolidae family.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">67</data>
+      <data key="d7">0</data>
+      <data key="d8">0.011</data>
+      <data key="d9">0</data>
+      <data key="d10">0.722657</data>
+      <data key="d11">26</data>
+      <data key="d12">Yellow-Breasted Apalis</data>
+      <data key="d13">26</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="27">
+      <data key="d0">2</data>
+      <data key="d1">2.78074</data>
+      <data key="d2">The Yellow-bellied Eremomela is a common breeding species in Africa south of the Sahara in its habitat of open woodland, savannah, and dry scrub.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">68</data>
+      <data key="d7">0</data>
+      <data key="d8">0.009</data>
+      <data key="d9">0</data>
+      <data key="d10">0.759836</data>
+      <data key="d11">27</data>
+      <data key="d12">Yellow-Bellied Eremomela</data>
+      <data key="d13">27</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="28">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">The Red-faced Crombec is a species of African warbler, formerly placed in the family Sylviidae.</data>
+      <data key="d3">15</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">69</data>
+      <data key="d7">2</data>
+      <data key="d8">0.01</data>
+      <data key="d9">0</data>
+      <data key="d10">0.740083</data>
+      <data key="d11">28</data>
+      <data key="d12">Red-Faced Crombec</data>
+      <data key="d13">28</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="29">
+      <data key="d0">0</data>
+      <data key="d1">3.25434</data>
+      <data key="d2">The Three-banded Plover or Three-banded Sandplover, Charadrius tricollaris, is a small wader. This plover is resident in much of eastern and southern Africa and Madagascar, mainly on inland rivers, pools and lakes.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">70</data>
+      <data key="d7">1</data>
+      <data key="d8">0.035</data>
+      <data key="d9">0</data>
+      <data key="d10">0.541082</data>
+      <data key="d11">29</data>
+      <data key="d12">Three-Banded Plover</data>
+      <data key="d13">29</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="30">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">The Dwarf Epauletted Bat is a species of megabat in the Pteropodidae family.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">71</data>
+      <data key="d7">2</data>
+      <data key="d8">0.029</data>
+      <data key="d9">0</data>
+      <data key="d10">0.567128</data>
+      <data key="d11">30</data>
+      <data key="d12">Dwarf Epauletted Bat</data>
+      <data key="d13">30</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="31">
+      <data key="d0">1</data>
+      <data key="d1">2.38095</data>
+      <data key="d2">Tree Mouse, Prionomys batesi, is a poorly understood climbing mouse from Central Africa. It is unique enough that it has been placed in a genus of its own, Prionomys, since its discovery in 1910.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">53</data>
+      <data key="d7">0</data>
+      <data key="d8">0.0075</data>
+      <data key="d9">0</data>
+      <data key="d10">0.795271</data>
+      <data key="d11">31</data>
+      <data key="d12">Tree Mouse</data>
+      <data key="d13">31</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="32">
+      <data key="d0">0</data>
+      <data key="d1">2.94526</data>
+      <data key="d2">Mueller's Clawed Frog is a species of South African aquatic frog of the genus Xenopus. Its name is derived from the three short claws on each hind foot, which it uses to tear apart its food. The word Xenopus means "strange foot" and laevis means "smooth".</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">23</data>
+      <data key="d7">1</data>
+      <data key="d8">0.13</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0162989</data>
+      <data key="d11">32</data>
+      <data key="d12">Mueller's Clawed Frog</data>
+      <data key="d13">32</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="33">
+      <data key="d0">2</data>
+      <data key="d1">2.29861</data>
+      <data key="d2">The Cape Teal is a 44-46 cm long dabbling duck of open wetlands in sub-Saharan Africa. This species is essentially non-migratory, although it moves opportunistically with the rains. Like many southern ducks, the sexes are similar.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">72</data>
+      <data key="d7">0</data>
+      <data key="d8">0.4</data>
+      <data key="d9">0</data>
+      <data key="d10">0.294283</data>
+      <data key="d11">33</data>
+      <data key="d12">Cape Teal</data>
+      <data key="d13">33</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="34">
+      <data key="d0">2</data>
+      <data key="d1">3.23584</data>
+      <data key="d2">The Cape Dwarf Gecko is a species of dwarf gecko found in the woodlands and forests of central and southern Africa.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">24</data>
+      <data key="d7">1</data>
+      <data key="d8">0.0709</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0189664</data>
+      <data key="d11">34</data>
+      <data key="d12">Cape Dwarf Gecko</data>
+      <data key="d13">34</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="35">
+      <data key="d0">5</data>
+      <data key="d1">2.25</data>
+      <data key="d2">True crabs are decapod crustaceans of the infraorder Brachyura, which typically have a very short projecting "tail", or where the reduced abdomen is entirely hidden under the thorax.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">15</data>
+      <data key="d7">1</data>
+      <data key="d8">250</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0588566</data>
+      <data key="d11">35</data>
+      <data key="d12">Crab</data>
+      <data key="d13">35</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="36">
+      <data key="d0">0</data>
+      <data key="d1">2.72169</data>
+      <data key="d2">Creek Rate is a species of rodent in the family Muridae. Its natural habitats are moist savanna and pastureland.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">73</data>
+      <data key="d7">1</data>
+      <data key="d8">3.5</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00715531</data>
+      <data key="d11">36</data>
+      <data key="d12">Creek Rat</data>
+      <data key="d13">36</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="37">
+      <data key="d0">5</data>
+      <data key="d1">2.5</data>
+      <data key="d2">Catfishes are a diverse group of ray-finned fish. Named for their prominent barbels, which resemble a cat's whiskers.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">74</data>
+      <data key="d7">1</data>
+      <data key="d8">0.2</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0146348</data>
+      <data key="d11">37</data>
+      <data key="d12">Catfish</data>
+      <data key="d13">37</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="38">
+      <data key="d0">2</data>
+      <data key="d1">3.79062</data>
+      <data key="d2">The Dwarf Sand Snake is a very small, slender snake with a short tail. They forage in a rather secretive fashion under fallen logs and tufts of grass in moist and dry wooded savannah habitats. Although they never bite, they do not tame easily.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">19</data>
+      <data key="d7">1</data>
+      <data key="d8">0.085</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0181255</data>
+      <data key="d11">38</data>
+      <data key="d12">Dwarf Sand Snake</data>
+      <data key="d13">38</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="39">
+      <data key="d0">0</data>
+      <data key="d1">3.56358</data>
+      <data key="d2">The Pearl-Spotted Owlet is an owl which breeds in Africa south of the Sahara. This species is a part of the larger grouping of owls known as typical owls, Strigidae, which contains most species of owl.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">75</data>
+      <data key="d7">1</data>
+      <data key="d8">0.085</data>
+      <data key="d9">0</data>
+      <data key="d10">0.433437</data>
+      <data key="d11">39</data>
+      <data key="d12">Pearl-Spotted Owlet</data>
+      <data key="d13">39</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="40">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">The Yellow-throated Sandgrouse is a species of bird in the Pteroclididae family.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">76</data>
+      <data key="d7">2</data>
+      <data key="d8">0.325</data>
+      <data key="d9">0</data>
+      <data key="d10">0.309963</data>
+      <data key="d11">40</data>
+      <data key="d12">Yellow-Throated Sandgrouse</data>
+      <data key="d13">40</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="41">
+      <data key="d0">0</data>
+      <data key="d1">3.52954</data>
+      <data key="d2">The Striped Weasel, the lone member of genus Poecilogale, is a small black and white weasel native to sub-Saharan Africa. It looks very much like a striped polecat, but it is much thinner and has shorter hair.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">79</data>
+      <data key="d7">1</data>
+      <data key="d8">0.287</data>
+      <data key="d9">0</data>
+      <data key="d10">0.319749</data>
+      <data key="d11">41</data>
+      <data key="d12">Striped Weasel</data>
+      <data key="d13">41</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="42">
+      <data key="d0">3</data>
+      <data key="d1">2.66657</data>
+      <data key="d2">The African Grey Hornbill is a hornbill. Hornbills are a family of tropical near-passerine birds found in the Old World. The African Grey Hornbill is a widespread and common resident breeder in much of sub-Saharan Africa and into Arabia.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">77</data>
+      <data key="d7">0</data>
+      <data key="d8">0.205</data>
+      <data key="d9">0</data>
+      <data key="d10">0.34781</data>
+      <data key="d11">42</data>
+      <data key="d12">African Grey Hornbill</data>
+      <data key="d13">42</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="43">
+      <data key="d0">0</data>
+      <data key="d1">2.25</data>
+      <data key="d2">The Coqui Francolin is a species of bird in the Phasianidae family.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">78</data>
+      <data key="d7">0</data>
+      <data key="d8">0.03</data>
+      <data key="d9">0</data>
+      <data key="d10">0.562341</data>
+      <data key="d11">43</data>
+      <data key="d12">Coqui Francolin</data>
+      <data key="d13">43</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="44">
+      <data key="d0">3</data>
+      <data key="d1">3.50856</data>
+      <data key="d2">The Rufous Beaked Snake is a species of colubrid from West Africa. It is named for its hooked snout, which it uses to dig burrows, and reddish-brown back scales. It hunts small animals during the day with the help of its venomous bite.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">46</data>
+      <data key="d7">1</data>
+      <data key="d8">0.028</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0239252</data>
+      <data key="d11">44</data>
+      <data key="d12">Rufous Beaked Snake</data>
+      <data key="d13">44</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="45">
+      <data key="d0">3</data>
+      <data key="d1">2.8657</data>
+      <data key="d2">Four Toed African Hedgehog is a species of hedgehog found throughout much of central and eastern Africa.  Populations tend to be scattered between suitable savannah or cropland habitats, avoiding forested areas. The species common name is derived from the number of toes found on its rear feet.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">27</data>
+      <data key="d7">0</data>
+      <data key="d8">0.425</data>
+      <data key="d9">0</data>
+      <data key="d10">0.289857</data>
+      <data key="d11">45</data>
+      <data key="d12">Four Toed African Hedgehog</data>
+      <data key="d13">45</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="46">
+      <data key="d0">3</data>
+      <data key="d1">3.56238</data>
+      <data key="d2">The Little Grebe, also known as Dabchick, is a member of the grebe family of water birds. At 23 to 29 cm in length it is the smallest European member of its family.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">999</data>
+      <data key="d7">1</data>
+      <data key="d8">0.14</data>
+      <data key="d9">0</data>
+      <data key="d10">0.382603</data>
+      <data key="d11">46</data>
+      <data key="d12">Little Grebe</data>
+      <data key="d13">46</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="47">
+      <data key="d0">3</data>
+      <data key="d1">2.9194</data>
+      <data key="d2">The White-bellied Bustard or White-bellied Korhaan is an African species of bustard.</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">55</data>
+      <data key="d7">0</data>
+      <data key="d8">5.45</data>
+      <data key="d9">0</data>
+      <data key="d10">0.153173</data>
+      <data key="d11">47</data>
+      <data key="d12">White-Bellied Bustard</data>
+      <data key="d13">47</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="48">
+      <data key="d0">4</data>
+      <data key="d1">2</data>
+      <data key="d2">The yellow-spotted rock hyrax or bush hyrax is a species of mammal in the family Procaviidae.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">9</data>
+      <data key="d7">2</data>
+      <data key="d8">4.49</data>
+      <data key="d9">0</data>
+      <data key="d10">0.160775</data>
+      <data key="d11">48</data>
+      <data key="d12">Bush Hyrax</data>
+      <data key="d13">48</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="49">
+      <data key="d0">4</data>
+      <data key="d1">3.66074</data>
+      <data key="d2">The African Marsh Owl is a species of owl which is a mainly resident breeder in Africa and Madagascar.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">35</data>
+      <data key="d7">1</data>
+      <data key="d8">0.355</data>
+      <data key="d9">0</data>
+      <data key="d10">0.303196</data>
+      <data key="d11">49</data>
+      <data key="d12">African Marsh Owl</data>
+      <data key="d13">49</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="50">
+      <data key="d0">3</data>
+      <data key="d1">2.94236</data>
+      <data key="d2">The common dwarf mongoose, sometimes just called the dwarf mongoose, is a small African carnivore belonging to the mongoose family.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">18</data>
+      <data key="d7">0</data>
+      <data key="d8">0.349</data>
+      <data key="d9">0</data>
+      <data key="d10">0.304491</data>
+      <data key="d11">50</data>
+      <data key="d12">Dwarf Mongoose</data>
+      <data key="d13">50</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="51">
+      <data key="d0">4</data>
+      <data key="d1">3.50814</data>
+      <data key="d2">The Hooded Vulture is an Old World vulture in the order Accipitriformes, which also includes eagles, kites, buzzards and hawks. It is the only member of the genus Necrosyrtes.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">54</data>
+      <data key="d7">1</data>
+      <data key="d8">2.05</data>
+      <data key="d9">0</data>
+      <data key="d10">0.195588</data>
+      <data key="d11">51</data>
+      <data key="d12">Hooded Vulture</data>
+      <data key="d13">51</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="52">
+      <data key="d0">4</data>
+      <data key="d1">2</data>
+      <data key="d2">Smith's Red Hock Hare is a species of mammal in the Leporidae family.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">26</data>
+      <data key="d7">2</data>
+      <data key="d8">7</data>
+      <data key="d9">0</data>
+      <data key="d10">0.143882</data>
+      <data key="d11">52</data>
+      <data key="d12">Smith's Red Hock Hare</data>
+      <data key="d13">52</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="53">
+      <data key="d0">0</data>
+      <data key="d1">2</data>
+      <data key="d2">The common eland, also known as the southern eland or eland antelope, is a savannah and plains antelope found in East and Southern Africa. It is a species of the family Bovidae and genus Taurotragus.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">20</data>
+      <data key="d7">2</data>
+      <data key="d8">470</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0502639</data>
+      <data key="d11">53</data>
+      <data key="d12">Southern Eland</data>
+      <data key="d13">89</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="54">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Bird</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">54</data>
+      <data key="d12">Domestic Chicken</data>
+      <data key="d13">54</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="55">
+      <data key="d0">0</data>
+      <data key="d1">2.62173</data>
+      <data key="d2">Greater Bushbabies are small, nocturnal primates native to continental Africa, and make up the family Galagidae. According to some accounts, the name "bush baby" comes from either the animal's cries or appearance.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">8</data>
+      <data key="d7">0</data>
+      <data key="d8">0.213</data>
+      <data key="d9">0</data>
+      <data key="d10">0.344497</data>
+      <data key="d11">55</data>
+      <data key="d12">Greater Bushbaby</data>
+      <data key="d13">55</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="56">
+      <data key="d0">0</data>
+      <data key="d1">3.58348</data>
+      <data key="d2">The Marabou Stork, Leptoptilos crumeniferus, is a large wading bird in the stork family Ciconiidae. It breeds in Africa south of the Sahara, occurring in both wet and arid habitats, often near human habitation, especially waste tips.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">85</data>
+      <data key="d7">1</data>
+      <data key="d8">6.25</data>
+      <data key="d9">0</data>
+      <data key="d10">0.148017</data>
+      <data key="d11">56</data>
+      <data key="d12">Marabou Stork</data>
+      <data key="d13">56</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="57">
+      <data key="d0">4</data>
+      <data key="d1">3.56295</data>
+      <data key="d2">The Southern Ground Hornbill or cafer, is one of two species of ground hornbill and is the largest species of hornbill. It is a large bird, at 90 to 129 cm long.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">86</data>
+      <data key="d7">1</data>
+      <data key="d8">4.2</data>
+      <data key="d9">0</data>
+      <data key="d10">0.163481</data>
+      <data key="d11">57</data>
+      <data key="d12">Southern Ground Hornbill</data>
+      <data key="d13">57</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="58">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Animal</data>
+      <data key="d3">10</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">1</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">58</data>
+      <data key="d12">Domestic Cat</data>
+      <data key="d13">58</data>
+      <data key="d14">Animal</data>
+    </node>
+    <node id="59">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">African elephants are the species of elephants in the genus Loxodonta, one of the two existing genera in Elephantidae. Although it is commonly believed that the genus was named by Georges Cuvier in 1825, Cuvier spelled it Loxodonte.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">21</data>
+      <data key="d7">2</data>
+      <data key="d8">5520</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0271516</data>
+      <data key="d11">59</data>
+      <data key="d12">African Elephant</data>
+      <data key="d13">95</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="60">
+      <data key="d0">5</data>
+      <data key="d1">3.375</data>
+      <data key="d2">The spotted-necked otter, or speckle-throated otter, is an otter native to sub-Saharan Africa. It is a smallish otter, 95-105 cm long, including the tail, and weighing 3.0 to 6.5 kg.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">39</data>
+      <data key="d7">1</data>
+      <data key="d8">6.1</data>
+      <data key="d9">0</data>
+      <data key="d10">0.148918</data>
+      <data key="d11">60</data>
+      <data key="d12">Spot Necked Otter</data>
+      <data key="d13">60</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="61">
+      <data key="d0">5</data>
+      <data key="d1">2.78568</data>
+      <data key="d2">The Leopard tortoise is a large and attractively marked tortoise found in the savannas of eastern and southern Africa, from Sudan to the southern Cape.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">32</data>
+      <data key="d7">0</data>
+      <data key="d8">54</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00361033</data>
+      <data key="d11">61</data>
+      <data key="d12">Leopard Tortoise</data>
+      <data key="d13">61</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="62">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">African White-Backed Vulture is an Old World vulture in the family Accipitridae, which also includes eagles, kites, buzzards and hawks.</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">54</data>
+      <data key="d7">1</data>
+      <data key="d8">4000</data>
+      <data key="d9">0</data>
+      <data key="d10">0.69</data>
+      <data key="d11">62</data>
+      <data key="d12">African White-Backed Vulture</data>
+      <data key="d13">62</data>
+      <data key="d14">excluded bird</data>
+    </node>
+    <node id="63">
+      <data key="d0">5</data>
+      <data key="d1">3.49293</data>
+      <data key="d2">The Lappet-faced Vulture or Nubian Vulture is a mostly African Old World vulture belonging to the bird order Accipitriformes, which also includes eagles, kites, buzzards and hawks. It is the only member of the genus Torgos.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">54</data>
+      <data key="d7">1</data>
+      <data key="d8">7.85</data>
+      <data key="d9">0</data>
+      <data key="d10">0.139818</data>
+      <data key="d11">63</data>
+      <data key="d12">Lappet-Faced Vulture</data>
+      <data key="d13">63</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="64">
+      <data key="d0">5</data>
+      <data key="d1">3.48947</data>
+      <data key="d2">The Nile Monitor, Water Leguaan, or River Leguaan is a large member of the monitor lizard family. Nile Monitors can grow to about 9 ft in length. They have muscular bodies, strong legs and powerful jaws.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">36</data>
+      <data key="d7">1</data>
+      <data key="d8">10.4</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00544988</data>
+      <data key="d11">64</data>
+      <data key="d12">Nile Monitor Lizard</data>
+      <data key="d13">64</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="65">
+      <data key="d0">0</data>
+      <data key="d1">2.61792</data>
+      <data key="d2">The Kori Bustard is a large bird native to Africa. It is a member of the bustard family. It may be the heaviest bird capable of flight.</data>
+      <data key="d3">60</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">30</data>
+      <data key="d7">0</data>
+      <data key="d8">13</data>
+      <data key="d9">0</data>
+      <data key="d10">0.123252</data>
+      <data key="d11">65</data>
+      <data key="d12">Kori Buskard</data>
+      <data key="d13">65</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="66">
+      <data key="d0">5</data>
+      <data key="d1">2.125</data>
+      <data key="d2">Black-and-white colobuses are Old World monkeys of the genus Colobus, native to Africa. They are closely related to the brown colobus monkeys of genus Piliocolobus.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">37</data>
+      <data key="d7">0</data>
+      <data key="d8">10.2</data>
+      <data key="d9">0</data>
+      <data key="d10">0.130957</data>
+      <data key="d11">66</data>
+      <data key="d12">Black and White Columbus Monkey</data>
+      <data key="d13">66</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="67">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">The hippopotamus, or hippo, from the ancient Greek for "river horse", is a large, mostly herbivorous mammal in sub-Saharan Africa, and one of only two extant species in the family Hippopotamidae.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">80</data>
+      <data key="d7">2</data>
+      <data key="d8">1550</data>
+      <data key="d9">0</data>
+      <data key="d10">0.037299</data>
+      <data key="d11">67</data>
+      <data key="d12">Hippopotamus</data>
+      <data key="d13">94</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="68">
+      <data key="d0">6</data>
+      <data key="d1">3.08333</data>
+      <data key="d2">The Ground Pangolin, also known as Temminck's Pangolin or the Cape Pangolin, is one of four species of pangolin which can be found in Africa and the only one in southern and eastern Africa.</data>
+      <data key="d3">60</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">41</data>
+      <data key="d7">1</data>
+      <data key="d8">15.9</data>
+      <data key="d9">0</data>
+      <data key="d10">0.117201</data>
+      <data key="d11">68</data>
+      <data key="d12">Ground Pangolin</data>
+      <data key="d13">68</data>
+      <data key="d14">Small Animal</data>
+    </node>
+    <node id="69">
+      <data key="d0">6</data>
+      <data key="d1">3.43754</data>
+      <data key="d2">The serval, Leptailurus serval or Caracal serval, known in Afrikaans as Tierboskat, "tiger-forest-cat", is a medium-sized African wild cat. DNA studies have shown that the serval is closely related to the African golden cat and the caracal.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">48</data>
+      <data key="d7">1</data>
+      <data key="d8">12.5</data>
+      <data key="d9">0</data>
+      <data key="d10">0.124467</data>
+      <data key="d11">69</data>
+      <data key="d12">Serval Cat</data>
+      <data key="d13">69</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="70">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">The black rhinoceros or hook-lipped rhinoceros, is a species of rhinoceros, native to the eastern and central areas of Africa.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">45</data>
+      <data key="d7">2</data>
+      <data key="d8">1100</data>
+      <data key="d9">0</data>
+      <data key="d10">0.040638</data>
+      <data key="d11">70</data>
+      <data key="d12">Black Rhinoceros</data>
+      <data key="d13">93</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="71">
+      <data key="d0">6</data>
+      <data key="d1">2</data>
+      <data key="d2">Kirk's Dik-dik is a small antelope found in eastern and southwestern Africa. It grows to 70 centimetres in length and weighs up to 7 kilograms when full grown.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">17</data>
+      <data key="d7">2</data>
+      <data key="d8">4.99</data>
+      <data key="d9">0</data>
+      <data key="d10">0.156587</data>
+      <data key="d11">71</data>
+      <data key="d12">Kirk's Dik-dik</data>
+      <data key="d13">71</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="72">
+      <data key="d0">6</data>
+      <data key="d1">2</data>
+      <data key="d2">The crested porcupine is a species of rodent in the Hystricidae family.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">43</data>
+      <data key="d7">2</data>
+      <data key="d8">0.3</data>
+      <data key="d9">0</data>
+      <data key="d10">0.316228</data>
+      <data key="d11">72</data>
+      <data key="d12">Crested Porcupine</data>
+      <data key="d13">72</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="73">
+      <data key="d0">4</data>
+      <data key="d1">2</data>
+      <data key="d2">Oribi are graceful slender-legged, long-necked small antelope found in grassland almost throughout Sub-Saharan Africa.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">81</data>
+      <data key="d7">2</data>
+      <data key="d8">17</data>
+      <data key="d9">0</data>
+      <data key="d10">0.115257</data>
+      <data key="d11">73</data>
+      <data key="d12">Oribi</data>
+      <data key="d13">73</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="74">
+      <data key="d0">7</data>
+      <data key="d1">3.30203</data>
+      <data key="d2">African Wild Dog is a canid found only in Africa, especially in savannas and lightly wooded areas.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">56</data>
+      <data key="d7">1</data>
+      <data key="d8">23.8</data>
+      <data key="d9">0</data>
+      <data key="d10">0.105959</data>
+      <data key="d11">74</data>
+      <data key="d12">African Wild Dog</data>
+      <data key="d13">74</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="75">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">The Masai Giraffe or Maasai Giraffe, also known as the Kilimanjaro Giraffe is the largest subspecies of giraffe and the tallest land mammal. It is found in Kenya and Tanzania.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">25</data>
+      <data key="d7">2</data>
+      <data key="d8">1250</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0393598</data>
+      <data key="d11">75</data>
+      <data key="d12">Masai Giraffe</data>
+      <data key="d13">92</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="76">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">The domestic dog, is a subspecies of the gray wolf, a member of the Canidae family of the mammilian order Carnivora. The term "domestic dog" is generally used for both domesticated and feral varieties.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">76</data>
+      <data key="d12">Domestic Dog</data>
+      <data key="d13">76</data>
+      <data key="d14">animal</data>
+    </node>
+    <node id="77">
+      <data key="d0">7</data>
+      <data key="d1">3.17092</data>
+      <data key="d2">The striped hyena is a species of true hyena native to North and East Africa.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">28</data>
+      <data key="d7">1</data>
+      <data key="d8">38.5</data>
+      <data key="d9">0</data>
+      <data key="d10">0.093954</data>
+      <data key="d11">77</data>
+      <data key="d12">Striped Hyena</data>
+      <data key="d13">77</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="78">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">animal</data>
+      <data key="d3">25</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">2</data>
+      <data key="d8">2500</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">78</data>
+      <data key="d12">Domestic Goat</data>
+      <data key="d13">78</data>
+      <data key="d14">animal</data>
+    </node>
+    <node id="79">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">animal</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">2</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">79</data>
+      <data key="d12">Domestic Cattle</data>
+      <data key="d13">90</data>
+      <data key="d14">animal</data>
+    </node>
+    <node id="80">
+      <data key="d0">4</data>
+      <data key="d1">3.42426</data>
+      <data key="d2">The leopard, Panthera pardus, is a member of the Felidae family and the smallest of the four "big cats" in the genus Panthera, the other three being the tiger, lion, and jaguar.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">31</data>
+      <data key="d7">1</data>
+      <data key="d8">41.5</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0922079</data>
+      <data key="d11">80</data>
+      <data key="d12">Leopard</data>
+      <data key="d13">80</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="81">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">animal</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">2</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">81</data>
+      <data key="d12">Domestic Sheep</data>
+      <data key="d13">81</data>
+      <data key="d14">animal</data>
+    </node>
+    <node id="82">
+      <data key="d0">7</data>
+      <data key="d1">2</data>
+      <data key="d2">The Bohor Reedbuck is an antelope native to central Africa in the genus Redunca, that mostly lives in grasslands near water.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">82</data>
+      <data key="d7">2</data>
+      <data key="d8">50</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0880112</data>
+      <data key="d11">82</data>
+      <data key="d12">Bohor Reedbuck</data>
+      <data key="d13">82</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="83">
+      <data key="d0">7</data>
+      <data key="d1">2.33591</data>
+      <data key="d2">The bushpig, Potamochoerus larvatus, is a member of the pig family and lives in forests, woodland, riverine vegetation and reedbeds in East and Southern Africa.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">10</data>
+      <data key="d7">0</data>
+      <data key="d8">103</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0734634</data>
+      <data key="d11">83</data>
+      <data key="d12">Bush Pig</data>
+      <data key="d13">83</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="84">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">animal</data>
+      <data key="d3">150</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">10</data>
+      <data key="d9">0</data>
+      <data key="d10">0.5</data>
+      <data key="d11">84</data>
+      <data key="d12">Human</data>
+      <data key="d13">84</data>
+      <data key="d14">animal</data>
+    </node>
+    <node id="85">
+      <data key="d0">7</data>
+      <data key="d1">2.125</data>
+      <data key="d2">The Ostrich is one or two species of large flightless birds native to Africa, the only living member of the genus Struthio.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">38</data>
+      <data key="d7">2</data>
+      <data key="d8">108</data>
+      <data key="d9">0</data>
+      <data key="d10">0.072598</data>
+      <data key="d11">85</data>
+      <data key="d12">Ostrich</data>
+      <data key="d13">85</data>
+      <data key="d14">Bird</data>
+    </node>
+    <node id="86">
+      <data key="d0">5</data>
+      <data key="d1">3.22409</data>
+      <data key="d2">The lion is one of the four big cats in the genus Panthera, and a member of the family Felidae. With some males exceeding 250 kg in weight, it is the second-largest living cat after the tiger.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">33</data>
+      <data key="d7">1</data>
+      <data key="d8">156</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0662215</data>
+      <data key="d11">86</data>
+      <data key="d12">Lion</data>
+      <data key="d13">86</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="87">
+      <data key="d0">8</data>
+      <data key="d1">2</data>
+      <data key="d2">Topis are a highly social and fast antelope species of the genus ' Damaliscus.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">52</data>
+      <data key="d7">0</data>
+      <data key="d8">112</data>
+      <data key="d9">0</data>
+      <data key="d10">0.0719409</data>
+      <data key="d11">87</data>
+      <data key="d12">Topi</data>
+      <data key="d13">87</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="88">
+      <data key="d0">6</data>
+      <data key="d1">3.63713</data>
+      <data key="d2">The Nile crocodile has a somewhat deserved reputation as a vicious man-eater. The proximity of much of its habitat to people means run-ins are frequent.</data>
+      <data key="d3">50</data>
+      <data key="d4">0</data>
+      <data key="d5">0</data>
+      <data key="d6">16</data>
+      <data key="d7">1</data>
+      <data key="d8">388</data>
+      <data key="d9">0</data>
+      <data key="d10">0.00220515</data>
+      <data key="d11">88</data>
+      <data key="d12">Nile Crocodile</data>
+      <data key="d13">91</data>
+      <data key="d14">Large Animal</data>
+    </node>
+    <node id="89">
+      <data key="d0">1</data>
+      <data key="d1">1</data>
+      <data key="d2">Decaying Materials are great sources of food for a variety of animals.</data>
+      <data key="d3">20</data>
+      <data key="d4">0</data>
+      <data key="d5">10000</data>
+      <data key="d6">999</data>
+      <data key="d7">0</data>
+      <data key="d8">1000</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">89</data>
+      <data key="d12">Decaying Material</data>
+      <data key="d13">1</data>
+      <data key="d14">Resource</data>
+    </node>
+    <node id="1001">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Special</data>
+      <data key="d3">5</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">40</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1001</data>
+      <data key="d12">Trees and Shrubs</data>
+      <data key="d13">7</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1002">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Special</data>
+      <data key="d3">5</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">20</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1002</data>
+      <data key="d12">Plant Juices</data>
+      <data key="d13">2</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1003">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Special</data>
+      <data key="d3">5</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">20</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1003</data>
+      <data key="d12">Fruits and Nectar</data>
+      <data key="d13">3</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1004">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">Special</data>
+      <data key="d3">5</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">20</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1004</data>
+      <data key="d12">Grains and Seeds</data>
+      <data key="d13">4</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1005">
+      <data key="d0">3</data>
+      <data key="d1">1</data>
+      <data key="d2">Grasses are among the most versatile life forms. They became widespread toward the end of the Cretaceous period, and fossilized dinosaur dung have been found containing phytoliths of a variety of grasses that include grasses that are related to modern rice and bamboo.</data>
+      <data key="d3">9</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">8</data>
+      <data key="d7">0</data>
+      <data key="d8">40</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1005</data>
+      <data key="d12">Grass and Herbs</data>
+      <data key="d13">5</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1006">
+      <data key="d0">0</data>
+      <data key="d1">1</data>
+      <data key="d2">none</data>
+      <data key="d3">6</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d6">0</data>
+      <data key="d7">0</data>
+      <data key="d8">20</data>
+      <data key="d9">1</data>
+      <data key="d10">0.5</data>
+      <data key="d11">1006</data>
+      <data key="d12">Crops</data>
+      <data key="d13">1</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1007">
+      <data key="d0">1</data>
+      <data key="d1">1</data>
+      <data key="d3">30</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d10">0.5</data>
+      <data key="d8">2400</data>
+      <data key="d9">1</data>
+      <data key="d13">7</data>
+      <data key="d2">Acacia is a genus of shrubs and trees belonging to the subfamily Mimosoideae of the family Fabaceae, first described in Africa by the Swedish botanist Carl Linnaeus in 1773.
+
+22% Plant Juices
+22% Fruits and Nectar
+22% Grains and Seeds
+33% Trees and Shrub</data>
+      <data key="d7">0</data>
+      <data key="d6">1</data>
+      <data key="d11">1007</data>
+      <data key="d12">Acacia</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1008">
+      <data key="d0">5</data>
+      <data key="d1">1</data>
+      <data key="d3">50</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d10">0.5</data>
+      <data key="d8">3200</data>
+      <data key="d9">1</data>
+      <data key="d13">7</data>
+      <data key="d2">Trees are an important component of the natural landscape because of their prevention of erosion and the provision of a weather-sheltered ecosystem in and under their foliage. They also play an important role in producing oxygen and reducing carbon dioxide in the atmosphere, as well as moderating ground temperatures.
+
+33% Plant Juices
+8% Fruits and Nectar
+25% Grains and Seeds
+33% Trees and Shrub</data>
+      <data key="d7">0</data>
+      <data key="d6">3</data>
+      <data key="d11">1008</data>
+      <data key="d12">Big Tree</data>
+      <data key="d14">Plant</data>
+    </node>
+    <node id="1009">
+      <data key="d0">10</data>
+      <data key="d1">1</data>
+      <data key="d3">75</data>
+      <data key="d4">1</data>
+      <data key="d5">10000</data>
+      <data key="d10">0.5</data>
+      <data key="d8">4400</data>
+      <data key="d9">1</data>
+      <data key="d13">7</data>
+      <data key="d2">Baobab is a genus of eight species of tree, six native to Madagascar, one native to mainland Africa and the Arabian Peninsula and one to Australia. The mainland African species also occurs on Madagascar, but it is not a native of that island.
+
+23% Plant Juices
+23% Fruits and Nectar
+23% Grains and Seeds
+30% Trees and Shrub</data>
+      <data key="d7">0</data>
+      <data key="d6">5</data>
+      <data key="d11">1009</data>
+      <data key="d12">Baobab</data>
+      <data key="d14">Plant</data>
+    </node>
+    <edge source="1" target="74" />
+    <edge source="2" target="88" />
+    <edge source="4" target="49" />
+    <edge source="6" target="49" />
+    <edge source="6" target="51" />
+    <edge source="6" target="57" />
+    <edge source="7" target="86" />
+    <edge source="8" target="9" />
+    <edge source="9" target="64" />
+    <edge source="9" target="5" />
+    <edge source="9" target="9" />
+    <edge source="9" target="10" />
+    <edge source="9" target="77" />
+    <edge source="9" target="20" />
+    <edge source="9" target="22" />
+    <edge source="9" target="25" />
+    <edge source="9" target="26" />
+    <edge source="9" target="27" />
+    <edge source="9" target="29" />
+    <edge source="9" target="31" />
+    <edge source="9" target="32" />
+    <edge source="9" target="36" />
+    <edge source="9" target="39" />
+    <edge source="9" target="42" />
+    <edge source="9" target="45" />
+    <edge source="9" target="46" />
+    <edge source="9" target="47" />
+    <edge source="9" target="50" />
+    <edge source="9" target="55" />
+    <edge source="9" target="57" />
+    <edge source="9" target="61" />
+    <edge source="10" target="32" />
+    <edge source="10" target="34" />
+    <edge source="10" target="36" />
+    <edge source="10" target="5" />
+    <edge source="10" target="10" />
+    <edge source="10" target="45" />
+    <edge source="10" target="47" />
+    <edge source="10" target="17" />
+    <edge source="10" target="50" />
+    <edge source="10" target="42" />
+    <edge source="10" target="20" />
+    <edge source="10" target="22" />
+    <edge source="10" target="24" />
+    <edge source="10" target="57" />
+    <edge source="10" target="26" />
+    <edge source="10" target="27" />
+    <edge source="10" target="29" />
+    <edge source="11" target="68" />
+    <edge source="11" target="1" />
+    <edge source="11" target="34" />
+    <edge source="11" target="4" />
+    <edge source="11" target="5" />
+    <edge source="11" target="33" />
+    <edge source="11" target="10" />
+    <edge source="11" target="39" />
+    <edge source="11" target="44" />
+    <edge source="11" target="50" />
+    <edge source="11" target="20" />
+    <edge source="11" target="22" />
+    <edge source="11" target="25" />
+    <edge source="11" target="26" />
+    <edge source="11" target="27" />
+    <edge source="11" target="36" />
+    <edge source="11" target="31" />
+    <edge source="12" target="68" />
+    <edge source="12" target="1" />
+    <edge source="12" target="43" />
+    <edge source="12" target="4" />
+    <edge source="12" target="5" />
+    <edge source="12" target="39" />
+    <edge source="12" target="31" />
+    <edge source="12" target="9" />
+    <edge source="12" target="11" />
+    <edge source="12" target="44" />
+    <edge source="12" target="76" />
+    <edge source="12" target="50" />
+    <edge source="12" target="20" />
+    <edge source="12" target="56" />
+    <edge source="12" target="25" />
+    <edge source="12" target="26" />
+    <edge source="12" target="27" />
+    <edge source="12" target="36" />
+    <edge source="13" target="34" />
+    <edge source="13" target="5" />
+    <edge source="13" target="9" />
+    <edge source="13" target="10" />
+    <edge source="13" target="77" />
+    <edge source="13" target="46" />
+    <edge source="13" target="16" />
+    <edge source="13" target="17" />
+    <edge source="13" target="50" />
+    <edge source="13" target="42" />
+    <edge source="13" target="20" />
+    <edge source="13" target="57" />
+    <edge source="13" target="23" />
+    <edge source="13" target="24" />
+    <edge source="13" target="25" />
+    <edge source="13" target="26" />
+    <edge source="13" target="27" />
+    <edge source="13" target="29" />
+    <edge source="14" target="64" />
+    <edge source="14" target="4" />
+    <edge source="14" target="5" />
+    <edge source="14" target="9" />
+    <edge source="14" target="77" />
+    <edge source="14" target="14" />
+    <edge source="14" target="16" />
+    <edge source="14" target="17" />
+    <edge source="14" target="18" />
+    <edge source="14" target="20" />
+    <edge source="14" target="85" />
+    <edge source="14" target="22" />
+    <edge source="14" target="25" />
+    <edge source="14" target="26" />
+    <edge source="14" target="27" />
+    <edge source="14" target="29" />
+    <edge source="14" target="31" />
+    <edge source="14" target="32" />
+    <edge source="14" target="33" />
+    <edge source="14" target="34" />
+    <edge source="14" target="36" />
+    <edge source="14" target="39" />
+    <edge source="14" target="42" />
+    <edge source="14" target="45" />
+    <edge source="14" target="47" />
+    <edge source="14" target="50" />
+    <edge source="14" target="55" />
+    <edge source="14" target="56" />
+    <edge source="14" target="57" />
+    <edge source="14" target="61" />
+    <edge source="15" target="34" />
+    <edge source="15" target="9" />
+    <edge source="15" target="42" />
+    <edge source="15" target="77" />
+    <edge source="15" target="29" />
+    <edge source="15" target="16" />
+    <edge source="15" target="17" />
+    <edge source="15" target="22" />
+    <edge source="15" target="24" />
+    <edge source="15" target="26" />
+    <edge source="15" target="27" />
+    <edge source="15" target="10" />
+    <edge source="16" target="32" />
+    <edge source="16" target="64" />
+    <edge source="16" target="50" />
+    <edge source="16" target="56" />
+    <edge source="16" target="57" />
+    <edge source="16" target="26" />
+    <edge source="16" target="27" />
+    <edge source="16" target="42" />
+    <edge source="16" target="77" />
+    <edge source="16" target="47" />
+    <edge source="17" target="10" />
+    <edge source="17" target="27" />
+    <edge source="18" target="36" />
+    <edge source="18" target="18" />
+    <edge source="18" target="4" />
+    <edge source="18" target="50" />
+    <edge source="19" target="64" />
+    <edge source="19" target="18" />
+    <edge source="19" target="36" />
+    <edge source="19" target="5" />
+    <edge source="19" target="39" />
+    <edge source="19" target="9" />
+    <edge source="19" target="31" />
+    <edge source="20" target="32" />
+    <edge source="20" target="64" />
+    <edge source="20" target="2" />
+    <edge source="20" target="3" />
+    <edge source="20" target="5" />
+    <edge source="20" target="6" />
+    <edge source="20" target="80" />
+    <edge source="20" target="42" />
+    <edge source="20" target="44" />
+    <edge source="20" target="46" />
+    <edge source="20" target="47" />
+    <edge source="20" target="27" />
+    <edge source="20" target="50" />
+    <edge source="20" target="56" />
+    <edge source="20" target="57" />
+    <edge source="20" target="38" />
+    <edge source="20" target="61" />
+    <edge source="21" target="33" />
+    <edge source="21" target="2" />
+    <edge source="21" target="35" />
+    <edge source="21" target="4" />
+    <edge source="21" target="5" />
+    <edge source="21" target="66" />
+    <edge source="21" target="61" />
+    <edge source="21" target="44" />
+    <edge source="21" target="50" />
+    <edge source="21" target="46" />
+    <edge source="21" target="47" />
+    <edge source="21" target="16" />
+    <edge source="21" target="18" />
+    <edge source="21" target="57" />
+    <edge source="21" target="22" />
+    <edge source="21" target="55" />
+    <edge source="21" target="25" />
+    <edge source="21" target="29" />
+    <edge source="21" target="36" />
+    <edge source="22" target="50" />
+    <edge source="22" target="49" />
+    <edge source="22" target="18" />
+    <edge source="22" target="3" />
+    <edge source="22" target="5" />
+    <edge source="22" target="51" />
+    <edge source="22" target="56" />
+    <edge source="22" target="57" />
+    <edge source="22" target="45" />
+    <edge source="22" target="46" />
+    <edge source="24" target="24" />
+    <edge source="24" target="4" />
+    <edge source="24" target="5" />
+    <edge source="25" target="49" />
+    <edge source="26" target="49" />
+    <edge source="26" target="6" />
+    <edge source="26" target="41" />
+    <edge source="26" target="74" />
+    <edge source="26" target="27" />
+    <edge source="26" target="44" />
+    <edge source="27" target="49" />
+    <edge source="27" target="51" />
+    <edge source="27" target="4" />
+    <edge source="27" target="6" />
+    <edge source="27" target="38" />
+    <edge source="27" target="55" />
+    <edge source="27" target="41" />
+    <edge source="27" target="74" />
+    <edge source="27" target="44" />
+    <edge source="27" target="63" />
+    <edge source="28" target="49" />
+    <edge source="28" target="51" />
+    <edge source="28" target="44" />
+    <edge source="28" target="6" />
+    <edge source="29" target="49" />
+    <edge source="29" target="3" />
+    <edge source="29" target="63" />
+    <edge source="29" target="6" />
+    <edge source="29" target="51" />
+    <edge source="30" target="50" />
+    <edge source="31" target="64" />
+    <edge source="31" target="2" />
+    <edge source="31" target="3" />
+    <edge source="31" target="4" />
+    <edge source="31" target="5" />
+    <edge source="31" target="6" />
+    <edge source="31" target="74" />
+    <edge source="31" target="80" />
+    <edge source="31" target="18" />
+    <edge source="31" target="83" />
+    <edge source="31" target="69" />
+    <edge source="31" target="31" />
+    <edge source="31" target="38" />
+    <edge source="31" target="39" />
+    <edge source="31" target="41" />
+    <edge source="31" target="44" />
+    <edge source="31" target="45" />
+    <edge source="31" target="46" />
+    <edge source="31" target="47" />
+    <edge source="31" target="49" />
+    <edge source="31" target="50" />
+    <edge source="31" target="51" />
+    <edge source="31" target="55" />
+    <edge source="31" target="56" />
+    <edge source="31" target="57" />
+    <edge source="31" target="63" />
+    <edge source="32" target="32" />
+    <edge source="32" target="64" />
+    <edge source="32" target="2" />
+    <edge source="32" target="5" />
+    <edge source="32" target="6" />
+    <edge source="32" target="39" />
+    <edge source="32" target="46" />
+    <edge source="32" target="80" />
+    <edge source="32" target="50" />
+    <edge source="32" target="56" />
+    <edge source="32" target="57" />
+    <edge source="32" target="61" />
+    <edge source="33" target="64" />
+    <edge source="33" target="83" />
+    <edge source="33" target="69" />
+    <edge source="33" target="6" />
+    <edge source="33" target="39" />
+    <edge source="33" target="41" />
+    <edge source="33" target="42" />
+    <edge source="33" target="44" />
+    <edge source="33" target="49" />
+    <edge source="33" target="51" />
+    <edge source="33" target="55" />
+    <edge source="33" target="56" />
+    <edge source="33" target="61" />
+    <edge source="34" target="65" />
+    <edge source="34" target="3" />
+    <edge source="34" target="4" />
+    <edge source="34" target="5" />
+    <edge source="34" target="6" />
+    <edge source="34" target="39" />
+    <edge source="34" target="44" />
+    <edge source="34" target="46" />
+    <edge source="34" target="47" />
+    <edge source="34" target="80" />
+    <edge source="34" target="49" />
+    <edge source="34" target="50" />
+    <edge source="34" target="55" />
+    <edge source="34" target="57" />
+    <edge source="34" target="26" />
+    <edge source="34" target="27" />
+    <edge source="34" target="61" />
+    <edge source="34" target="69" />
+    <edge source="34" target="63" />
+    <edge source="35" target="64" />
+    <edge source="35" target="2" />
+    <edge source="35" target="50" />
+    <edge source="35" target="5" />
+    <edge source="35" target="77" />
+    <edge source="35" target="42" />
+    <edge source="35" target="60" />
+    <edge source="35" target="29" />
+    <edge source="35" target="46" />
+    <edge source="35" target="61" />
+    <edge source="36" target="50" />
+    <edge source="37" target="32" />
+    <edge source="37" target="2" />
+    <edge source="37" target="3" />
+    <edge source="37" target="5" />
+    <edge source="37" target="6" />
+    <edge source="37" target="63" />
+    <edge source="37" target="42" />
+    <edge source="37" target="46" />
+    <edge source="37" target="80" />
+    <edge source="37" target="88" />
+    <edge source="37" target="50" />
+    <edge source="37" target="56" />
+    <edge source="37" target="38" />
+    <edge source="37" target="60" />
+    <edge source="37" target="61" />
+    <edge source="37" target="69" />
+    <edge source="37" target="37" />
+    <edge source="38" target="64" />
+    <edge source="38" target="3" />
+    <edge source="38" target="4" />
+    <edge source="38" target="5" />
+    <edge source="38" target="38" />
+    <edge source="38" target="39" />
+    <edge source="38" target="44" />
+    <edge source="38" target="46" />
+    <edge source="38" target="47" />
+    <edge source="38" target="50" />
+    <edge source="38" target="56" />
+    <edge source="38" target="6" />
+    <edge source="38" target="69" />
+    <edge source="40" target="49" />
+    <edge source="41" target="49" />
+    <edge source="42" target="2" />
+    <edge source="42" target="3" />
+    <edge source="43" target="69" />
+    <edge source="44" target="50" />
+    <edge source="44" target="3" />
+    <edge source="44" target="4" />
+    <edge source="44" target="5" />
+    <edge source="44" target="38" />
+    <edge source="44" target="39" />
+    <edge source="44" target="56" />
+    <edge source="44" target="6" />
+    <edge source="44" target="44" />
+    <edge source="44" target="47" />
+    <edge source="45" target="49" />
+    <edge source="45" target="5" />
+    <edge source="46" target="49" />
+    <edge source="46" target="5" />
+    <edge source="47" target="80" />
+    <edge source="47" target="49" />
+    <edge source="47" target="50" />
+    <edge source="47" target="51" />
+    <edge source="47" target="4" />
+    <edge source="47" target="5" />
+    <edge source="47" target="74" />
+    <edge source="47" target="69" />
+    <edge source="48" target="80" />
+    <edge source="48" target="50" />
+    <edge source="48" target="51" />
+    <edge source="48" target="69" />
+    <edge source="48" target="6" />
+    <edge source="50" target="49" />
+    <edge source="52" target="80" />
+    <edge source="52" target="49" />
+    <edge source="52" target="50" />
+    <edge source="52" target="51" />
+    <edge source="52" target="4" />
+    <edge source="52" target="5" />
+    <edge source="52" target="55" />
+    <edge source="52" target="71" />
+    <edge source="52" target="69" />
+    <edge source="52" target="63" />
+    <edge source="53" target="80" />
+    <edge source="53" target="86" />
+    <edge source="55" target="80" />
+    <edge source="55" target="49" />
+    <edge source="55" target="88" />
+    <edge source="57" target="80" />
+    <edge source="57" target="86" />
+    <edge source="60" target="88" />
+    <edge source="60" target="49" />
+    <edge source="60" target="51" />
+    <edge source="60" target="6" />
+    <edge source="61" target="80" />
+    <edge source="61" target="57" />
+    <edge source="61" target="2" />
+    <edge source="61" target="3" />
+    <edge source="61" target="5" />
+    <edge source="64" target="49" />
+    <edge source="65" target="80" />
+    <edge source="65" target="49" />
+    <edge source="65" target="51" />
+    <edge source="65" target="5" />
+    <edge source="65" target="86" />
+    <edge source="66" target="80" />
+    <edge source="66" target="49" />
+    <edge source="66" target="51" />
+    <edge source="66" target="6" />
+    <edge source="68" target="80" />
+    <edge source="71" target="80" />
+    <edge source="71" target="74" />
+    <edge source="71" target="69" />
+    <edge source="71" target="86" />
+    <edge source="72" target="80" />
+    <edge source="72" target="74" />
+    <edge source="72" target="6" />
+    <edge source="73" target="80" />
+    <edge source="73" target="74" />
+    <edge source="73" target="86" />
+    <edge source="80" target="88" />
+    <edge source="80" target="86" />
+    <edge source="82" target="88" />
+    <edge source="82" target="74" />
+    <edge source="82" target="86" />
+    <edge source="83" target="86" />
+    <edge source="86" target="86" />
+    <edge source="87" target="80" />
+    <edge source="87" target="88" />
+    <edge source="87" target="74" />
+    <edge source="87" target="86" />
+    <edge source="88" target="88" />
+    <edge source="89" target="32" />
+    <edge source="89" target="66" />
+    <edge source="89" target="35" />
+    <edge source="89" target="36" />
+    <edge source="89" target="5" />
+    <edge source="89" target="8" />
+    <edge source="89" target="9" />
+    <edge source="89" target="11" />
+    <edge source="89" target="12" />
+    <edge source="89" target="13" />
+    <edge source="89" target="14" />
+    <edge source="89" target="16" />
+    <edge source="89" target="19" />
+    <edge source="89" target="21" />
+    <edge source="89" target="83" />
+    <edge source="89" target="37" />
+    <edge source="89" target="31" />
+    <edge source="1001" target="33" />
+    <edge source="1001" target="66" />
+    <edge source="1001" target="75" />
+    <edge source="1001" target="70" />
+    <edge source="1001" target="71" />
+    <edge source="1001" target="73" />
+    <edge source="1001" target="11" />
+    <edge source="1001" target="14" />
+    <edge source="1001" target="48" />
+    <edge source="1001" target="82" />
+    <edge source="1001" target="52" />
+    <edge source="1001" target="53" />
+    <edge source="1001" target="87" />
+    <edge source="1001" target="59" />
+    <edge source="1001" target="85" />
+    <edge source="1001" target="31" />
+    <edge source="1002" target="8" />
+    <edge source="1002" target="55" />
+    <edge source="1002" target="14" />
+    <edge source="1002" target="15" />
+    <edge source="1003" target="33" />
+    <edge source="1003" target="66" />
+    <edge source="1003" target="65" />
+    <edge source="1003" target="72" />
+    <edge source="1003" target="73" />
+    <edge source="1003" target="42" />
+    <edge source="1003" target="71" />
+    <edge source="1003" target="13" />
+    <edge source="1003" target="47" />
+    <edge source="1003" target="16" />
+    <edge source="1003" target="50" />
+    <edge source="1003" target="83" />
+    <edge source="1003" target="85" />
+    <edge source="1003" target="21" />
+    <edge source="1003" target="55" />
+    <edge source="1003" target="26" />
+    <edge source="1003" target="27" />
+    <edge source="1003" target="28" />
+    <edge source="1003" target="53" />
+    <edge source="1003" target="30" />
+    <edge source="1003" target="31" />
+    <edge source="1004" target="33" />
+    <edge source="1004" target="71" />
+    <edge source="1004" target="40" />
+    <edge source="1004" target="73" />
+    <edge source="1004" target="42" />
+    <edge source="1004" target="43" />
+    <edge source="1004" target="45" />
+    <edge source="1004" target="47" />
+    <edge source="1004" target="16" />
+    <edge source="1004" target="72" />
+    <edge source="1004" target="82" />
+    <edge source="1004" target="83" />
+    <edge source="1004" target="53" />
+    <edge source="1004" target="55" />
+    <edge source="1004" target="26" />
+    <edge source="1004" target="27" />
+    <edge source="1004" target="28" />
+    <edge source="1004" target="61" />
+    <edge source="1004" target="85" />
+    <edge source="1004" target="31" />
+    <edge source="1005" target="67" />
+    <edge source="1005" target="70" />
+    <edge source="1005" target="71" />
+    <edge source="1005" target="73" />
+    <edge source="1005" target="42" />
+    <edge source="1005" target="7" />
+    <edge source="1005" target="14" />
+    <edge source="1005" target="82" />
+    <edge source="1005" target="52" />
+    <edge source="1005" target="53" />
+    <edge source="1005" target="87" />
+    <edge source="1005" target="59" />
+    <edge source="1005" target="61" />
+    <edge source="1005" target="85" />
+    <edge source="1005" target="31" />
+  </graph>
+</graphml>
