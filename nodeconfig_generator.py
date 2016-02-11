@@ -147,6 +147,9 @@ def generateSet1():
     templateNodes = testNodes
     nodes = deepcopy(templateNodes)
 
+    # Print unaltered nodeconfig first
+    print(generateNodeConfig(nodes))
+
     # Change one node at a time
     for i in range(len(nodes)):
 
@@ -154,10 +157,16 @@ def generateSet1():
         for param in ('initialBiomass', 'K', 'R', 'X'):
             if param in nodes[i]:
                 for percent in range(50, 151, 5):
+
+                    # Don't print the original nodeconfig again
+                    if percent == 100:
+                        continue
+
                     nodes[i][param] = testNodes[i][param] * percent / 100
                     print(generateNodeConfig(nodes))
                 nodes[i] = copy(testNodes[i])  # reset the node
 
+# FIXME: Print unaltered nodeconfig first, skip in loop
 def generatePairVariations(templateNodes, param,
         minPercent, maxPercent, stepPercent, startPos=0):
     """
@@ -251,6 +260,9 @@ def generateAllParamSingleVariations(templateNodes,
     maxPercent in stepPercent increments.
     """
 
+    # Write the unaltered nodeconfig first
+    print(generateNodeConfig(templateNodes))
+
     nodes = deepcopy(templateNodes)
 
     # Change one node at a time
@@ -260,6 +272,11 @@ def generateAllParamSingleVariations(templateNodes,
         for param in ('initialBiomass', 'K', 'R', 'X'):
             if param in nodes[i]:
                 for percent in range(minPercent, maxPercent + 1, stepPercent):
+
+                    # Don't print the original nodeconfig again
+                    if percent == 100:
+                        continue
+
                     nodes[i][param] = templateNodes[i][param] * percent / 100
                     print(generateNodeConfig(nodes))
                 nodes[i] = copy(templateNodes[i])  # reset the node
@@ -283,6 +300,20 @@ def generateSet9():
     generateAllParamSingleVariations(
             parseNodeConfig(convergenceNodeConfigs[1]), 50, 150, 5)
 
+def generateSet10():
+    """
+    Generate single-parameter variations on Convergence ecosystem #4
+    """
+    generateAllParamSingleVariations(
+            parseNodeConfig(convergenceNodeConfigs[3]), 50, 150, 5)
+
+def generateSet11():
+    """
+    Generate single-parameter variations on Convergence ecosystem #5
+    """
+    generateAllParamSingleVariations(
+            parseNodeConfig(convergenceNodeConfigs[4]), 50, 150, 5)
+
 if __name__ == '__main__':
     pass
     #generateSet1()
@@ -292,4 +323,6 @@ if __name__ == '__main__':
     #generateSet5()
     #generateSet6()
     #generateSet7()
-    generateSet9()
+    #generateSet9()
+    #generateSet10()
+    generateSet11()
