@@ -98,6 +98,17 @@ def plotCsv(filename, scoreFunction):
     regionCenters[-1] = (tprev + len(scores)) / 2
     ax2.plot(regionCenters, regionAverages, 'ro')
 
+    # Linear regression on local maxima
+    mSlope, mIntercept, r_value, p_value, std_err = stats.linregress(
+            maxIndices, maxValues)
+    ax2.plot([0, tn], [mIntercept, mSlope * tn + mIntercept], 'g:')
+
+    # Log-linear regression on local maxima
+    mLogSlope, mLogIntercept, r_value, p_value, std_err = stats.linregress(
+            maxIndices, np.log(maxValues))
+    t = np.arange(len(scores))
+    ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
+
     plt.title(filename)
     plt.show()
 
@@ -107,6 +118,10 @@ def plotCsv(filename, scoreFunction):
         slope, intercept))
     print("log-linear regression: slope = {}, intercept = {}".format(
         logSlope, logIntercept))
+    print("linear regression of peaks: slope = {}, intercept = {}".format(
+        mSlope, mIntercept))
+    print("log-linear regression of peaks: slope = {}, intercept = {}".format(
+        mLogSlope, mLogIntercept))
     print("regionAverages[-2] - regionAverages[1] = {}".format(
         regionAverages[-2] - regionAverages[1]))
     print("regionAverages[-2] / regionAverages[1] = {}".format(
