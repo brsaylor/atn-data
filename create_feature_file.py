@@ -184,6 +184,22 @@ def shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData):
     
     return scores
 
+def shannonIndexBiomassProductNorm(speciesData, nodeConfig, biomassData):
+    """
+    A version of shannonIndexBiomassProduct normalized by initial total biomass
+    and maximum possible Shannon index for the number of species,
+    enabling more meaningful comparison across ecosystems of different sizes.
+    """
+
+    totalInitialBiomass = sum(
+            [biomass[0] for biomass in biomassData.values()])
+    perfectShannon = 0
+    for i, node in enumerate(nodeConfig):
+        proportion = 1 / len(nodeConfig)
+        perfectShannon -= proportion * log2(proportion)
+    return (shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData)
+            / (totalInitialBiomass * perfectShannon))
+
 def getOutputAttributes(speciesData, nodeConfig, biomassData):
     """
     Given speciesData as returned by getSpeciesData,
@@ -249,12 +265,12 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
             speciesData, nodeConfig, biomassData)
 
     # Slope of linear regression of shannonIndexBiomassProduct
-    health = shannonIndexBiomassProduct(
+    health = shannonIndexBiomassProductNorm(
             speciesData, nodeConfig, biomassData)
     t = np.arange(numTimesteps)
     slope, intercept, r_value, p_value, std_err = stats.linregress(
             t, health)
-    out['shannonBiomassSlope'] = slope
+    out['shannonBiomassNormSlope'] = slope
 
     # Slope of linear regression on local peaks in net production
     netProd = netProduction(
