@@ -15,6 +15,7 @@ import csv
 from math import log2
 
 import numpy as np
+from scipy import stats, signal
 
 from nodeconfig_generator import parseNodeConfig
 
@@ -136,6 +137,53 @@ def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
 def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
     return ecosystemScoreSeries(speciesData, nodeConfig, biomassData).mean()
 
+def totalBiomass(speciesData, nodeConfig, biomassData):
+    """
+    Return a time series of the total biomass of all species
+    """
+    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
+    totalBiomass = np.empty(numTimesteps)
+    for timestep in range(numTimesteps):
+        totalBiomass[timestep] = sum(
+                [biomass[timestep] for biomass in biomassData.values()])
+    return totalBiomass
+
+def netProduction(speciesData, nodeConfig, biomassData):
+    """
+    Time-series measure of ecosystem health
+    computed as net production (change/derivative in total biomass)
+    """
+    B = totalBiomass(speciesData, nodeConfig, biomassData)
+    netProd = B - np.roll(B, 1)
+    
+    # Can't really say that net production was equal to total biomass at t0
+    netProd[0] = netProd[-1] = 0
+    
+    return netProd
+
+def shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData):
+    """
+    Time-series measure of ecosystem health
+    computed as the product of the Shannon index (based on biomass)
+    and the total biomass.
+    """
+    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
+    scores = np.zeros(numTimesteps)
+    
+    for timestep in range(numTimesteps):
+        speciesBiomass = np.empty(len(nodeConfig))
+        for i, node in enumerate(nodeConfig):
+            speciesBiomass[i] = max(0, biomassData[node['nodeId']][timestep])
+        totalBiomass = speciesBiomass.sum()
+        for i, node in enumerate(nodeConfig):
+            if speciesBiomass[i] <= 0:
+                continue
+            proportion = speciesBiomass[i] / totalBiomass
+            scores[timestep] -= proportion * log2(proportion)
+        scores[timestep] *= totalBiomass
+    
+    return scores
+
 def getOutputAttributes(speciesData, nodeConfig, biomassData):
     """
     Given speciesData as returned by getSpeciesData,
@@ -191,8 +239,31 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
 
     out['surviving20'] = surviving20
     out['surviving1000'] = surviving1000
+
+    #
+    # Scalar measures of ecosystem health
+    #
+
+    # Average of original environment score formula
     out['avgEcosystemScore'] = getAvgEcosystemScore(
             speciesData, nodeConfig, biomassData)
+
+    # Slope of linear regression of shannonIndexBiomassProduct
+    health = shannonIndexBiomassProduct(
+            speciesData, nodeConfig, biomassData)
+    t = np.arange(numTimesteps)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(
+            t, health)
+    out['shannonBiomassSlope'] = slope
+
+    # Slope of linear regression on local peaks in net production
+    netProd = netProduction(
+            speciesData, nodeConfig, biomassData)
+    # Without smoothing, there are many tiny local peaks
+    smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
+    maxIndices, = signal.argrelmax(smoothedNetProd)
+    maxValues = np.take(netProd, maxIndices)
+    out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
 
     # Classify this simulation outcome as "bad" or "good" (or neither)
     # "bad": more than 60% extinct in < 20 time steps
