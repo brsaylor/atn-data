@@ -264,10 +264,18 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     out['avgEcosystemScore'] = getAvgEcosystemScore(
             speciesData, nodeConfig, biomassData)
 
+    t = np.arange(numTimesteps)
+
+    # Slope of linear regression of shannonIndexBiomassProduct
+    health = shannonIndexBiomassProduct(
+            speciesData, nodeConfig, biomassData)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(
+            t, health)
+    out['shannonBiomassSlope'] = slope
+
     # Slope of linear regression of shannonIndexBiomassProduct
     health = shannonIndexBiomassProductNorm(
             speciesData, nodeConfig, biomassData)
-    t = np.arange(numTimesteps)
     slope, intercept, r_value, p_value, std_err = stats.linregress(
             t, health)
     out['shannonBiomassNormSlope'] = slope
@@ -280,6 +288,14 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     maxIndices, = signal.argrelmax(smoothedNetProd)
     maxValues = np.take(netProd, maxIndices)
     out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
+
+    # Slope of linear regression on environment score
+    scores = ecosystemScoreSeries(speciesData, nodeConfig, biomassData)
+    out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
+
+    # Slope of log-linear regression on environment score
+    scores = ecosystemScoreSeries(speciesData, nodeConfig, biomassData)
+    out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
     # Classify this simulation outcome as "bad" or "good" (or neither)
     # "bad": more than 60% extinct in < 20 time steps
