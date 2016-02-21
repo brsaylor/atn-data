@@ -103,10 +103,10 @@ def getSimulationData(filename):
 
     return (nodeConfig, nodeConfigAttributes, biomassData)
 
-def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
+def environmentScore(speciesData, nodeConfig, biomassData):
     """
-    Compute the Ecosystem Score for all timesteps for the given data and return
-    the score time series.  The calculations are taken from
+    Compute the Environment Score for all timesteps for the given data and
+    return the score time series.  The calculations are taken from
     model.Ecosystem.updateEcosystemScore() in WoB_Server.
     """
 
@@ -117,7 +117,7 @@ def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
 
         # Calculate the Ecosystem Score for this timestep
         biomass = 0
-        numSpecies = len(nodeConfig)
+        numSpecies = 0
         for node in nodeConfig:
             nodeId = node['nodeId']
             perUnitBiomass = node['perUnitBiomass']
@@ -125,6 +125,9 @@ def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
             # Sometimes biomass can go slightly negative.
             # Clip to 0 to avoid complex numbers in score calculation.
             totalBiomass = max(0, biomassData[nodeId][timestep])
+
+            if totalBiomass > 0:
+                numSpecies += 1
 
             biomass += perUnitBiomass * pow(totalBiomass / perUnitBiomass,
                     speciesData[nodeId]['trophicLevel'])
@@ -135,7 +138,7 @@ def ecosystemScoreSeries(speciesData, nodeConfig, biomassData):
     return scores
 
 def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
-    return ecosystemScoreSeries(speciesData, nodeConfig, biomassData).mean()
+    return environmentScore(speciesData, nodeConfig, biomassData).mean()
 
 def totalBiomass(speciesData, nodeConfig, biomassData):
     """
@@ -290,11 +293,9 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
 
     # Slope of linear regression on environment score
-    scores = ecosystemScoreSeries(speciesData, nodeConfig, biomassData)
+    scores = environmentScore(speciesData, nodeConfig, biomassData)
     out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
-
     # Slope of log-linear regression on environment score
-    scores = ecosystemScoreSeries(speciesData, nodeConfig, biomassData)
     out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
     # Classify this simulation outcome as "bad" or "good" (or neither)

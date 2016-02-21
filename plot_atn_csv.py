@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats, signal
 
-from create_feature_file import getSpeciesData, ecosystemScoreSeries
+from create_feature_file import getSpeciesData
 from nodeconfig_generator import parseNodeConfig
 
 speciesData = None
