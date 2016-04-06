@@ -9,6 +9,8 @@ import re
 import itertools
 import bisect
 
+import util
+
 # node_config syntax is as follows (no carriage returns):
 #
 # 1. #, //#=number of nodes
@@ -481,6 +483,40 @@ def generateGaussianMixtureVariations(templateNodes, distribution, count):
     # should match priors)
     #print(count_k)
 
+def makeBaseConfigFromSpeciesList(speciesIdList):
+    speciesData = util.read_species_csv()
+    nodes = []
+
+    for speciesId in speciesIdList:
+        species = speciesData[speciesId]
+        if len(species['node_id_list']) > 1:
+            raise RuntimeError("Species with multiple nodes not handled yet")
+        node = {
+            'nodeId': species['node_id_list'][0],
+            'initialBiomass': 1000.0,
+            'perUnitBiomass': species['biomass'],
+        }
+        if species['organism_type'] == 1:
+            # plant
+            node['K'] = species['carrying_capacity']
+            node['R'] = species['growth_rate']
+        else:
+            # animal
+            node['X'] = species['metabolism']
+
+        nodes.append(node)
+
+    return nodes
+
+def generateSet16():
+    """
+    Generate node configs for an algorithmically-generated 7-species food web.
+    Only initial biomass is varied.
+    """
+    speciesIds = [int(i) for i in '9 19 32 57 61 64 89'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass'], 20, 200, 1000)
+
 if __name__ == '__main__':
     pass
     #generateSet1()
@@ -570,6 +606,8 @@ perUnitBiomass59
   std. dev.                 0         0
     """
 
-    templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
-    dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
-    generateGaussianMixtureVariations(templateNodes, dist, 1000)
+    #templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
+    #dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
+    #generateGaussianMixtureVariations(templateNodes, dist, 1000)
+
+    generateSet16()
