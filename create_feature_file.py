@@ -290,13 +290,23 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
     maxIndices, = signal.argrelmax(smoothedNetProd)
     maxValues = np.take(netProd, maxIndices)
-    out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
+    try:
+        out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
+    except ValueError:
+        print("Warning: error calculating peak net production slope")
+        out['peakNetProductionSlope'] = ''
+
 
     # Slope of linear regression on environment score
     scores = environmentScore(speciesData, nodeConfig, biomassData)
     out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
     out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
+
+    # Slope of linear regression on environment score starting at step 400
+    startTime=400
+    out['environmentScoreSlope' + str(startTime)] = stats.linregress(
+            t[startTime:], scores[startTime:])[0]
 
     return out
 

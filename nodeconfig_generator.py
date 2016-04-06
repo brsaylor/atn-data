@@ -4,6 +4,10 @@
 # October 2015
 
 from copy import copy, deepcopy
+import random
+import re
+import itertools
+import bisect
 
 # node_config syntax is as follows (no carriage returns):
 #
@@ -281,6 +285,28 @@ def generateAllParamSingleVariations(templateNodes,
                     print(generateNodeConfig(nodes))
                 nodes[i] = copy(templateNodes[i])  # reset the node
 
+def generateRandomVariations(templateNodes,
+        params, minPercent, maxPercent, count):
+    """
+    Generate <count> random variations of parameter values on all nodes,
+    for parameters named in <params>.
+    """
+    minRatio = minPercent / 100
+    maxRatio = maxPercent / 100
+    params = set(params)
+
+    # Write the unaltered nodeconfig first
+    print(generateNodeConfig(templateNodes))
+
+    nodes = deepcopy(templateNodes)
+    for i in range(count):
+        for j, node in enumerate(nodes):
+            for param in node.keys():
+                if param in params:
+                    node[param] = (templateNodes[j][param] *
+                            random.uniform(minRatio, maxRatio))
+        print(generateNodeConfig(nodes))
+
 def generateSet5():
     """
     Similar to generateSet1 - vary one node at a time, one parameter at a time
@@ -314,6 +340,147 @@ def generateSet11():
     generateAllParamSingleVariations(
             parseNodeConfig(convergenceNodeConfigs[4]), 50, 150, 5)
 
+def generateSet12():
+    """
+    Generate random variations on Convergence ecosystem #2 (6 species)
+    """
+    nodes = parseNodeConfig(convergenceNodeConfigs[1])
+    generateRandomVariations(nodes, ('initialBiomass', 'K', 'R', 'X'),
+            50, 150, 1000)
+
+def generatePerUnitBiomassVariations():
+    nodes = parseNodeConfig(convergenceNodeConfigs[1])
+    generateRandomVariations(nodes, ('perUnitBiomass',), 50, 150, 100)
+
+def parseWekaEMOutput(priors, text):
+    """
+    Parse the portion of the output from Weka's EM clusterer that gives the
+    distribution parameters for each attribute.  Doesn't parse cluster priors;
+    they must be supplied as an argument.  The return value is a list of
+    dictionaries - one for each cluster - structured like the following example:
+    
+[
+    {
+        "prior": 0.35,
+        "nodes": {
+            "5": {
+                "K": {
+                    "mean": 8025.473,
+                    "stdDev": 2253.5472
+                },
+                "initialBiomass": {
+                    "mean": 2085.6366,
+                    "stdDev": 506.5151
+                }
+            },
+            "14": {
+                "X": {
+                    "mean": 0.2048,
+                    "stdDev": 0.0588
+                },
+                "initialBiomass": {
+                    "mean": 669.0392,
+                    "stdDev": 91.3827
+                }
+            }
+        }
+    },
+    
+    {
+        "prior": 0.65,
+        "nodes": {
+            "5": {
+                "K": {
+                    "mean": 8326.2055,
+                    "stdDev": 2189.6134
+                },
+                "initialBiomass": {
+                    "mean": 2023.5001,
+                    "stdDev": 578.9036
+                }
+            },
+            "14": {
+                "X": {
+                    "mean": 0.2043,
+                    "stdDev": 0.0585
+                },
+                "initialBiomass": {
+                    "mean": 1185.7895,
+                    "stdDev": 231.4305
+                }
+            }
+        }
+    }
+]
+    """
+    
+    dist = [{'prior': p, 'nodes': {}} for p in priors]
+    
+    for line in text.split('\n'):
+        if len(line.strip()) == 0:
+            # skip blank line
+            continue
+        firstDigitPos = re.search(r'\d', line).start()
+        if line[0] != ' ':
+            # Found a line giving the attribute name
+            paramName = line[:firstDigitPos]
+            nodeId = int(line[firstDigitPos:])
+        else:
+            # Found a line giving means or standard deviations for an attribute
+            if line.lstrip().startswith('mean'):
+                distParamName = 'mean'
+            if line.lstrip().startswith('std. dev.'):
+                distParamName = 'stdDev'
+            for k, distParamValue in enumerate(
+                    [float(x) for x in line[firstDigitPos:].split()]):
+                if nodeId not in dist[k]['nodes']:
+                    dist[k]['nodes'][nodeId] = {}
+                if paramName not in dist[k]['nodes'][nodeId]:
+                    dist[k]['nodes'][nodeId][paramName] = {}
+                dist[k]['nodes'][nodeId][paramName][distParamName] = distParamValue
+    
+    return dist
+
+def generateGaussianMixtureVariations(templateNodes, distribution, count):
+    """
+    Generate 'count' node configs based on the given GMM distribution.
+
+    The 'distribution' argument is a data structure returned by
+    parseWekaEMOutput().
+
+    Attributes are treated independently; Weka's EM clusterer does not estimate
+    multivariate Gaussians.
+    """
+
+    nodes = deepcopy(templateNodes)
+
+    priors = [component['prior'] for component in distribution]
+    cumulativePriors = list(itertools.accumulate(priors))
+
+    # Count the number of times each component was chosen (for testing)
+    count_k = [0, 0]
+
+    for i in range(count):
+
+        # Choose a component based on the prior probabilities
+        rand = random.random() * cumulativePriors[-1]
+        k = bisect.bisect(cumulativePriors, rand)
+        count_k[k] += 1
+        componentNodes = distribution[k]['nodes']
+
+        # Draw parameter values from the Gaussian distribution defined by
+        # componentNodes.
+        for node in nodes:
+            nodeId = node['nodeId']
+            for paramName, distParams in componentNodes[nodeId].items():
+                node[paramName] = random.gauss(
+                        distParams['mean'], distParams['stdDev'])
+        print(generateNodeConfig(nodes))
+
+    # Print number of times each component was chosen (for testing - proportions
+    # should match priors)
+    #print(count_k)
+
 if __name__ == '__main__':
     pass
     #generateSet1()
@@ -325,4 +492,84 @@ if __name__ == '__main__':
     #generateSet7()
     #generateSet9()
     #generateSet10()
-    generateSet11()
+    #generateSet11()
+    #generateSet12()
+    #generatePerUnitBiomassVariations()
+
+    wekaEMOutput = """
+K5
+  mean               8025.473 8326.2055
+  std. dev.         2253.5472 2189.6134
+
+X14
+  mean                 0.2048    0.2043
+  std. dev.            0.0588    0.0585
+
+X31
+  mean                 0.6112    0.5995
+  std. dev.            0.0789    0.0771
+
+X33
+  mean                 0.3854    0.3738
+  std. dev.             0.109    0.1113
+
+X56
+  mean                 0.1951    0.1759
+  std. dev.            0.0522    0.0528
+
+X59
+  mean                 0.2167    0.2203
+  std. dev.            0.0693    0.0649
+
+initialBiomass14
+  mean               669.0392 1185.7895
+  std. dev.           91.3827  231.4305
+
+initialBiomass31
+  mean                30.3852   28.9353
+  std. dev.            7.8386    8.6399
+
+initialBiomass33
+  mean              2455.4004 2556.0225
+  std. dev.          681.7782  709.3693
+
+initialBiomass5
+  mean              2085.6366 2023.5001
+  std. dev.          506.5151  578.9036
+
+initialBiomass56
+  mean               702.9477  722.2053
+  std. dev.          205.0646  205.3958
+
+initialBiomass59
+  mean               661.6127  704.5754
+  std. dev.          206.5186  188.6952
+
+perUnitBiomass14
+  mean                     20        20
+  std. dev.                 0         0
+
+perUnitBiomass31
+  mean                  0.008     0.008
+  std. dev.                 0         0
+
+perUnitBiomass33
+  mean                    0.4       0.4
+  std. dev.                 0         0
+
+perUnitBiomass5
+  mean                      1         1
+  std. dev.                 0         0
+
+perUnitBiomass56
+  mean                   6.25      6.25
+  std. dev.                 0         0
+
+perUnitBiomass59
+  mean                   3.35      3.35
+  std. dev.                 0         0
+    """
+
+    templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
+    dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
+    generateGaussianMixtureVariations(templateNodes, dist, 1000)

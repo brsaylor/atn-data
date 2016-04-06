@@ -7,10 +7,12 @@ import pandas as pd
 def assign_labels(df):
     col = 'environmentScoreSlope' 
     q1 = df[col].quantile(0.25)
-    q4 = df[col].quantile(0.75)
-    print('first quartile = {}, last quartile = {}'.format(q1, q4))
+    q2 = df[col].quantile(0.75)
+    #q1 = df[col].quantile(0.05)
+    #q2 = df[col].quantile(0.95)
+    print('lower quantile = {}, upper quantile = {}'.format(q1, q2))
     df.loc[df[col] <= q1, 'label'] = 'bad'
-    df.loc[df[col] >= q4, 'label'] = 'good'
+    df.loc[df[col] >= q2, 'label'] = 'good'
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
