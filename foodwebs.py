@@ -6,7 +6,7 @@ import random
 
 import networkx as nx
 
-WOB_DB_DIR = 'wob-database'
+from util import WOB_DB_DIR
 
 def read_serengeti_from_csv():
     """
