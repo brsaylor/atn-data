@@ -484,8 +484,11 @@ def generateGaussianMixtureVariations(templateNodes, distribution, count):
     #print(count_k)
 
 def makeBaseConfigFromSpeciesList(speciesIdList):
-    speciesData = util.read_species_csv()
+    speciesData = util.get_species_data()
     nodes = []
+
+    # Sort species by trophic level (ATNEngine needs plants first)
+    speciesIdList.sort(key=lambda i: speciesData[i]['trophic_level'])
 
     for speciesId in speciesIdList:
         species = speciesData[speciesId]
@@ -516,6 +519,24 @@ def generateSet16():
     speciesIds = [int(i) for i in '9 19 32 57 61 64 89'.split()]
     templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
     generateRandomVariations(templateNodes, ['initialBiomass'], 20, 200, 1000)
+
+def generateSet17():
+    """
+    Generate node configs for an algorithmically-generated 7-species food web.
+    Only initial biomass is varied.
+    """
+    speciesIds = [int(i) for i in '9 19 32 57 61 64 89'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+
+def generateSet18():
+    """
+    Generate node configs for an algorithmically-generated 7-species food web.
+    Only initial biomass is varied.
+    """
+    speciesIds = [int(i) for i in '8 9 31 52 55 1002 1005'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
 
 if __name__ == '__main__':
     pass
@@ -611,3 +632,5 @@ perUnitBiomass59
     #generateGaussianMixtureVariations(templateNodes, dist, 1000)
 
     generateSet16()
+    #generateSet17()
+    #generateSet18()

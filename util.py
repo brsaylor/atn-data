@@ -22,10 +22,21 @@ def typecast_dict_values(d, types):
             d2[k] = v
     return d2
 
+_species_data = None
+def get_species_data():
+    """
+    Returns species data from the WoB database export as read by
+    read_species_csv(), but caches the result for later use.
+    """
+    global _species_data
+    if _species_data is None:
+        _species_data = read_species_csv()
+    return _species_data
+
 def read_species_csv():
     """
     Reads species-level data from the WoB database export and returns a dict of
-    didicts. The main dict is indexed by species_id. For each species_id, the
+    dicts. The main dict is indexed by species_id. For each species_id, the
     value is a dict of properties of that species, including a list of node IDs.
     """
 
