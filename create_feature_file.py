@@ -16,6 +16,7 @@ from math import log2
 
 import numpy as np
 from scipy import stats, signal
+import pandas as pd
 
 from nodeconfig_generator import parseNodeConfig
 
@@ -102,6 +103,18 @@ def getSimulationData(filename):
         nodeConfigAttributes = nodeConfigToParams(nodeConfig)
 
     return (nodeConfig, nodeConfigAttributes, biomassData)
+
+def rmse(biomassData1, biomassData2):
+    """ Calculate the root mean squared error between biomassData1 and
+    biomassData2 (as returned by getSimulationData()) and return as a pandas
+    Series indexed by node ID. The sum of this series is the score for an
+    attempt in the Convergence game. """
+
+    # FIXME: Once everything is converted to use DataFrames, don't need to do
+    # this conversion
+    df1 = pd.DataFrame(biomassData1)
+    df2 = pd.DataFrame(biomassData2)
+    return np.sqrt(((df1 - df2) ** 2).mean())
 
 def environmentScore(speciesData, nodeConfig, biomassData):
     """
