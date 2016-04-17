@@ -538,6 +538,15 @@ def generateSet18():
     templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
     generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
 
+def generateSet19():
+    """
+    Generate node configs for an algorithmically-generated 5-species food web.
+    Only initial biomass is varied.
+    """
+    speciesIds = [int(i) for i in '9 10 12 25 89'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+
 if __name__ == '__main__':
     pass
     #generateSet1()
@@ -631,6 +640,7 @@ perUnitBiomass59
     #dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
     #generateGaussianMixtureVariations(templateNodes, dist, 1000)
 
-    generateSet16()
+    #generateSet16()
     #generateSet17()
     #generateSet18()
+    generateSet19()
