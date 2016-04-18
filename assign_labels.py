@@ -4,12 +4,25 @@ import sys
 
 import pandas as pd
 
+# Used to identify instances of misbehaving ATNEngine
+MAX_REASONABLE_BIOMASS = 100000
+MIN_REASONABLE_NONZERO_TIMESTEP = 500
+
+def remove_ugly_instances(df):
+    """ Return a new DataFrame with "ugly" instances removed (misbehaving
+    ATNEngine causing biomass to explode and/or crash to zero) """
+    df2 = df[(df.lastNonzeroTimestep >= MIN_REASONABLE_NONZERO_TIMESTEP) &
+            (df.maxBiomass <= MAX_REASONABLE_BIOMASS)]
+    total = len(df)
+    ugly = total - len(df2)
+    print("Removed {} badly behaved instances out of {} total ({:.2f}%)".format(
+        ugly, total, 100 * (ugly / total)))
+    return df2
+
 def assign_labels(df):
     col = 'environmentScoreSlope' 
     q1 = df[col].quantile(0.25)
     q2 = df[col].quantile(0.75)
-    #q1 = df[col].quantile(0.05)
-    #q2 = df[col].quantile(0.95)
     print('lower quantile = {}, upper quantile = {}'.format(q1, q2))
     df.loc[df[col] <= q1, 'label'] = 'bad'
     df.loc[df[col] >= q2, 'label'] = 'good'
@@ -33,6 +46,8 @@ if __name__ == '__main__':
 
     # Order columns according to the first CSV
     df = df[columns]
+
+    df = remove_ugly_instances(df)
 
     # Assign labels
     assign_labels(df)
