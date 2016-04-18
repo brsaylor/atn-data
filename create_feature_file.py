@@ -104,16 +104,10 @@ def getSimulationData(filename):
 
     return (nodeConfig, nodeConfigAttributes, biomassData)
 
-def rmse(biomassData1, biomassData2):
-    """ Calculate the root mean squared error between biomassData1 and
-    biomassData2 (as returned by getSimulationData()) and return as a pandas
-    Series indexed by node ID. The sum of this series is the score for an
-    attempt in the Convergence game. """
-
-    # FIXME: Once everything is converted to use DataFrames, don't need to do
-    # this conversion
-    df1 = pd.DataFrame(biomassData1)
-    df2 = pd.DataFrame(biomassData2)
+def rmse(df1, df2):
+    """ Calculate the root mean squared error between the two DataFrames and
+    return as a Series indexed by node ID. The sum of this series is the score
+    for an attempt in the Convergence game. """
     return np.sqrt(((df1 - df2) ** 2).mean())
 
 def environmentScore(speciesData, nodeConfig, biomassData):
@@ -216,14 +210,11 @@ def shannonIndexBiomassProductNorm(speciesData, nodeConfig, biomassData):
     return (shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData)
             / (totalInitialBiomass * perfectShannon))
 
-def lastNonzeroTimestep(biomassData):
+def lastNonzeroTimestep(biomassDataFrame):
     """
     Returns the last timestep at which there is nonzero biomass.
     """
-
-    # FIXME: Remove when I convert speciesData to DataFrames everywhere
-    df = pd.DataFrame(biomassData)
-
+    df = biomassDataFrame
     nonzero = pd.Series(index=df.index, data=False)
     for col in df:
         nonzero |= (df[col] != 0)
@@ -249,6 +240,10 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     surviving1000: number of species surviving at timestep 1000
     avgEcosystemScore: average EcosystemScore over all timesteps
     """
+
+    # Convert biomass data to a pandas DataFrame
+    # FIXME: Should use pandas throughout
+    biomassDataFrame = pd.DataFrame(biomassData)
 
     # Output attributes
     out = {}
@@ -334,7 +329,7 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     out['environmentScoreSlope' + str(startTime)] = stats.linregress(
             t[startTime:], scores[startTime:])[0]
 
-    out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassData)
+    out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassDataFrame)
 
     return out
 
