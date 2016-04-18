@@ -330,6 +330,8 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
             t[startTime:], scores[startTime:])[0]
 
     out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassDataFrame)
+    out['maxBiomass'] = biomassDataFrame.max().max()
+    out['minBiomass'] = biomassDataFrame.min().min()
 
     return out
 
