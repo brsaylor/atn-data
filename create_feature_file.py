@@ -216,6 +216,19 @@ def shannonIndexBiomassProductNorm(speciesData, nodeConfig, biomassData):
     return (shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData)
             / (totalInitialBiomass * perfectShannon))
 
+def lastNonzeroTimestep(biomassData):
+    """
+    Returns the last timestep at which there is nonzero biomass.
+    """
+
+    # FIXME: Remove when I convert speciesData to DataFrames everywhere
+    df = pd.DataFrame(biomassData)
+
+    nonzero = pd.Series(index=df.index, data=False)
+    for col in df:
+        nonzero |= (df[col] != 0)
+    return nonzero.sort_index(ascending=False).argmax()
+
 def getOutputAttributes(speciesData, nodeConfig, biomassData):
     """
     Given speciesData as returned by getSpeciesData,
@@ -320,6 +333,8 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     startTime=400
     out['environmentScoreSlope' + str(startTime)] = stats.linregress(
             t[startTime:], scores[startTime:])[0]
+
+    out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassData)
 
     return out
 
