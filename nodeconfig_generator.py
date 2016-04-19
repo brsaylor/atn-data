@@ -311,6 +311,9 @@ def generateRandomVariations(templateNodes,
                 if param in params:
                     node[param] = (templateNodes[j][param] *
                             random.uniform(minRatio, maxRatio))
+                    # Limit metabolic rate and growth rate to 1
+                    if (param == 'R' or param == 'X') and node[param] > 1.0:
+                        node[param] = 1.0
         print(generateNodeConfig(nodes))
 
 def generateSet5():
@@ -596,6 +599,20 @@ def generateSet25():
     generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
             50, 200, 1000)
 generatorFunctions[25] = generateSet25
+
+def generateSet26():
+    speciesIds = [int(i) for i in '65 66 51 85 6 63 74 1003 1004 45 31'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[26] = generateSet26
+
+def generateSet27():
+    speciesIds = [int(i) for i in '34 22 70 28 40 9 47 1004 1005 14 45'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[27] = generateSet27
 
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
