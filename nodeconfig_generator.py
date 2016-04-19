@@ -576,6 +576,27 @@ def generateSet22():
             50, 200, 1000)
 generatorFunctions[22] = generateSet22
 
+def generateSet23():
+    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[23] = generateSet23
+
+def generateSet24():
+    speciesIds = [int(i) for i in '1001 87 75 14 33'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[24] = generateSet24
+
+def generateSet25():
+    speciesIds = [int(i) for i in '16 82 83 1004 86'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[25] = generateSet25
+
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
     sys.exit(1)
