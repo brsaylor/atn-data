@@ -3,6 +3,7 @@
 # Ben Saylor
 # October 2015
 
+import sys
 from copy import copy, deepcopy
 import random
 import re
@@ -10,6 +11,9 @@ import itertools
 import bisect
 
 import util
+
+# Functions that generate and print out node configs, keyed by set number.
+generatorFunctions = {}
 
 # node_config syntax is as follows (no carriage returns):
 #
@@ -559,20 +563,42 @@ def generateSet20():
     templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
     generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
 
+def generateSet21():
+    speciesIds = [int(i) for i in '15 17 26 77 1002'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            33, 300, 3000)
+
+def generateSet22():
+    speciesIds = [int(i) for i in '42 31 5 85 1005'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[22] = generateSet22
+
+def printUsageAndExit():
+    print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
+    sys.exit(1)
+
 if __name__ == '__main__':
-    pass
-    #generateSet1()
-    #generateSet2()
-    #generateSet3()
-    #generateSet4()
-    #generateSet5()
-    #generateSet6()
-    #generateSet7()
-    #generateSet9()
-    #generateSet10()
-    #generateSet11()
-    #generateSet12()
-    #generatePerUnitBiomassVariations()
+
+    # Starting with set 22, putting generator functions in a dict, so the set
+    # can be chosen from the command line
+
+    if len(sys.argv) != 2:
+        printUsageAndExit()
+    try:
+        setNumber = int(sys.argv[1])
+    except ValueError:
+        printUsageAndExit()
+
+    if setNumber not in generatorFunctions:
+        print("Invalid set number (valid set numbers: {})".format(
+            ' '.join(map(str, generatorFunctions.keys()))),
+            file=sys.stderr)
+        printUsageAndExit()
+
+    generatorFunctions[setNumber]()
 
     wekaEMOutput = """
 K5
@@ -652,8 +678,3 @@ perUnitBiomass59
     #dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
     #generateGaussianMixtureVariations(templateNodes, dist, 1000)
 
-    #generateSet16()
-    #generateSet17()
-    #generateSet18()
-    #generateSet19()
-    generateSet20()
