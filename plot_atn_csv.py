@@ -51,7 +51,7 @@ def plotCsv(filename, scoreFunction):
 
     f.close()
 
-    fig, ax1 = plt.subplots()#figsize=(14, 8))
+    fig, ax1 = plt.subplots(figsize=(14, 8))
     ax1.set_xlabel("timestep")
     ax1.set_ylabel("biomass")
     legend = []
@@ -60,7 +60,7 @@ def plotCsv(filename, scoreFunction):
         nodeId = int(match.group(1))
         plt.plot(data[nodeId])
         legend.append(speciesData[nodeId]['name'] + ' ' + nodeConfigSection)
-    #ax1.legend(legend)
+    ax1.legend(legend)
 
     scores = scoreFunction(speciesData, nodeConfig, data)
     ax2 = ax1.twinx()
@@ -73,13 +73,13 @@ def plotCsv(filename, scoreFunction):
     tn = len(scores) - 1
     slope, intercept, r_value, p_value, std_err = stats.linregress(
             t, scores)
-    ax2.plot([0, tn], [intercept, slope * tn + intercept], 'g', linewidth=2)
+    #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'g', linewidth=2)
 
     # Linear regression, but starting at timestep 200
-    startTime = 400
-    slope, intercept, r_value, p_value, std_err = stats.linregress(
-            t[startTime:], scores[startTime:])
-    ax2.plot([0, tn], [intercept, slope * tn + intercept], 'b', linewidth=2)
+    #startTime = 400
+    #slope, intercept, r_value, p_value, std_err = stats.linregress(
+    #        t[startTime:], scores[startTime:])
+    #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'b', linewidth=2)
 
     # Log-linear regression
     logSlope, logIntercept, r_value, p_value, std_err = stats.linregress(
