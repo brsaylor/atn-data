@@ -20,7 +20,7 @@ def remove_ugly_instances(df):
     return df2
 
 def assign_labels(df):
-    col = 'environmentScoreSlope' 
+    col = 'environmentScoreSlope200' 
     q1 = df[col].quantile(0.25)
     q2 = df[col].quantile(0.75)
     print('lower quantile = {}, upper quantile = {}'.format(q1, q2))

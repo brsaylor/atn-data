@@ -305,7 +305,7 @@ def generateRandomVariations(templateNodes,
     print(generateNodeConfig(templateNodes))
 
     nodes = deepcopy(templateNodes)
-    for i in range(count):
+    for i in range(count - 1):
         for j, node in enumerate(nodes):
             for param in node.keys():
                 if param in params:
@@ -763,6 +763,19 @@ def generateSet45():
     templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
     sweepParamForNode(templateNodes, 51, 'X', 5, 100, 1000)
 generatorFunctions[45] = generateSet45
+
+def generateSet46():
+    speciesIds = [1005, 14, 31, 42, 2]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[46] = generateSet46
+
+def generateSet47():
+    templateNodes = parseNodeConfig(convergenceNodeConfigs[0])
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[47] = generateSet47
 
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)

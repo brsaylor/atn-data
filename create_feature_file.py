@@ -324,8 +324,9 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     # Slope of log-linear regression on environment score
     out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
-    # Slope of linear regression on environment score starting at step 400
-    startTime=400
+    # Slope of linear regression on environment score starting at a later
+    # time step, allowing for a settling-down period
+    startTime=200
     out['environmentScoreSlope' + str(startTime)] = stats.linregress(
             t[startTime:], scores[startTime:])[0]
 
