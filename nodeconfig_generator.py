@@ -316,6 +316,23 @@ def generateRandomVariations(templateNodes,
                         node[param] = 1.0
         print(generateNodeConfig(nodes))
 
+def sweepParamForNode(templateNodes, nodeId, param,
+        minPercent, maxPercent, count):
+    """ Generate <count> nodeconfigs in which the given param for the given node
+    is varied from minPercent to maxPercent of the original value. """
+
+    minRatio = minPercent / 100
+    maxRatio = maxPercent / 100
+
+    nodes = deepcopy(templateNodes)
+    for i in range(count):
+        for j, node in enumerate(nodes):
+            if node['nodeId'] == nodeId:
+                ratio = (maxRatio - minRatio) / (count - 1) * i + minRatio
+                node[param] = templateNodes[j][param] * ratio
+                break
+        print(generateNodeConfig(nodes))
+
 def generateSet5():
     """
     Similar to generateSet1 - vary one node at a time, one parameter at a time
@@ -491,12 +508,14 @@ def generateGaussianMixtureVariations(templateNodes, distribution, count):
     #print(count_k)
 
 def makeBaseConfigFromSpeciesList(speciesIdList,
-        basalBiomass=1000.0, nonBasalBiomass=1000.0):
+        basalBiomass=1000.0, nonBasalBiomass=1000.0, sort=True):
     speciesData = util.get_species_data()
     nodes = []
 
-    # Sort species by trophic level (ATNEngine needs plants first)
-    speciesIdList.sort(key=lambda i: speciesData[i]['trophic_level'])
+    if sort:
+        # Sort species by trophic level (ATNEngine needs plants first)
+        speciesIdList.sort(key=lambda i: speciesData[i]['trophic_level'])
+    # Otherwise, it's assumed speciesIdList is sorted as desired
 
     for speciesId in speciesIdList:
         species = speciesData[speciesId]
@@ -613,6 +632,137 @@ def generateSet27():
     generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
             50, 200, 1000)
 generatorFunctions[27] = generateSet27
+
+def generateSet28():
+    speciesIds = [int(i) for i in '83 85 6 39 8 44 1002 55 1004 74 31'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[28] = generateSet28
+
+def generateSet29():
+    speciesIds = [int(i) for i in '64 16 26 69 87 1001 42 1003 45 31'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[29] = generateSet29
+
+def generateSet30():
+    speciesIds = [int(i) for i in '48 33 82 52 25 17 1001 1003 13 46'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[30] = generateSet30
+
+def generateSet31():
+    speciesIds = [int(i) for i in '48 66 27 4 85 1001 10 11 1004 45'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[31] = generateSet31
+
+def generateSet32():
+    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[32] = generateSet32
+
+def generateSet33():
+    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[33] = generateSet33
+
+def generateSet34():
+    speciesIds = [int(i) for i in '85 70 71 40 41 26 59 1004 1005'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[34] = generateSet34
+
+def generateSet35():
+    speciesIds = [int(i) for i in '16 21 38 55 1002 1003 28 46 31'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[35] = generateSet35
+
+def generateSet36():
+    speciesIds = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[36] = generateSet36
+
+def generateSet37():
+    speciesIds = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[37] = generateSet37
+
+def generateSet38():
+    speciesIds = [int(i) for i in '80 1 11 69 27 71 1001 1003'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[38] = generateSet38
+
+def generateSet39():
+    speciesIds = [int(i) for i in '80 49 55 8 1002 15'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[39] = generateSet39
+
+def generateSet40():
+    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    nodes = makeBaseConfigFromSpeciesList(speciesIds)
+    for i in range(10):
+        print(generateNodeConfig(nodes))
+        random.shuffle(nodes)
+generatorFunctions[40] = generateSet40
+
+def generateSet41():
+    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    nodes = makeBaseConfigFromSpeciesList(speciesIds)
+    for i in range(10):
+        print(generateNodeConfig(nodes))
+        nonBasalNodes = nodes[2:]
+        random.shuffle(nonBasalNodes)
+        nodes = nodes[0:2] + nonBasalNodes
+generatorFunctions[41] = generateSet41
+
+def generateSet42():
+    nodes = parseNodeConfig(convergenceNodeConfigs[0])
+    for i in range(10):
+        print(generateNodeConfig(nodes))
+        nonBasalNodes = nodes[1:]
+        random.shuffle(nonBasalNodes)
+        nodes = nodes[0:1] + nonBasalNodes
+generatorFunctions[42] = generateSet42
+
+def generateSet43():
+    # Topologically sorted version of set 29
+    speciesIds = [int(i) for i in '1003 1001 31 45 87 69 16 26 42 64'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds, sort=False)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 1000)
+generatorFunctions[43] = generateSet43
+
+def generateSet44():
+    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    sweepParamForNode(templateNodes, 51, 'initialBiomass', 5, 100, 1000)
+generatorFunctions[44] = generateSet44
+
+def generateSet45():
+    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    sweepParamForNode(templateNodes, 51, 'X', 5, 100, 1000)
+generatorFunctions[45] = generateSet45
 
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
