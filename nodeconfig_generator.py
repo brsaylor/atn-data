@@ -15,6 +15,13 @@ import util
 # Functions that generate and print out node configs, keyed by set number.
 generatorFunctions = {}
 
+# Parameter sliders in Convergence game are bounded by these ranges
+validParamRanges = {
+    'K': (1000, 15000),
+    'R': (0, 3),
+    'X': (0, 1)
+}
+
 # node_config syntax is as follows (no carriage returns):
 #
 # 1. #, //#=number of nodes
@@ -311,9 +318,10 @@ def generateRandomVariations(templateNodes,
                 if param in params:
                     node[param] = (templateNodes[j][param] *
                             random.uniform(minRatio, maxRatio))
-                    # Limit metabolic rate and growth rate to 1
-                    if (param == 'R' or param == 'X') and node[param] > 1.0:
-                        node[param] = 1.0
+                    # Limit parameter ranges
+                    if param in validParamRanges:
+                        node[param] = util.clip(node[param],
+                                *validParamRanges[param])
         print(generateNodeConfig(nodes))
 
 def sweepParamForNode(templateNodes, nodeId, param,
@@ -512,11 +520,6 @@ def makeBaseConfigFromSpeciesList(speciesIdList,
     speciesData = util.get_species_data()
     nodes = []
 
-    if sort:
-        # Sort species by trophic level (ATNEngine needs plants first)
-        speciesIdList.sort(key=lambda i: speciesData[i]['trophic_level'])
-    # Otherwise, it's assumed speciesIdList is sorted as desired
-
     for speciesId in speciesIdList:
         species = speciesData[speciesId]
         if len(species['node_id_list']) > 1:
@@ -536,6 +539,11 @@ def makeBaseConfigFromSpeciesList(speciesIdList,
             node['X'] = species['metabolism']
 
         nodes.append(node)
+
+    if sort:
+        # Sort by node ID to avoid triggering bug in unpatched ATNEngine
+        nodes.sort(key=lambda n: n['nodeId'])
+    # Otherwise, it's assumed speciesIdList is sorted as desired
 
     return nodes
 
@@ -768,7 +776,7 @@ def generateSet46():
     speciesIds = [1005, 14, 31, 42, 2]
     templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
     generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
+            50, 200, 1000)
 generatorFunctions[46] = generateSet46
 
 def generateSet47():
@@ -776,6 +784,50 @@ def generateSet47():
     generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
             50, 150, 1000)
 generatorFunctions[47] = generateSet47
+
+def generateSet48():
+    templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[48] = generateSet48
+
+def generateSet49():
+    speciesIds = [int(i) for i in '80 51 52 71 1001 75'.split()]
+    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 200, 100)
+generatorFunctions[49] = generateSet49
+
+def generateSet50():
+    templateNodes = parseNodeConfig(convergenceNodeConfigs[2])
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[50] = generateSet50
+
+def generateSet51():
+    # Variations on set 47, sim 90
+    templateNodes = parseNodeConfig("5,[5],1555.63,1.0,1,K=11091.4,0,[14],1071.01,20.0,1,X=0.254849,0,[31],1844.15,0.0075,1,X=0.517565,0,[42],133.96,0.205,1,X=0.726891,0,[70],2110.84,13.0,1,X=0.194138,0")
+    generateRandomVariations(templateNodes, ['K', 'X'], 50, 150, 100)
+generatorFunctions[51] = generateSet51
+
+def generateSet52():
+    # Variations on set 50, sim 100
+    templateNodes = parseNodeConfig("11,[2],645.546,528.0,2,K=1660.64,R=1.0,0,[3],599.66,528.0,1,K=4441.54,0,[4],595.662,528.0,1,K=2754.94,0,[5],1426.75,1.0,1,K=2084.45,0,[7],639.183,816.0,1,K=4015.18,0,[49],1511.23,0.355,1,X=1.0,0,[55],739.104,0.213,1,X=0.496037,0,[61],392.821,54.0,1,X=0.00999599,0,[74],924.06,50.0,1,X=0.115569,0,[82],525.34,50.0,1,X=0.376351,0,[83],233.019,103.0,1,X=0.180538,0")
+    generateRandomVariations(templateNodes, ['K', 'X'], 50, 150, 100)
+generatorFunctions[52] = generateSet52
+
+def generateSet53():
+    """ Like set 42, but shuffle all nodes, not just basal """
+    nodes = parseNodeConfig(convergenceNodeConfigs[0])
+    for i in range(10):
+        print(generateNodeConfig(nodes))
+        random.shuffle(nodes)
+generatorFunctions[53] = generateSet53
+
+def generateSet54():
+    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[54] = generateSet54
 
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)

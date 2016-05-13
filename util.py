@@ -77,6 +77,11 @@ def read_species_data_test():
     species_data = read_species_csv()
     print(json.dumps(species_data, sort_keys=True, indent=4))
 
+def clip(x, xmin, xmax):
+    """ Return the value of the first argument limited to the range given by the
+    other two arguments. """
+    return min(xmax, max(x, xmin))
+
 if __name__ == '__main__':
     pass
     #read_species_data_test()
