@@ -30,6 +30,15 @@ class TreeNode(object):
     def is_leaf(self):
         return self.child_lte is None and self.child_gt is None
 
+    def get_leaves(self):
+        """
+        Return a list of the leaf nodes in this subtree.
+        """
+        if self.is_leaf:
+            return [self]
+        else:
+            return self.child_lte.get_leaves() + self.child_gt.get_leaves()
+
     def __str__(self):
         return self.to_string()
 
@@ -206,4 +215,9 @@ if __name__ == '__main__':
         print("Run this script to test parsing. Output should match input.")
         print("Usage: ./trees.py weka-J48-output-file.txt")
         sys.exit(1)
-    print(str(parse_weka_j48_output_file(sys.argv[1])))
+    tree = parse_weka_j48_output_file(sys.argv[1])
+    print(str(tree))
+    print()
+    print("Leaves:")
+    for leaf in tree.get_leaves():
+        print(str(leaf))
