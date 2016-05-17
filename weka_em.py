@@ -2,6 +2,8 @@
 Functions for dealing with Weka's EM output
 """
 
+import re
+
 def parse_weka_em_output(priors, text):
     """
     Parse the portion of the output from Weka's EM clusterer that gives the
@@ -110,6 +112,6 @@ def parse_weka_em_output_file(filename):
             if line.startswith('Time taken'):
                 break
             paramOutputLines.append(line)
-    clusters = parseWekaEMOutput(priors, ''.join(paramOutputLines))
+    clusters = parse_weka_em_output(priors, ''.join(paramOutputLines))
     return clusters
 

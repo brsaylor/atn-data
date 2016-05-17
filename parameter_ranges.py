@@ -7,7 +7,8 @@ simulations
 
 import sys
 
-from nodeconfig_generator import parseWekaEMOutput, parseNodeConfig
+from nodeconfig_generator import parseNodeConfig
+from weka_em import parse_weka_em_output
 
 def getRangeForParameter(clusters, nodeId, param):
     """
@@ -15,7 +16,7 @@ def getRangeForParameter(clusters, nodeId, param):
     clustering of 'good' simulations. The bottom of the range is the minimum
     (mean - stdev) for the parameter, and the top of each range is the maximum
     (mean + stdev).
-    clusters: output of parseWekaEMOutput
+    clusters: output of parse_weka_em_output
     """
     paramRange = [-1, -1]
     for cluster in clusters:
@@ -52,7 +53,7 @@ def printParamRanges(nodeConfig, trimmedWekaOutputFilename, numClusters):
     # doesn't determine the number of clusters itself
     priors = [0] * numClusters
 
-    clusters = parseWekaEMOutput(priors, wekaOutput)
+    clusters = parse_weka_em_output(priors, wekaOutput)
 
     rangeValues = []
     for node in nodes:
