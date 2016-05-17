@@ -12,6 +12,8 @@ import bisect
 
 import util
 
+from weka_em import parse_weka_em_output
+
 # Functions that generate and print out node configs, keyed by set number.
 generatorFunctions = {}
 
@@ -386,101 +388,13 @@ def generatePerUnitBiomassVariations():
     nodes = parseNodeConfig(convergenceNodeConfigs[1])
     generateRandomVariations(nodes, ('perUnitBiomass',), 50, 150, 100)
 
-def parseWekaEMOutput(priors, text):
-    """
-    Parse the portion of the output from Weka's EM clusterer that gives the
-    distribution parameters for each attribute.  Doesn't parse cluster priors;
-    they must be supplied as an argument.  The return value is a list of
-    dictionaries - one for each cluster - structured like the following example:
-    
-[
-    {
-        "prior": 0.35,
-        "nodes": {
-            "5": {
-                "K": {
-                    "mean": 8025.473,
-                    "stdDev": 2253.5472
-                },
-                "initialBiomass": {
-                    "mean": 2085.6366,
-                    "stdDev": 506.5151
-                }
-            },
-            "14": {
-                "X": {
-                    "mean": 0.2048,
-                    "stdDev": 0.0588
-                },
-                "initialBiomass": {
-                    "mean": 669.0392,
-                    "stdDev": 91.3827
-                }
-            }
-        }
-    },
-    
-    {
-        "prior": 0.65,
-        "nodes": {
-            "5": {
-                "K": {
-                    "mean": 8326.2055,
-                    "stdDev": 2189.6134
-                },
-                "initialBiomass": {
-                    "mean": 2023.5001,
-                    "stdDev": 578.9036
-                }
-            },
-            "14": {
-                "X": {
-                    "mean": 0.2043,
-                    "stdDev": 0.0585
-                },
-                "initialBiomass": {
-                    "mean": 1185.7895,
-                    "stdDev": 231.4305
-                }
-            }
-        }
-    }
-]
-    """
-    
-    dist = [{'prior': p, 'nodes': {}} for p in priors]
-    
-    for line in text.split('\n'):
-        if len(line.strip()) == 0:
-            # skip blank line
-            continue
-        firstDigitPos = re.search(r'\d', line).start()
-        if line[0] != ' ':
-            # Found a line giving the attribute name
-            paramName = line[:firstDigitPos]
-            nodeId = int(line[firstDigitPos:])
-        else:
-            # Found a line giving means or standard deviations for an attribute
-            if line.lstrip().startswith('mean'):
-                distParamName = 'mean'
-            if line.lstrip().startswith('std. dev.'):
-                distParamName = 'stdDev'
-            for k, distParamValue in enumerate(
-                    [float(x) for x in line[firstDigitPos:].split()]):
-                if nodeId not in dist[k]['nodes']:
-                    dist[k]['nodes'][nodeId] = {}
-                if paramName not in dist[k]['nodes'][nodeId]:
-                    dist[k]['nodes'][nodeId][paramName] = {}
-                dist[k]['nodes'][nodeId][paramName][distParamName] = distParamValue
-    
-    return dist
 
 def generateGaussianMixtureVariations(templateNodes, distribution, count):
     """
     Generate 'count' node configs based on the given GMM distribution.
 
     The 'distribution' argument is a data structure returned by
-    parseWekaEMOutput().
+    parse_weka_em_output().
 
     Attributes are treated independently; Weka's EM clusterer does not estimate
     multivariate Gaussians.
@@ -829,6 +743,79 @@ def generateSet54():
     generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
 generatorFunctions[54] = generateSet54
 
+def generateSet55():
+    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
+    sweepParamForNode(templateNodes, 3, 'R', 10, 300, 100)
+generatorFunctions[55] = generateSet55
+
+def generateSet56():
+    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
+    sweepParamForNode(templateNodes, 3, 'initialBiomass', 50, 500, 100)
+generatorFunctions[56] = generateSet56
+
+def generateSet57():
+    templateNodes = makeBaseConfigFromSpeciesList([8, 4, 1002, 36, 14])
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[57] = generateSet57
+
+def generateSet58():
+    templateNodes = makeBaseConfigFromSpeciesList([65, 50, 1003, 55, 33])
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[58] = generateSet58
+
+def generateSet59():
+    templateNodes = makeBaseConfigFromSpeciesList([1002, 36, 14, 46, 31])
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[59] = generateSet59
+
+def generateSet60():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [66, 83, 82, 53, 71, 88, 1001, 7, 1004, 1005])
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[60] = generateSet60
+
+def generateSet61():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [88, 2, 4, 21, 87, 8, 1001, 1002, 1003, 14]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[61] = generateSet61
+
+def generateSet62():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [49, 83, 53, 28, 1001, 42, 1003, 1004, 85, 44]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[62] = generateSet62
+
+def generateSet63():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [80, 66, 1003, 4, 31]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[63] = generateSet63
+
+def generateSet64():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [80, 49, 82, 50, 69, 71, 88, 1001, 1003, 1005]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+generatorFunctions[64] = generateSet64
+
+def generateSet65():
+    origNodes = makeBaseConfigFromSpeciesList(
+            [53, 73, 74, 80, 1005]
+            )
+    print(generateNodeConfig(origNodes))
+generatorFunctions[65] = generateSet65
+ 
+def generateSet66():
+    origNodes = makeBaseConfigFromSpeciesList(
+            [47, 49, 83, 86, 1003]
+            )
+    print(generateNodeConfig(origNodes))
+generatorFunctions[66] = generateSet66
+
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
     sys.exit(1)
@@ -852,82 +839,3 @@ if __name__ == '__main__':
         printUsageAndExit()
 
     generatorFunctions[setNumber]()
-
-    wekaEMOutput = """
-K5
-  mean               8025.473 8326.2055
-  std. dev.         2253.5472 2189.6134
-
-X14
-  mean                 0.2048    0.2043
-  std. dev.            0.0588    0.0585
-
-X31
-  mean                 0.6112    0.5995
-  std. dev.            0.0789    0.0771
-
-X33
-  mean                 0.3854    0.3738
-  std. dev.             0.109    0.1113
-
-X56
-  mean                 0.1951    0.1759
-  std. dev.            0.0522    0.0528
-
-X59
-  mean                 0.2167    0.2203
-  std. dev.            0.0693    0.0649
-
-initialBiomass14
-  mean               669.0392 1185.7895
-  std. dev.           91.3827  231.4305
-
-initialBiomass31
-  mean                30.3852   28.9353
-  std. dev.            7.8386    8.6399
-
-initialBiomass33
-  mean              2455.4004 2556.0225
-  std. dev.          681.7782  709.3693
-
-initialBiomass5
-  mean              2085.6366 2023.5001
-  std. dev.          506.5151  578.9036
-
-initialBiomass56
-  mean               702.9477  722.2053
-  std. dev.          205.0646  205.3958
-
-initialBiomass59
-  mean               661.6127  704.5754
-  std. dev.          206.5186  188.6952
-
-perUnitBiomass14
-  mean                     20        20
-  std. dev.                 0         0
-
-perUnitBiomass31
-  mean                  0.008     0.008
-  std. dev.                 0         0
-
-perUnitBiomass33
-  mean                    0.4       0.4
-  std. dev.                 0         0
-
-perUnitBiomass5
-  mean                      1         1
-  std. dev.                 0         0
-
-perUnitBiomass56
-  mean                   6.25      6.25
-  std. dev.                 0         0
-
-perUnitBiomass59
-  mean                   3.35      3.35
-  std. dev.                 0         0
-    """
-
-    #templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
-    #dist = parseWekaEMOutput([0.35, 0.65], wekaEMOutput)
-    #generateGaussianMixtureVariations(templateNodes, dist, 1000)
-
