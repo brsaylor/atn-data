@@ -6,6 +6,7 @@ Utility functions
 
 import os
 import csv
+import re
 
 WOB_DB_DIR = 'wob-database'
 
@@ -81,6 +82,10 @@ def clip(x, xmin, xmax):
     """ Return the value of the first argument limited to the range given by the
     other two arguments. """
     return min(xmax, max(x, xmin))
+
+def remove_trailing_digits(string):
+    """ Return the string with trailing digits removed. """
+    return re.match(r'(\D+)', string).group()
 
 if __name__ == '__main__':
     pass

@@ -21,7 +21,11 @@ generatorFunctions = {}
 validParamRanges = {
     'K': (1000, 15000),
     'R': (0, 3),
-    'X': (0, 1)
+    'X': (0, 1),
+
+    # Initial biomass is not varied in Convergence, but we still need upper and
+    # lower bounds for other purposes
+    'initialBiomass': (0, 15000)
 }
 
 # node_config syntax is as follows (no carriage returns):

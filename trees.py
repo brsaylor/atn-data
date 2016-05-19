@@ -18,10 +18,14 @@ class TreeNode(object):
 
     def __init__(self):
         self.parent = None
+
+        # only set for non-leaves
         self.split_attribute = None
         self.split_value = None
         self.child_lte = None
         self.child_gt = None
+
+        # only set for leaves
         self.class_label = None
         self.instance_count = None
         self.misclassified_count = None

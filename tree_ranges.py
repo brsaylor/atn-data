@@ -3,7 +3,11 @@
 import sys
 import json
 
+import pandas as pd
+
 import trees
+from nodeconfig_generator import validParamRanges
+import util
 
 def get_ranges_for_leaf(leaf):
     """
@@ -54,6 +58,8 @@ def get_ranges_for_leaf(leaf):
 
     return ranges
 
+# NOTE: Not using the method, because I'm not sure it makes sense for this
+# purpose
 def combine_weighted_segments(in_segments):
     """
     Combine a list of weighted segments, accounting for overlap.
@@ -142,10 +148,79 @@ def test_combine_weighted_segments():
     out_segments = [(1, 2, 1), (2, 3, 3), (3, 4, 6), (4, 5, 5), (5, 6, 3)]
     assert combine_weighted_segments(in_segments) == out_segments
 
+# NOTE: Not using the method, because I'm not sure it makes sense for this
+# purpose
+def get_parameter_distributions(tree):
+    """
+    Calculate parameter distributions based on the given decision tree.
+
+    For each parameter/attribute, a piecewise distribution is computed. Each
+    segment of this distribution has two endpoints (on the 'x' axis) and a
+    constant weight (on the 'y' axis'). The weight of a segment is the sum of
+    the number of "good" instances within its range, minus the number of "bad"
+    instances. Each leaf of the tree may contribute a segment of this
+    distribution, based on the attribute split points along the path from the
+    leaf to the root. 
+
+    Parameters
+    ----------
+    tree : TreeNode
+        The root node of the tree.
+
+    Returns
+    -------
+    dict
+        key: parameter name
+        value: list of non-overlapping weighted segments, each one of which is a
+               tuple in the form (low, high, weight)
+    """
+
+    # upper and lower limits for parameter ranges
+    # key: parameter name
+    # value: (low, high)
+    limits = {}
+
+    # Assemble the parameter ranges for each leaf into a list of weighted
+    # segments for each parameter.
+    # key: parameter name
+    # value: list of (low, high, weight) segments for the parameter
+    segments = {}
+
+    for leaf in tree.get_leaves():
+        weight = leaf.instance_count - leaf.misclassified_count
+        if leaf.class_label == 'bad':
+            weight = -weight
+
+        for param, (low, high) in get_ranges_for_leaf(leaf).items():
+
+            # Ranges can have None for low or high, if there is no lower or
+            # upper bound, respectively. Replace None with the lowest or highest
+            # valid value for the parameter.
+            if param not in limits:
+                param_base_name = util.remove_trailing_digits(param)
+                limits[param] = validParamRanges[param_base_name]
+            low = low or limits[param][0]
+            high = high or limits[param][1]
+            
+            seg = (low, high, weight)
+            if param not in segments:
+                segments[param] = [seg]
+            else:
+                segments[param].append(seg)
+
+    # For each parameter, combine the weighted segments.
+    # key: parameter name
+    # value: list of combined segments for the parameter, none overlapping
+    combined_segments = {}
+    for param, param_segments in segments.items():
+        combined_segments[param] = combine_weighted_segments(segments[param])
+
+    return combined_segments
+
 if __name__ == '__main__':
 
-    test_combine_weighted_segments()
-    sys.exit(0)
+    #test_combine_weighted_segments()
+    #sys.exit(0)
     
     if len(sys.argv) != 2:
         print("Usage: ./tree_ranges.py weka-J48-output-file.txt")
