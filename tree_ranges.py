@@ -255,9 +255,10 @@ def get_distributions(tree, instances):
     for param, split_values in splits.items():
         split_values.sort()
         param_base_name = util.remove_trailing_digits(param)
-        min_valid_value, max_valid_value = validParamRanges[param_base_name]
-        split_values.insert(0, min_valid_value)
-        split_values.append(max_valid_value)
+        min_param_value = instances[param].min()
+        max_param_value = instances[param].max()
+        split_values.insert(0, min_param_value)
+        split_values.append(max_param_value)
 
         # FIXME: There must be a more efficient way to use pandas for this
         df = instances
@@ -265,7 +266,10 @@ def get_distributions(tree, instances):
         for i in range(len(split_values) - 1):
             low = split_values[i]
             high = split_values[i+1]
-            df2 = df[(df[param] > low) & (df[param] <= high)]
+            if i == 0:
+                df2 = df[df[param] <= high]
+            else:
+                df2 = df[(df[param] > low) & (df[param] <= high)]
             counts = df2['label'].value_counts(dropna=False)
             segments.append((low, high,
                 int(counts.loc['good']),
