@@ -3,6 +3,7 @@
 import sys
 import json
 
+import numpy as np
 import pandas as pd
 
 import trees
@@ -217,20 +218,117 @@ def get_parameter_distributions(tree):
 
     return combined_segments
 
+def get_distributions(tree, instances):
+    """
+    Calculate piecewise distributions of good, bad, and unlabeled instances.
+
+    Parameters
+    ----------
+    tree : TreeNode
+        The decision tree.
+    instances : DataFrame
+        Labeled instances used to train the decision tree. Must have a column
+        for each attribute in the tree, and a 'label' column with values 'good',
+        'bad', or NaN (unlabeled).
+
+    Returns
+    -------
+    dict
+        key: parameter name
+        value: list of tuples, each of which describes a range of values for the
+        parameter, delimited by a pair of split points in the tree:
+        (high, low, good_count, bad_count, unlabeled_count)
+    """
+    
+    # key: parameter name
+    # value: list of split values
+    splits = {}
+    for node in tree.get_internal_nodes():
+        if node.split_attribute not in splits:
+            splits[node.split_attribute] = [node.split_value]
+        else:
+            splits[node.split_attribute].append(node.split_value)
+    
+    # key: parameter name
+    # value: list of tuples: (high, low, good_count, bad_count, unlabeled_count)
+    distributions = {}
+    for param, split_values in splits.items():
+        split_values.sort()
+        param_base_name = util.remove_trailing_digits(param)
+        min_valid_value, max_valid_value = validParamRanges[param_base_name]
+        split_values.insert(0, min_valid_value)
+        split_values.append(max_valid_value)
+
+        # FIXME: There must be a more efficient way to use pandas for this
+        df = instances
+        segments = []
+        for i in range(len(split_values) - 1):
+            low = split_values[i]
+            high = split_values[i+1]
+            df2 = df[(df[param] > low) & (df[param] <= high)]
+            counts = df2['label'].value_counts(dropna=False)
+            segments.append((low, high,
+                int(counts.loc['good']),
+                int(counts.loc['bad']),
+                int(counts.loc[np.nan])))
+
+        distributions[param] = segments
+
+    return distributions
+
+def get_range_weights(distributions):
+    """
+    Calculate scoring weights for each range in the given parameter ranges.
+
+    The weight for a range is defined as P(good) - P(bad), with the denominator
+    of the probabilities being the total number of instances (labeled and
+    unlabeled) in the range.
+
+    Parameters
+    ----------
+    distributions : dict
+        Piecewise distributions as returned by get_distributions().
+
+    Returns
+    -------
+    dict
+        key: parameter name
+        value: list of tuples in the form (low, high, weight)
+    """
+
+    # the returned dict
+    range_weights = {}
+
+    for param, in_segments in distributions.items():
+        out_segments = []
+        for low, high, good, bad, unlabeled in in_segments:
+            weight = (good - bad) / (good + bad + unlabeled)
+            out_segments.append((low, high, weight))
+        range_weights[param] = out_segments
+
+    return range_weights
+
 if __name__ == '__main__':
 
     #test_combine_weighted_segments()
     #sys.exit(0)
     
-    if len(sys.argv) != 2:
-        print("Usage: ./tree_ranges.py weka-J48-output-file.txt")
+    if len(sys.argv) != 3:
+        print("Usage: ./tree_ranges.py weka-J48-output-file.txt labeled-feature-file.csv")
         sys.exit(1)
     tree = trees.parse_weka_j48_output_file(sys.argv[1])
-    print(str(tree))
-    print()
-    print("Ranges:")
-    for leaf in tree.get_leaves():
-        print(str(leaf))
-        json.dump(get_ranges_for_leaf(leaf),
-                sys.stdout, sort_keys=True, indent=4)
-        print("\n")
+    instances = pd.read_csv(sys.argv[2])
+    distributions = get_distributions(tree, instances)
+    range_weights = get_range_weights(distributions)
+
+    print("\nDISTRIBUTIONS:\n")
+    print(json.dumps(distributions, sort_keys=True, indent=4))
+    print("\nRANGE WEIGHTS:\n")
+    print(json.dumps(range_weights, sort_keys=True, indent=4))
+
+    #print("Ranges:")
+    #for leaf in tree.get_leaves():
+    #    print(str(leaf))
+    #    json.dump(get_ranges_for_leaf(leaf),
+    #            sys.stdout, sort_keys=True, indent=4)
+    #    print("\n")

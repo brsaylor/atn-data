@@ -43,6 +43,20 @@ class TreeNode(object):
         else:
             return self.child_lte.get_leaves() + self.child_gt.get_leaves()
 
+    def get_internal_nodes(self):
+        """
+        Return a list of the internal nodes in this subtree.
+        """
+        if self.is_leaf:
+            return []
+        else:
+            nodes = [self]
+            if self.child_lte is not None:
+                nodes.extend(self.child_lte.get_internal_nodes())
+            if self.child_gt is not None:
+                nodes.extend(self.child_gt.get_internal_nodes())
+            return nodes
+
     def __str__(self):
         return self.to_string()
 
