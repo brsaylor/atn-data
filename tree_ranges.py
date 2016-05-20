@@ -271,10 +271,10 @@ def get_distributions(tree, instances):
             else:
                 df2 = df[(df[param] > low) & (df[param] <= high)]
             counts = df2['label'].value_counts(dropna=False)
-            segments.append((low, high,
-                int(counts.loc['good']),
-                int(counts.loc['bad']),
-                int(counts.loc[np.nan])))
+            good = counts.loc['good'] if 'good' in counts.index else 0
+            bad = counts.loc['bad'] if 'bad' in counts.index else 0
+            unlabeled = counts.loc[np.nan] if np.nan in counts.index else 0
+            segments.append((low, high, good, bad, unlabeled))
 
         distributions[param] = segments
 
