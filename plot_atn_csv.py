@@ -21,7 +21,7 @@ from nodeconfig_generator import parseNodeConfig
 
 speciesData = None
 
-def plotCsv(filename, scoreFunction):
+def plotCsv(filename, scoreFunction, showLegend=False, figsize=None):
     global speciesData
     if speciesData is None:
         speciesData = getSpeciesData()
@@ -51,16 +51,21 @@ def plotCsv(filename, scoreFunction):
 
     f.close()
 
-    fig, ax1 = plt.subplots(figsize=(14, 8))
+    if figsize is not None:
+        fig, ax1 = plt.subplots(figsize=figsize)
+    else:
+        fig, ax1 = plt.subplots()
     ax1.set_xlabel("timestep")
     ax1.set_ylabel("biomass")
+
     legend = []
     for nodeConfigSection in nodeConfigSplit:
         match = re.match(r'\[(\d+)\]', nodeConfigSection)
         nodeId = int(match.group(1))
         plt.plot(data[nodeId])
         legend.append(speciesData[nodeId]['name'] + ' ' + nodeConfigSection)
-    ax1.legend(legend)
+    if showLegend:
+        ax1.legend(legend)
 
     scores = scoreFunction(speciesData, nodeConfig, data)
     ax2 = ax1.twinx()
