@@ -11,6 +11,7 @@ calculated from the biomass data.
 
 import sys
 import os.path
+import gzip
 import csv
 from math import log2
 
@@ -86,7 +87,8 @@ def getSimulationData(filename):
     nodeConfigAttributes = None
     biomassData = {}
 
-    with open(filename, 'r') as f:
+    with (gzip.open(filename, 'rt') if filename.endswith('gz')
+            else open(filename, 'r')) as f:
         reader = csv.reader(f)
         reader.__next__()  # Skip the header row
         for row in reader:

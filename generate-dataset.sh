@@ -22,7 +22,9 @@ python nodeconfig_generator.py $SET > $NODECONFIG_FILE
 bash ATNEngineBatchRunner.sh $TIMESTEPS $NODECONFIG_FILE
 mkdir $SETDIR/biomass-data
 mv $LOGDIR/*.csv $SETDIR/biomass-data/
+echo "Compressing data..."
+gzip $SETDIR/biomass-data/*.csv
 echo "Creating feature file..."
-python create_feature_file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv
+python create_feature_file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv.gz
 echo "Assigning labels..."
 python assign_labels.py features.set$SET.csv features.set$SET.labelled.csv

@@ -11,6 +11,7 @@ import sys
 import csv
 import re
 import json
+import gzip
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,7 +27,10 @@ def plotCsv(filename, scoreFunction, showLegend=False, figsize=None):
     if speciesData is None:
         speciesData = getSpeciesData()
     
-    f = open(filename)
+    if filename.endswith('.gz'):
+        f = gzip.open(filename, 'rt')
+    else:
+        f = open(filename)
     reader = csv.reader(f)
 
     reader.__next__() # skip header row
