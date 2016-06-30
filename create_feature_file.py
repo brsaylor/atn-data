@@ -285,50 +285,56 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     #
 
     # Average of original environment score formula
-    out['avgEcosystemScore'] = getAvgEcosystemScore(
-            speciesData, nodeConfig, biomassData)
+    #out['avgEcosystemScore'] = getAvgEcosystemScore(
+    #        speciesData, nodeConfig, biomassData)
 
     t = np.arange(numTimesteps)
 
     # Slope of linear regression of shannonIndexBiomassProduct
-    health = shannonIndexBiomassProduct(
-            speciesData, nodeConfig, biomassData)
-    slope, intercept, r_value, p_value, std_err = stats.linregress(
-            t, health)
-    out['shannonBiomassSlope'] = slope
+    #health = shannonIndexBiomassProduct(
+    #        speciesData, nodeConfig, biomassData)
+    #slope, intercept, r_value, p_value, std_err = stats.linregress(
+    #        t, health)
+    #out['shannonBiomassSlope'] = slope
 
     # Slope of linear regression of shannonIndexBiomassProduct
-    health = shannonIndexBiomassProductNorm(
-            speciesData, nodeConfig, biomassData)
-    slope, intercept, r_value, p_value, std_err = stats.linregress(
-            t, health)
-    out['shannonBiomassNormSlope'] = slope
+    #health = shannonIndexBiomassProductNorm(
+    #        speciesData, nodeConfig, biomassData)
+    #slope, intercept, r_value, p_value, std_err = stats.linregress(
+    #        t, health)
+    #out['shannonBiomassNormSlope'] = slope
 
     # Slope of linear regression on local peaks in net production
-    netProd = netProduction(
-            speciesData, nodeConfig, biomassData)
+    #netProd = netProduction(
+    #        speciesData, nodeConfig, biomassData)
     # Without smoothing, there are many tiny local peaks
-    smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
-    maxIndices, = signal.argrelmax(smoothedNetProd)
-    maxValues = np.take(netProd, maxIndices)
-    try:
-        out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
-    except ValueError:
-        print("Warning: error calculating peak net production slope")
-        out['peakNetProductionSlope'] = ''
+    #smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
+    #maxIndices, = signal.argrelmax(smoothedNetProd)
+    #maxValues = np.take(netProd, maxIndices)
+    #try:
+    #    out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
+    #except ValueError:
+    #    print("Warning: error calculating peak net production slope")
+    #    out['peakNetProductionSlope'] = ''
 
 
     # Slope of linear regression on environment score
     scores = environmentScore(speciesData, nodeConfig, biomassData)
-    out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
+    #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
-    out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
+    #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
     # Slope of linear regression on environment score starting at a later
     # time step, allowing for a settling-down period
-    startTime=200
-    out['environmentScoreSlope' + str(startTime)] = stats.linregress(
-            t[startTime:], scores[startTime:])[0]
+    startTime = 200
+    meanPeriod = 500
+    for endTime in (500, 1000, 5000):
+        out['environmentScoreSlope_{}_{}'.format(startTime, endTime)] = \
+                stats.linregress(t[startTime:endTime],
+                        scores[startTime:endTime])[0]
+        meanStartTime = endTime - meanPeriod
+        out['environmentScoreMean_{}_{}'.format(meanStartTime, endTime)] = \
+                scores[meanStartTime:endTime].mean()
 
     out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassDataFrame)
     out['maxBiomass'] = biomassDataFrame.max().max()

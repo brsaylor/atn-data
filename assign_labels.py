@@ -19,13 +19,11 @@ def remove_ugly_instances(df):
         ugly, total, 100 * (ugly / total)))
     return df2
 
-def assign_labels(df):
-    col = 'environmentScoreSlope200' 
+def assign_labels(df, col):
     q1 = df[col].quantile(0.25)
     q2 = df[col].quantile(0.75)
-    print('lower quantile = {}, upper quantile = {}'.format(q1, q2))
-    df.loc[df[col] <= q1, 'label'] = 'bad'
-    df.loc[df[col] >= q2, 'label'] = 'good'
+    df.loc[df[col] <= q1, 'label_' + col] = 'bad'
+    df.loc[df[col] >= q2, 'label_' + col] = 'good'
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -50,7 +48,9 @@ if __name__ == '__main__':
     df = remove_ugly_instances(df)
 
     # Assign labels
-    assign_labels(df)
+    for col in df.columns:
+        if col.startswith('environmentScore'):
+            assign_labels(df, col)
     
     # Save the result
     df.to_csv(outfilename, index=False)

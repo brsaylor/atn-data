@@ -109,7 +109,7 @@ def generateNodeConfig(nodes):
         paramConfig = ''
         for param in ('K', 'R', 'X'):
             if param in node:
-                paramConfig += '{}={:.6},'.format(param, node[param])
+                paramConfig += '{}={:.6},'.format(param, float(node[param]))
                 paramCount += 1
 
         # The final 0 is for the number of link parameters, which is always 0
@@ -819,6 +819,30 @@ def generateSet66():
             )
     print(generateNodeConfig(origNodes))
 generatorFunctions[66] = generateSet66
+
+def generateSet67():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [39, 80, 31, 72, 1003]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[67] = generateSet67
+
+def generateSet68():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [49, 4, 18, 50, 36, 9, 85, 14, 8, 1002]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[68] = generateSet68
+
+def generateSet69():
+    templateNodes = makeBaseConfigFromSpeciesList(
+            [3, 49, 41, 86, 47, 61, 83, 33, 1004, 1005]
+            )
+    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
+            50, 150, 1000)
+generatorFunctions[69] = generateSet69
 
 def printUsageAndExit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
