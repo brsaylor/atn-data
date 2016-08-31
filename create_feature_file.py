@@ -255,6 +255,9 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     surviving1000 = numSpecies
     extinctionTimesteps = []
 
+    # Store sd(log N) amplitudes for all species
+    amplitudes_sdLogN = []
+
     for nodeId, biomassSeries in biomassData.items():
         numTimesteps = len(biomassSeries)
         cumulativeBiomass = 0
@@ -278,6 +281,15 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
                 / float(numTimesteps))
         out['avgBiomass2_' + str(nodeId)] = (cumulativeBiomass2
                 / float(numTimesteps))
+
+        # Amplitude measured as SD(log N) (Kendall et al. 1998)
+        amp = np.std(np.log10(biomassDataFrame[nodeId] + 1))
+        amplitudes_sdLogN.append(amp)
+        out['amplitude_sdLogN_' + str(nodeId)] = amp
+
+    out['amplitude_sdLogN_min'] = min(amplitudes_sdLogN)
+    out['amplitude_sdLogN_mean'] = sum(amplitudes_sdLogN) / len(amplitudes_sdLogN)
+    out['amplitude_sdLogN_max'] = max(amplitudes_sdLogN)
 
     out['surviving20'] = surviving20
     out['surviving1000'] = surviving1000
