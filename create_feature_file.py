@@ -340,9 +340,8 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
 
     # Slope of linear regression on environment score starting at a later
     # time step, allowing for a settling-down period
-    startTime = 200
     meanPeriod = 500
-    for endTime in (500, 1000, 5000):
+    for startTime, endTime in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
         out['environmentScoreSlope_{}_{}'.format(startTime, endTime)] = \
                 stats.linregress(t[startTime:endTime],
                         scores[startTime:endTime])[0]
