@@ -54,13 +54,17 @@ def nodeConfigToParams(nodeConfig):
             params[key + str(node['nodeId'])] = value
     return params
 
-def getSpeciesData(filename='species-data.csv'):
+def getSpeciesData(filename=None):
     """
     Given the filename of the CSV containing species-level data (for all
     species, rows unique by nodeId),
     return a dict whose keys are node IDs and keys are dicts containing the data
     for that species.
     """
+
+    if filename is None:
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                'species-data.csv')
 
     data = {}
     with open(filename, 'r') as f:

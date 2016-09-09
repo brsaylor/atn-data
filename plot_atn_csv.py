@@ -8,21 +8,25 @@ Plot a CSV output by ATNEngine
 """
 
 import sys
+import os
 import csv
 import re
 import json
 import gzip
+import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats, signal
+import pandas as pd
 
-from create_feature_file import getSpeciesData
+from create_feature_file import getSpeciesData, environmentScore
 from nodeconfig_generator import parseNodeConfig
 
 speciesData = None
 
-def plotCsv(filename, scoreFunction, showLegend=False, figsize=None):
+def plotCsv(filename, scoreFunction, showLegend=False, figsize=None,
+        outputFile=None):
     global speciesData
     if speciesData is None:
         speciesData = getSpeciesData()
@@ -69,7 +73,7 @@ def plotCsv(filename, scoreFunction, showLegend=False, figsize=None):
         plt.plot(data[nodeId])
         legend.append(speciesData[nodeId]['name'] + ' ' + nodeConfigSection)
     if showLegend:
-        ax1.legend(legend)
+        lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
     scores = scoreFunction(speciesData, nodeConfig, data)
     ax2 = ax1.twinx()
@@ -114,19 +118,31 @@ def plotCsv(filename, scoreFunction, showLegend=False, figsize=None):
     #ax2.plot(regionCenters, regionAverages, 'ro')
 
     # Linear regression on local maxima
-    mSlope, mIntercept, r_value, p_value, std_err = stats.linregress(
-            maxIndices, maxValues)
+    #mSlope, mIntercept, r_value, p_value, std_err = stats.linregress(
+    #        maxIndices, maxValues)
     #ax2.plot([0, tn], [mIntercept, mSlope * tn + mIntercept], 'g:')
 
     # Log-linear regression on local maxima
-    mLogSlope, mLogIntercept, r_value, p_value, std_err = stats.linregress(
-            maxIndices, np.log(maxValues))
+    #mLogSlope, mLogIntercept, r_value, p_value, std_err = stats.linregress(
+    #        maxIndices, np.log(maxValues))
     t = np.arange(len(scores))
     #ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
 
     plt.title(filename)
-    plt.show()
 
+    if outputFile:
+        dpi=200
+        if showLegend:
+            plt.savefig(outputFile, bbox_extra_artists=(lgd,),
+                    bbox_inches='tight', dpi=dpi)
+        else:
+            plt.savefig(outputFile, dpi=dpi)
+    else:
+        plt.show()
+
+    return
+
+    # FIXME: need a better way to retrieve/display this info
     print("TREND MEASURES:")
     print("sum of derivative: {}".format(sumDerivative(scores)))
     print("linear regression: slope = {}, intercept = {}".format(
@@ -161,6 +177,40 @@ def printSpeciesData(speciesData, nodeConfig):
         dataByNodeId[nodeId] = data
     print(json.dumps(dataByNodeId, indent=4, sort_keys=True))
 
+def plot_top_bottom_n(n, biomass_dir, feature_file, ranking_col, output_dir):
+    if output_dir is None:
+        output_dir = '.'
+
+    feature_data = pd.read_csv(args.feature_file)
+
+    if ranking_col not in feature_data:
+        print("Error: {} does not have a column named {}".format(
+            feature_file, ranking_col), file=sys.stderr)
+        sys.exit(1)
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    ranked_filenames = feature_data.sort_values(ranking_col,
+            ascending=False)['filename']
+
+    def save_plot(rank, filename):
+        """
+        Plot the given file and save to an image file.
+        rank: 1-based rank in terms of ranking_col
+        filename: basename of gzipped biomass CSV
+        """
+        input_file = os.path.join(biomass_dir, filename)
+        output_file = os.path.join(output_dir, 'rank_{}_{}'.format(
+            rank, filename.replace('.csv.gz', '.png')))
+        plotCsv(input_file, environmentScore, showLegend=True, outputFile=output_file)
+
+    for rank, filename in enumerate(ranked_filenames[:n], start=1):
+        save_plot(rank, filename)
+
+    for rank, filename in enumerate(ranked_filenames[-n:],
+            start=len(ranked_filenames)-n+1):
+        save_plot(rank, filename)
+
 # FIXME: Refactoring needed
 def sumDerivative(series):
     # Note: sum of finite-difference derivative is last value minus first
@@ -168,6 +218,42 @@ def sumDerivative(series):
     return series[-1] - series[0]
 
 if __name__ == '__main__':
-    filenames = sys.argv[1:]
-    for filename in filenames:
-        plotCsv(filename)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--top-bottom-n', type=int,
+            help="Plot the top and bottom N simulations")
+    parser.add_argument('--biomass-dir',
+            help="Path to biomass CSV files")
+    parser.add_argument('--feature-file',
+            help="Path to feature file")
+    parser.add_argument('--ranking-col',
+            help="Feature file column to use for ranking simulations")
+    parser.add_argument('--output-dir',
+            help="Output directory for PNG images")
+    args = parser.parse_args()
+
+    if args.top_bottom_n:
+        if not os.path.isdir(args.biomass_dir or ''):
+            print("Error: {} is not a directory".format(args.biomass_dir),
+                    file=sys.stderr)
+            sys.exit(1)
+        if not os.path.isfile(args.feature_file or ''):
+            print("Error: {} not found".format(args.feature_file),
+                    file=sys.stderr)
+            sys.exit(1)
+
+        # FIXME: Better way to have conditionally required args with argparse?
+        if args.ranking_col is None:
+            print("Error: --ranking_col is required", file=sys.stderr)
+            sys.exit(1)
+
+        plot_top_bottom_n(args.top_bottom_n, args.biomass_dir,
+                args.feature_file, args.ranking_col,
+                os.path.expanduser(args.output_dir))
+
+    else:
+        # Default operation
+
+        filenames = sys.argv[1:]
+        for filename in filenames:
+            plotCsv(filename)
