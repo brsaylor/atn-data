@@ -274,7 +274,7 @@ def get_distributions(tree, instances):
             good = counts.loc['good'] if 'good' in counts.index else 0
             bad = counts.loc['bad'] if 'bad' in counts.index else 0
             unlabeled = counts.loc[np.nan] if np.nan in counts.index else 0
-            segments.append((low, high, good, bad, unlabeled))
+            segments.append((low, high, int(good), int(bad), int(unlabeled)))
 
         distributions[param] = segments
 
@@ -306,7 +306,11 @@ def get_range_weights(distributions):
     for param, in_segments in distributions.items():
         out_segments = []
         for low, high, good, bad, unlabeled in in_segments:
-            weight = (good - bad) / (good + bad + unlabeled)
+            if good + bad + unlabeled == 0:
+                print("Warning: no instances in range; setting weight=0 [FIXME]", file=sys.stderr)
+                weight = 0.0
+            else:
+                weight = (good - bad) / (good + bad + unlabeled)
             out_segments.append((low, high, weight))
         range_weights[param] = out_segments
 
