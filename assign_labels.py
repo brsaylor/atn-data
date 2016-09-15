@@ -6,7 +6,7 @@ import pandas as pd
 
 # Used to identify instances of misbehaving ATNEngine
 MAX_REASONABLE_BIOMASS = 100000
-MIN_REASONABLE_NONZERO_TIMESTEP = 500
+MIN_REASONABLE_NONZERO_TIMESTEP = 1000
 
 def remove_ugly_instances(df):
     """ Return a new DataFrame with "ugly" instances removed (misbehaving
