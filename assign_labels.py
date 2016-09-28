@@ -6,12 +6,17 @@ import pandas as pd
 
 # Used to identify instances of misbehaving ATNEngine
 MAX_REASONABLE_BIOMASS = 100000
-MIN_REASONABLE_NONZERO_TIMESTEP = 1000
+MAX_REASONABLE_LAST_NONZERO_BIOMASS = 100
 
 def remove_ugly_instances(df):
     """ Return a new DataFrame with "ugly" instances removed (misbehaving
     ATNEngine causing biomass to explode and/or crash to zero) """
-    df2 = df[(df.lastNonzeroTimestep >= MIN_REASONABLE_NONZERO_TIMESTEP) &
+    df2 = df[(
+                # Final timestep is nonzero,
+                # or final nonzero value is small enough that it wasn't a crash
+                (df.lastNonzeroTimestep == df.timesteps - 1) |
+                (df.lastNonzeroBiomass <= MAX_REASONABLE_LAST_NONZERO_BIOMASS)
+            ) &
             (df.maxBiomass <= MAX_REASONABLE_BIOMASS)]
     total = len(df)
     ugly = total - len(df2)

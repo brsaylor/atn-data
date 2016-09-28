@@ -353,7 +353,11 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
         out['environmentScoreMean_{}_{}'.format(meanStartTime, endTime)] = \
                 scores[meanStartTime:endTime].mean()
 
-    out['lastNonzeroTimestep'] = lastNonzeroTimestep(biomassDataFrame)
+    lastNonzeroT = lastNonzeroTimestep(biomassDataFrame)
+    out['timesteps'] = numTimesteps
+    out['lastNonzeroTimestep'] = lastNonzeroT
+    out['lastNonzeroBiomass'] = biomassDataFrame.loc[lastNonzeroT].sum()
+
     out['maxBiomass'] = biomassDataFrame.max().max()
     out['minBiomass'] = biomassDataFrame.min().min()
 
