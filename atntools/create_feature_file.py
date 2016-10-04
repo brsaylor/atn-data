@@ -19,11 +19,11 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from atntools.nodeconfig_generator import parseNodeConfig
+from atntools.nodeconfig_generator import parse_node_config
 
 NO_EXTINCTION = 99999999
 
-def getSimNumber(filename):
+def get_sim_number(filename):
     """
     Based on a filename such as
     ATN.csv
@@ -40,21 +40,21 @@ def getSimNumber(filename):
     else:
         return int(split1[1].split('.')[0])
 
-def nodeConfigToParams(nodeConfig):
+def node_config_to_params(node_config):
     """
     Given a node config as returned by parseNodeConfig(), return a dictionary
     with one key-value pair for each node-parameter pair, where the keys are
     named with the parameter name with the node ID appended.
     """
     params = {}
-    for node in nodeConfig:
+    for node in node_config:
         for key, value in node.items():
             if key == 'nodeId':
                 continue
             params[key + str(node['nodeId'])] = value
     return params
 
-def getSpeciesData(filename=None):
+def get_species_data(filename=None):
     """
     Given the filename of the CSV containing species-level data (for all
     species, rows unique by nodeId),
@@ -76,20 +76,20 @@ def getSpeciesData(filename=None):
             }
     return data
 
-def getSimulationData(filename):
+def get_simulation_data(filename):
     """
     Given a filename of an ATN CSV file,
-    return a tuple (nodeConfig, nodeConfigAttributes, biomassData).
+    return a tuple (node_config, node_config_attributes, biomass_data).
 
-    nodeConfigAttributes is a dictionary with the node config parameters (as
+    node_config_attributes is a dictionary with the node config parameters (as
     returned by nodeConfigToParams()).
 
-    biomassData is a dictionary mapping node ID to a list of biomass values over
+    biomass_data is a dictionary mapping node ID to a list of biomass values over
     time.
     """
 
-    nodeConfigAttributes = None
-    biomassData = {}
+    node_config_attributes = None
+    biomass_data = {}
 
     with (gzip.open(filename, 'rt') if filename.endswith('gz')
             else open(filename, 'r')) as f:
@@ -100,15 +100,15 @@ def getSimulationData(filename):
                 # Blank line: end of biomass data
                 break
             nodeId = int(row[0].split('.')[1])
-            biomassData[nodeId] = [int(x) for x in row[1:]]
+            biomass_data[nodeId] = [int(x) for x in row[1:]]
 
         # The next row should have the node config
         row = reader.__next__()
-        nodeConfigStr = row[0].split(': ')[1]
-        nodeConfig = parseNodeConfig(nodeConfigStr)
-        nodeConfigAttributes = nodeConfigToParams(nodeConfig)
+        node_config_str = row[0].split(': ')[1]
+        node_config = parse_node_config(node_config_str)
+        node_config_attributes = node_config_to_params(node_config)
 
-    return (nodeConfig, nodeConfigAttributes, biomassData)
+    return (node_config, node_config_attributes, biomass_data)
 
 def rmse(df1, df2):
     """ Calculate the root mean squared error between the two DataFrames and
@@ -116,120 +116,120 @@ def rmse(df1, df2):
     for an attempt in the Convergence game. """
     return np.sqrt(((df1 - df2) ** 2).mean())
 
-def environmentScore(speciesData, nodeConfig, biomassData):
+def environment_score(species_data, node_config, biomass_data):
     """
     Compute the Environment Score for all timesteps for the given data and
     return the score time series.  The calculations are taken from
     model.Ecosystem.updateEcosystemScore() in WoB_Server.
     """
 
-    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
-    scores = np.empty(numTimesteps)
+    num_timesteps = len(biomass_data[node_config[0]['nodeId']])
+    scores = np.empty(num_timesteps)
 
-    for timestep in range(numTimesteps):
+    for timestep in range(num_timesteps):
 
         # Calculate the Ecosystem Score for this timestep
         biomass = 0
-        numSpecies = 0
-        for node in nodeConfig:
-            nodeId = node['nodeId']
-            perUnitBiomass = node['perUnitBiomass']
+        num_species = 0
+        for node in node_config:
+            node_id = node['nodeId']
+            per_unit_biomass = node['perUnitBiomass']
 
             # Sometimes biomass can go slightly negative.
             # Clip to 0 to avoid complex numbers in score calculation.
-            totalBiomass = max(0, biomassData[nodeId][timestep])
+            total_biomass = max(0, biomass_data[node_id][timestep])
 
-            if totalBiomass > 0:
-                numSpecies += 1
+            if total_biomass > 0:
+                num_species += 1
 
-            biomass += perUnitBiomass * pow(totalBiomass / perUnitBiomass,
-                    speciesData[nodeId]['trophicLevel'])
+            biomass += per_unit_biomass * pow(total_biomass / per_unit_biomass,
+                                              species_data[node_id]['trophicLevel'])
         if biomass > 0:
             biomass = round(log2(biomass)) * 5
-        scores[timestep] = int(round(pow(biomass, 2) + pow(numSpecies, 2)))
+        scores[timestep] = int(round(pow(biomass, 2) + pow(num_species, 2)))
 
     return scores
 
-def getAvgEcosystemScore(speciesData, nodeConfig, biomassData):
-    return environmentScore(speciesData, nodeConfig, biomassData).mean()
+def get_avg_ecosystem_score(species_data, node_config, biomass_data):
+    return environment_score(species_data, node_config, biomass_data).mean()
 
-def totalBiomass(speciesData, nodeConfig, biomassData):
+def total_biomass(speciesData, node_config, biomass_data):
     """
     Return a time series of the total biomass of all species
     """
-    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
-    totalBiomass = np.empty(numTimesteps)
-    for timestep in range(numTimesteps):
-        totalBiomass[timestep] = sum(
-                [biomass[timestep] for biomass in biomassData.values()])
-    return totalBiomass
+    num_timesteps = len(biomass_data[node_config[0]['nodeId']])
+    total_biomass = np.empty(num_timesteps)
+    for timestep in range(num_timesteps):
+        total_biomass[timestep] = sum(
+                [biomass[timestep] for biomass in biomass_data.values()])
+    return total_biomass
 
-def netProduction(speciesData, nodeConfig, biomassData):
+def net_production(species_data, node_config, biomass_data):
     """
     Time-series measure of ecosystem health
     computed as net production (change/derivative in total biomass)
     """
-    B = totalBiomass(speciesData, nodeConfig, biomassData)
-    netProd = B - np.roll(B, 1)
+    B = total_biomass(species_data, node_config, biomass_data)
+    net_prod = B - np.roll(B, 1)
     
     # Can't really say that net production was equal to total biomass at t0
-    netProd[0] = netProd[-1] = 0
+    net_prod[0] = net_prod[-1] = 0
     
-    return netProd
+    return net_prod
 
-def shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData):
+def shannon_index_biomass_product(species_data, node_config, biomass_data):
     """
     Time-series measure of ecosystem health
     computed as the product of the Shannon index (based on biomass)
     and the total biomass.
     """
-    numTimesteps = len(biomassData[nodeConfig[0]['nodeId']])
-    scores = np.zeros(numTimesteps)
+    num_timesteps = len(biomass_data[node_config[0]['nodeId']])
+    scores = np.zeros(num_timesteps)
     
-    for timestep in range(numTimesteps):
-        speciesBiomass = np.empty(len(nodeConfig))
-        for i, node in enumerate(nodeConfig):
-            speciesBiomass[i] = max(0, biomassData[node['nodeId']][timestep])
-        totalBiomass = speciesBiomass.sum()
-        for i, node in enumerate(nodeConfig):
-            if speciesBiomass[i] <= 0:
+    for timestep in range(num_timesteps):
+        species_biomass = np.empty(len(node_config))
+        for i, node in enumerate(node_config):
+            species_biomass[i] = max(0, biomass_data[node['nodeId']][timestep])
+        total_biomass = species_biomass.sum()
+        for i, node in enumerate(node_config):
+            if species_biomass[i] <= 0:
                 continue
-            proportion = speciesBiomass[i] / totalBiomass
+            proportion = species_biomass[i] / total_biomass
             scores[timestep] -= proportion * log2(proportion)
-        scores[timestep] *= totalBiomass
+        scores[timestep] *= total_biomass
     
     return scores
 
-def shannonIndexBiomassProductNorm(speciesData, nodeConfig, biomassData):
+def shannon_index_biomass_product_norm(species_data, node_config, biomass_data):
     """
     A version of shannonIndexBiomassProduct normalized by initial total biomass
     and maximum possible Shannon index for the number of species,
     enabling more meaningful comparison across ecosystems of different sizes.
     """
 
-    totalInitialBiomass = sum(
-            [biomass[0] for biomass in biomassData.values()])
-    perfectShannon = 0
-    for i, node in enumerate(nodeConfig):
-        proportion = 1 / len(nodeConfig)
-        perfectShannon -= proportion * log2(proportion)
-    return (shannonIndexBiomassProduct(speciesData, nodeConfig, biomassData)
-            / (totalInitialBiomass * perfectShannon))
+    total_initial_biomass = sum(
+            [biomass[0] for biomass in biomass_data.values()])
+    perfect_shannon = 0
+    for i, node in enumerate(node_config):
+        proportion = 1 / len(node_config)
+        perfect_shannon -= proportion * log2(proportion)
+    return (shannon_index_biomass_product(species_data, node_config, biomass_data)
+            / (total_initial_biomass * perfect_shannon))
 
-def lastNonzeroTimestep(biomassDataFrame):
+def last_nonzero_timestep(biomass_data_frame):
     """
     Returns the last timestep at which there is nonzero biomass.
     """
-    df = biomassDataFrame
+    df = biomass_data_frame
     nonzero = pd.Series(index=df.index, data=False)
     for col in df:
         nonzero |= (df[col] != 0)
     return nonzero.sort_index(ascending=False).argmax()
 
-def getOutputAttributes(speciesData, nodeConfig, biomassData):
+def get_output_attributes(speciesData, nodeConfig, biomass_data):
     """
     Given speciesData as returned by getSpeciesData,
-    nodeConfig and biomassData as returned by getSimulationData,
+    nodeConfig and biomassData as returned by get_simulation_data,
     return a dictionary of attributes whose keys are
     "<attributeName>_<nodeId>" for species-specific attributes and
     "<attributeName>"          for non-species-specific attributes
@@ -249,51 +249,51 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
 
     # Convert biomass data to a pandas DataFrame
     # FIXME: Should use pandas throughout
-    biomassDataFrame = pd.DataFrame(biomassData)
+    biomass_data_frame = pd.DataFrame(biomass_data)
 
     # Output attributes
     out = {}
 
-    numSpecies = len(biomassData)
-    surviving20 = numSpecies
-    surviving1000 = numSpecies
-    extinctionTimesteps = []
+    num_species = len(biomass_data)
+    surviving20 = num_species
+    surviving1000 = num_species
+    extinction_timesteps = []
 
     # Store sd(log N) amplitudes for all species
-    amplitudes_sdLogN = []
+    amplitudes_sd_log_n = []
 
-    for nodeId, biomassSeries in biomassData.items():
-        numTimesteps = len(biomassSeries)
-        cumulativeBiomass = 0
-        cumulativeBiomass2 = 0
+    for node_id, biomass_series in biomass_data.items():
+        num_timesteps = len(biomass_series)
+        cumulative_biomass = 0
+        cumulative_biomass2 = 0
         extinct = False
-        out['extinction_' + str(nodeId)] = NO_EXTINCTION
-        for timestep, biomass in enumerate(biomassSeries):
+        out['extinction_' + str(node_id)] = NO_EXTINCTION
+        for timestep, biomass in enumerate(biomass_series):
             if not extinct:
                 if biomass == 0:
-                    out['extinction_' + str(nodeId)] = timestep
-                    extinctionTimesteps.append(timestep)
+                    out['extinction_' + str(node_id)] = timestep
+                    extinction_timesteps.append(timestep)
                     extinct = True
                     if timestep <= 20:
                         surviving20 -= 1
                     if timestep <= 1000:
                         surviving1000 -= 1
                 else:
-                    cumulativeBiomass += biomass
-            cumulativeBiomass2 += biomass
-        out['avgBiomass_' + str(nodeId)] = (cumulativeBiomass
-                / float(numTimesteps))
-        out['avgBiomass2_' + str(nodeId)] = (cumulativeBiomass2
-                / float(numTimesteps))
+                    cumulative_biomass += biomass
+            cumulative_biomass2 += biomass
+        out['avgBiomass_' + str(node_id)] = (cumulative_biomass
+                / float(num_timesteps))
+        out['avgBiomass2_' + str(node_id)] = (cumulative_biomass2
+                / float(num_timesteps))
 
         # Amplitude measured as SD(log N) (Kendall et al. 1998)
-        amp = np.std(np.log10(biomassDataFrame[nodeId] + 1))
-        amplitudes_sdLogN.append(amp)
-        out['amplitude_sdLogN_' + str(nodeId)] = amp
+        amp = np.std(np.log10(biomass_data_frame[node_id] + 1))
+        amplitudes_sd_log_n.append(amp)
+        out['amplitude_sdLogN_' + str(node_id)] = amp
 
-    out['amplitude_sdLogN_min'] = min(amplitudes_sdLogN)
-    out['amplitude_sdLogN_mean'] = sum(amplitudes_sdLogN) / len(amplitudes_sdLogN)
-    out['amplitude_sdLogN_max'] = max(amplitudes_sdLogN)
+    out['amplitude_sdLogN_min'] = min(amplitudes_sd_log_n)
+    out['amplitude_sdLogN_mean'] = sum(amplitudes_sd_log_n) / len(amplitudes_sd_log_n)
+    out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
 
     out['surviving20'] = surviving20
     out['surviving1000'] = surviving1000
@@ -306,7 +306,7 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
     #out['avgEcosystemScore'] = getAvgEcosystemScore(
     #        speciesData, nodeConfig, biomassData)
 
-    t = np.arange(numTimesteps)
+    t = np.arange(num_timesteps)
 
     # Slope of linear regression of shannonIndexBiomassProduct
     #health = shannonIndexBiomassProduct(
@@ -337,29 +337,29 @@ def getOutputAttributes(speciesData, nodeConfig, biomassData):
 
 
     # Slope of linear regression on environment score
-    scores = environmentScore(speciesData, nodeConfig, biomassData)
+    scores = environment_score(speciesData, nodeConfig, biomass_data)
     #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
     #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
     # Slope of linear regression on environment score starting at a later
     # time step, allowing for a settling-down period
-    meanPeriod = 500
-    for startTime, endTime in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
-        out['environmentScoreSlope_{}_{}'.format(startTime, endTime)] = \
-                stats.linregress(t[startTime:endTime],
-                        scores[startTime:endTime])[0]
-        meanStartTime = endTime - meanPeriod
-        out['environmentScoreMean_{}_{}'.format(meanStartTime, endTime)] = \
-                scores[meanStartTime:endTime].mean()
+    mean_period = 500
+    for start_time, end_time in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
+        out['environmentScoreSlope_{}_{}'.format(start_time, end_time)] = \
+                stats.linregress(t[start_time:end_time],
+                        scores[start_time:end_time])[0]
+        mean_start_time = end_time - mean_period
+        out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
+                scores[mean_start_time:end_time].mean()
 
-    lastNonzeroT = lastNonzeroTimestep(biomassDataFrame)
-    out['timesteps'] = numTimesteps
-    out['lastNonzeroTimestep'] = lastNonzeroT
-    out['lastNonzeroBiomass'] = biomassDataFrame.loc[lastNonzeroT].sum()
+    last_nonzero_t = last_nonzero_timestep(biomass_data_frame)
+    out['timesteps'] = num_timesteps
+    out['lastNonzeroTimestep'] = last_nonzero_t
+    out['lastNonzeroBiomass'] = biomass_data_frame.loc[last_nonzero_t].sum()
 
-    out['maxBiomass'] = biomassDataFrame.max().max()
-    out['minBiomass'] = biomassDataFrame.min().min()
+    out['maxBiomass'] = biomass_data_frame.max().max()
+    out['minBiomass'] = biomass_data_frame.min().min()
 
     return out
 
@@ -368,40 +368,40 @@ if __name__ == '__main__':
         print("Usage: create_feature_file.py <set#> <outfile.csv> ATN.csv [ATN_1.csv ...]")
         sys.exit(1)
 
-    setNumber = int(sys.argv[1])
+    set_number = int(sys.argv[1])
     outfilename = sys.argv[2]
     infilenames = sys.argv[3:]
 
-    speciesData = getSpeciesData()
+    species_data = get_species_data()
 
     outfile = None
     writer = None
 
-    for simNumber, infilename in sorted(
-            [(getSimNumber(f), f) for f in infilenames]):
+    for sim_number, infilename in sorted(
+            [(get_sim_number(f), f) for f in infilenames]):
 
         # Create the output row from the simulation identifiers, input and
         # output attributes
         outrow = {}
         identifiers = {
                 'filename': os.path.basename(infilename),
-                'setNumber': setNumber,
-                'simNumber': simNumber,
+                'setNumber': set_number,
+                'simNumber': sim_number,
                 }
         outrow.update(identifiers)
-        nodeConfig, inputAttributes, biomassData = getSimulationData(infilename)
-        outrow.update(inputAttributes)
-        outputAttributes = getOutputAttributes(
-                speciesData, nodeConfig, biomassData)
-        outrow.update(outputAttributes)
+        node_config, input_attributes, biomass_data = get_simulation_data(infilename)
+        outrow.update(input_attributes)
+        output_attributes = get_output_attributes(
+                species_data, node_config, biomass_data)
+        outrow.update(output_attributes)
 
         if writer is None:
             # Set up the CSV writer
 
             fieldnames = (
-                    list(identifiers.keys()) +
-                    sorted(inputAttributes.keys()) +
-                    sorted(outputAttributes.keys()))
+                list(identifiers.keys()) +
+                sorted(input_attributes.keys()) +
+                sorted(output_attributes.keys()))
             outfile = open(outfilename, 'w')
             writer = csv.DictWriter(outfile, fieldnames)
             writer.writeheader()

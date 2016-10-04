@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     # Assign labels
     for col in df.columns:
-        if col.startswith('environmentScore'):
+        if col.startswith('environment_score'):
             assign_labels(df, col)
     
     # Save the result

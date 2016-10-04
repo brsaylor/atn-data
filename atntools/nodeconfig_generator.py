@@ -14,7 +14,7 @@ from atntools import util
 from atntools.weka_em import parse_weka_em_output
 
 # Functions that generate and print out node configs, keyed by set number.
-generatorFunctions = {}
+generator_functions = {}
 
 # Parameter sliders in Convergence game are bounded by these ranges
 validParamRanges = {
@@ -55,7 +55,7 @@ validParamRanges = {
 # 70    African Clawless Otter
 
 # All nodeconfigs for target ecosystems from Convergence game
-convergenceNodeConfigs = [
+convergence_node_configs = [
     '5,[5],2000.0,1.0,1,K=10000.000,0,[14],1751.0,20.0,1,X=0.201,0,[31],1415.0,0.0075,1,X=1.000,0,[42],240.0,0.205,1,X=0.637,0,[70],2494.0,13.0,1,X=0.155,0',
 
     '6,[5],2000,1.000,1,K=8000.000,0,[14],1051,20.000,1,X=0.200,0,[31],29,0.008,1,X=0.950,0,[33],2476,0.400,1,X=0.370,0,[56],738,6.250,1,X=0.180,0,[59],674,3.350,1,X=0.220,0',
@@ -67,61 +67,61 @@ convergenceNodeConfigs = [
     '17,[1],2000,1000.000,2,K=3000.000,X=0.052,0,[2],657,528.000,1,K=3000.000,0,[3],657,528.000,1,K=3000.000,0,[4],657,528.000,1,K=3000.000,0,[5],2000,1.000,1,K=5000.000,0,[7],1015,816.000,1,K=3000.000,0,[19],211,20.000,1,X=0.100,0,[21],400,0.200,1,X=0.200,0,[26],496,0.011,1,X=0.910,0,[29],964,0.035,1,X=0.680,0,[31],700,0.008,1,X=1.000,0,[35],1000,250.000,1,X=0.070,0,[36],1322,3.500,1,X=0.010,0,[39],1178,0.085,1,X=0.540,0,[56],1281,6.250,1,X=0.090,0,[66],203,10.200,1,X=0.160,0,[80],719,41.500,1,X=0.120,0',
     ]
 
-def parseNodeConfig(nodeConfig):
+def parse_node_config(node_config):
     """
     Parse a node config string and return a list-of-dicts representation.
     """
     nodes = []
-    configList = nodeConfig.split(',')
-    numNodes = int(configList[0])
+    config_list = node_config.split(',')
+    num_nodes = int(config_list[0])
 
     pos = 1  # current position in the comma-split list
 
-    for i in range(numNodes):
+    for i in range(num_nodes):
         node = {
-                'nodeId': int(configList[pos][1:-1]),  # FIXME validate [#]
-                'initialBiomass': float(configList[pos+1]),
-                'perUnitBiomass': float(configList[pos+2]),
+                'nodeId': int(config_list[pos][1:-1]),  # FIXME validate [#]
+                'initialBiomass': float(config_list[pos+1]),
+                'perUnitBiomass': float(config_list[pos+2]),
                 }
-        numParams = int(configList[pos+3])
+        num_params = int(config_list[pos+3])
         pos += 4
-        for p in range(numParams):
-            paramName, paramValue = configList[pos].split('=')
-            node[paramName] = float(paramValue)
+        for p in range(num_params):
+            param_name, param_value = config_list[pos].split('=')
+            node[param_name] = float(param_value)
             pos += 1
         pos += 1  # FIXME assuming there are no node link parameters
         nodes.append(node)
 
     return nodes
 
-def generateNodeConfig(nodes):
+def generate_node_config(nodes):
     """
     Convert a list-of-dicts representation of a node config into a string.
     """
 
-    nodeConfig = str(len(nodes))
+    node_config = str(len(nodes))
     for node in nodes:
-        nodeConfig += (',[{nodeId}],{initialBiomass:.6},{perUnitBiomass},'
+        node_config += (',[{nodeId}],{initialBiomass:.6},{perUnitBiomass},'
                 .format(**node))
 
-        paramCount = 0
-        paramConfig = ''
+        param_count = 0
+        param_config = ''
         for param in ('K', 'R', 'X'):
             if param in node:
-                paramConfig += '{}={:.6},'.format(param, float(node[param]))
-                paramCount += 1
+                param_config += '{}={:.6},'.format(param, float(node[param]))
+                param_count += 1
 
         # The final 0 is for the number of link parameters, which is always 0
-        nodeConfig += '{},{}0'.format(paramCount, paramConfig)
+        node_config += '{},{}0'.format(param_count, param_config)
 
-    return nodeConfig
+    return node_config
 
 # Change from Convergence 5-species template: addition of R for the grass.
 # Inspection of WoB_Server code (SimJob) reveals that R defaults to 1.0.
 
-testNodeConfig = '5,[5],2000.0,1.0,2,K=10000.0,R=1.0,0,[14],1751.0,20.0,1,X=0.201,0,[31],1415.0,0.0075,1,X=1.0,0,[42],240.0,0.205,1,X=0.637,0,[70],2494.0,13.0,1,X=0.155,0'
+test_node_config = '5,[5],2000.0,1.0,2,K=10000.0,R=1.0,0,[14],1751.0,20.0,1,X=0.201,0,[31],1415.0,0.0075,1,X=1.0,0,[42],240.0,0.205,1,X=0.637,0,[70],2494.0,13.0,1,X=0.155,0'
 
-testNodes = [
+test_nodes = [
     {
         'nodeId': 5,
         'initialBiomass': 2000.0,
@@ -156,21 +156,21 @@ testNodes = [
 ]
 
 # Verify that parseNodeConfig and generateNodeConfig work correctly
-assert(parseNodeConfig(testNodeConfig) == testNodes)
-assert(generateNodeConfig(testNodes) == testNodeConfig)
+assert(parse_node_config(test_node_config) == test_nodes)
+assert(generate_node_config(test_nodes) == test_node_config)
 
-def generateSet1():
+def generate_set_1():
     """
     Vary one node at a time, one parameter at a time, based on the 5-species
     ecosystem from the Convergence game. Parameters are varied in a +/- 50%
     range in 5% increments.
     """
 
-    templateNodes = testNodes
-    nodes = deepcopy(templateNodes)
+    template_nodes = test_nodes
+    nodes = deepcopy(template_nodes)
 
     # Print unaltered nodeconfig first
-    print(generateNodeConfig(nodes))
+    print(generate_node_config(nodes))
 
     # Change one node at a time
     for i in range(len(nodes)):
@@ -184,15 +184,15 @@ def generateSet1():
                     if percent == 100:
                         continue
 
-                    nodes[i][param] = testNodes[i][param] * percent / 100
-                    print(generateNodeConfig(nodes))
-                nodes[i] = copy(testNodes[i])  # reset the node
+                    nodes[i][param] = test_nodes[i][param] * percent / 100
+                    print(generate_node_config(nodes))
+                nodes[i] = copy(test_nodes[i])  # reset the node
 
 # FIXME: Print unaltered nodeconfig first, skip in loop
-def generatePairVariations(templateNodes, param,
+def generatePairVariations(template_nodes, param,
         minPercent, maxPercent, stepPercent, startPos=0):
     """
-    For each pair of nodes in 'templateNodes' with parameter 'param', print node
+    For each pair of nodes in 'template_nodes' with parameter 'param', print node
     configs with all combinations of values for 'param' within the given
     percentage range.
 
@@ -200,7 +200,7 @@ def generatePairVariations(templateNodes, param,
     (nodes before this position are not varied).
     """
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
 
     for i in range(startPos, len(nodes) - 1):
         if param not in nodes[i]:
@@ -212,80 +212,80 @@ def generatePairVariations(templateNodes, param,
             # Now, two nodes i and j are selected.
             # Generate all combinations of values of 'param' for i and j
             for percent_i in range(minPercent, maxPercent + 1, stepPercent):
-                nodes[i][param] = templateNodes[i][param] * percent_i / 100
+                nodes[i][param] = template_nodes[i][param] * percent_i / 100
                 for percent_j in range(minPercent, maxPercent + 1, stepPercent):
-                    nodes[j][param] = templateNodes[j][param] * percent_j / 100
-                    print(generateNodeConfig(nodes))
+                    nodes[j][param] = template_nodes[j][param] * percent_j / 100
+                    print(generate_node_config(nodes))
 
-            nodes[j] = copy(templateNodes[j])  # reset node j
-        nodes[i] = copy(templateNodes[i])  # reset node i
+            nodes[j] = copy(template_nodes[j])  # reset node j
+        nodes[i] = copy(template_nodes[i])  # reset node i
 
-def generateTripleVariations(templateNodes, param,
+def generateTripleVariations(template_nodes, param,
         minPercent, maxPercent, stepPercent):
     """
     Like generatePairVariations, but with every combination of three nodes that
     have parameter 'param'.
     """
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
 
     for k in range(len(nodes) - 2):
         if param not in nodes[k]:
             continue
         for percent in range(minPercent, maxPercent + 1, stepPercent):
-            nodes[k][param] = templateNodes[k][param] + percent / 100
+            nodes[k][param] = template_nodes[k][param] + percent / 100
             generatePairVariations(nodes, param,
                     minPercent, maxPercent, stepPercent, startPos=k+1)
-        nodes[k] = copy(templateNodes[k])  # reset node k
+        nodes[k] = copy(template_nodes[k])  # reset node k
 
-def generateSet2():
+def generate_set_2():
     """
     Base config: testNodes
     For each pair of nodes with an X parameter, generate configs with all
     combinations of X values ranging between +/- 50% of the original value, in
     10% increments.
     """
-    generatePairVariations(testNodes, 'X', 50, 150, 10)
+    generatePairVariations(test_nodes, 'X', 50, 150, 10)
 
-def generateSet3():
+def generate_set_3():
     """
     Base config: testNodes
     """
-    generateTripleVariations(testNodes, 'X', 50, 150, 10)
+    generateTripleVariations(test_nodes, 'X', 50, 150, 10)
 
-def generateSet4():
+def generate_set_4():
     """
     Base config: testNodes
     Try various combinations of K and R for the grass, and for each combination,
     vary X of each other node.
     """
-    nodes = deepcopy(testNodes)
+    nodes = deepcopy(test_nodes)
     for percentK in range(50, 151, 10):
-        nodes[0]['K'] = testNodes[0]['K'] * percentK / 100
+        nodes[0]['K'] = test_nodes[0]['K'] * percentK / 100
         for percentR in range(50, 151, 10):
-            nodes[0]['R'] = testNodes[0]['R'] * percentR / 100
+            nodes[0]['R'] = test_nodes[0]['R'] * percentR / 100
             for i in range(1, len(nodes)):
                 for percentX in range(50, 151, 10):
-                    nodes[i]['X'] = testNodes[i]['X'] * percentX / 100
-                    print(generateNodeConfig(nodes))
-                nodes[i] = copy(testNodes[i])  # reset node i
+                    nodes[i]['X'] = test_nodes[i]['X'] * percentX / 100
+                    print(generate_node_config(nodes))
+                nodes[i] = copy(test_nodes[i])  # reset node i
 
 convergeEcosystem3NodeConfig = '11,[2],433,528.000,2,R=2.000,K=3000.000,0,[3],433,528.000,1,K=3000.000,0,[4],433,528.000,1,K=3000.000,0,[5],2000,1.000,1,K=4000.000,0,[7],668,816.000,1,K=3000.000,0,[49],1308,0.355,1,X=0.870,0,[55],576,0.213,1,X=0.990,0,[61],601,54.000,1,X=0.010,0,[74],725,50.000,1,X=0.100,0,[82],700,50.000,1,X=0.750,0,[83],300,103.000,1,X=0.210,0'
 
-convergeEcosystem3Nodes = parseNodeConfig(convergeEcosystem3NodeConfig)
+convergeEcosystem3Nodes = parse_node_config(convergeEcosystem3NodeConfig)
 
-def generateAllParamSingleVariations(templateNodes,
+def generateAllParamSingleVariations(template_nodes,
         minPercent, maxPercent, stepPercent):
     """
-    (Similar to generateSet1) Vary one node at a time, one parameter at a time,
-    based on templateNodes.  Parameters are varied in from minPercent to
+    (Similar to generate_set_1) Vary one node at a time, one parameter at a time,
+    based on template_nodes.  Parameters are varied in from minPercent to
     maxPercent in stepPercent increments.
     """
 
     # Write the unaltered nodeconfig first
-    print(generateNodeConfig(templateNodes))
+    print(generate_node_config(template_nodes))
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
 
     # Change one node at a time
     for i in range(len(nodes)):
@@ -299,12 +299,12 @@ def generateAllParamSingleVariations(templateNodes,
                     if percent == 100:
                         continue
 
-                    nodes[i][param] = templateNodes[i][param] * percent / 100
-                    print(generateNodeConfig(nodes))
-                nodes[i] = copy(templateNodes[i])  # reset the node
+                    nodes[i][param] = template_nodes[i][param] * percent / 100
+                    print(generate_node_config(nodes))
+                nodes[i] = copy(template_nodes[i])  # reset the node
 
-def generateRandomVariations(templateNodes,
-        params, minPercent, maxPercent, count):
+def generate_random_variations(template_nodes,
+                               params, minPercent, maxPercent, count):
     """
     Generate <count> random variations of parameter values on all nodes,
     for parameters named in <params>.
@@ -314,22 +314,22 @@ def generateRandomVariations(templateNodes,
     params = set(params)
 
     # Write the unaltered nodeconfig first
-    print(generateNodeConfig(templateNodes))
+    print(generate_node_config(template_nodes))
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
     for i in range(count - 1):
         for j, node in enumerate(nodes):
             for param in node.keys():
                 if param in params:
-                    node[param] = (templateNodes[j][param] *
+                    node[param] = (template_nodes[j][param] *
                             random.uniform(minRatio, maxRatio))
                     # Limit parameter ranges
                     if param in validParamRanges:
                         node[param] = util.clip(node[param],
                                 *validParamRanges[param])
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
 
-def sweepParamForNode(templateNodes, nodeId, param,
+def sweepParamForNode(template_nodes, nodeId, param,
         minPercent, maxPercent, count):
     """ Generate <count> nodeconfigs in which the given param for the given node
     is varied from minPercent to maxPercent of the original value. """
@@ -337,62 +337,62 @@ def sweepParamForNode(templateNodes, nodeId, param,
     minRatio = minPercent / 100
     maxRatio = maxPercent / 100
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
     for i in range(count):
         for j, node in enumerate(nodes):
             if node['nodeId'] == nodeId:
                 ratio = (maxRatio - minRatio) / (count - 1) * i + minRatio
-                node[param] = templateNodes[j][param] * ratio
+                node[param] = template_nodes[j][param] * ratio
                 break
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
 
-def generateSet5():
+def generate_set_5():
     """
-    Similar to generateSet1 - vary one node at a time, one parameter at a time
+    Similar to generate_set_1 - vary one node at a time, one parameter at a time
     """
     generateAllParamSingleVariations(convergeEcosystem3Nodes, 50, 150, 5)
 
-def generateSet6():
+def generate_set_6():
     generatePairVariations(convergeEcosystem3Nodes, 'X', 50, 150, 10)
 
-def generateSet7():
+def generate_set_7():
     generateTripleVariations(convergeEcosystem3Nodes, 'X', 50, 150, 10)
 
-def generateSet9():
+def generate_set_9():
     """
     Generate single-parameter variations on Convergence ecosystem #2
     """
     generateAllParamSingleVariations(
-            parseNodeConfig(convergenceNodeConfigs[1]), 50, 150, 5)
+            parse_node_config(convergence_node_configs[1]), 50, 150, 5)
 
-def generateSet10():
+def generate_set_10():
     """
     Generate single-parameter variations on Convergence ecosystem #4
     """
     generateAllParamSingleVariations(
-            parseNodeConfig(convergenceNodeConfigs[3]), 50, 150, 5)
+            parse_node_config(convergence_node_configs[3]), 50, 150, 5)
 
-def generateSet11():
+def generate_set_11():
     """
     Generate single-parameter variations on Convergence ecosystem #5
     """
     generateAllParamSingleVariations(
-            parseNodeConfig(convergenceNodeConfigs[4]), 50, 150, 5)
+            parse_node_config(convergence_node_configs[4]), 50, 150, 5)
 
-def generateSet12():
+def generate_set_12():
     """
     Generate random variations on Convergence ecosystem #2 (6 species)
     """
-    nodes = parseNodeConfig(convergenceNodeConfigs[1])
-    generateRandomVariations(nodes, ('initialBiomass', 'K', 'R', 'X'),
-            50, 150, 1000)
+    nodes = parse_node_config(convergence_node_configs[1])
+    generate_random_variations(nodes, ('initialBiomass', 'K', 'R', 'X'),
+                               50, 150, 1000)
 
-def generatePerUnitBiomassVariations():
-    nodes = parseNodeConfig(convergenceNodeConfigs[1])
-    generateRandomVariations(nodes, ('perUnitBiomass',), 50, 150, 100)
+def generate_per_unit_biomass_variations():
+    nodes = parse_node_config(convergence_node_configs[1])
+    generate_random_variations(nodes, ('perUnitBiomass',), 50, 150, 100)
 
 
-def generateGaussianMixtureVariations(templateNodes, distribution, count):
+def generate_gaussian_mixture_variations(template_nodes, distribution, count):
     """
     Generate 'count' node configs based on the given GMM distribution.
 
@@ -403,10 +403,10 @@ def generateGaussianMixtureVariations(templateNodes, distribution, count):
     multivariate Gaussians.
     """
 
-    nodes = deepcopy(templateNodes)
+    nodes = deepcopy(template_nodes)
 
     priors = [component['prior'] for component in distribution]
-    cumulativePriors = list(itertools.accumulate(priors))
+    cumulative_priors = list(itertools.accumulate(priors))
 
     # Count the number of times each component was chosen (for testing)
     count_k = [0, 0]
@@ -414,31 +414,31 @@ def generateGaussianMixtureVariations(templateNodes, distribution, count):
     for i in range(count):
 
         # Choose a component based on the prior probabilities
-        rand = random.random() * cumulativePriors[-1]
-        k = bisect.bisect(cumulativePriors, rand)
+        rand = random.random() * cumulative_priors[-1]
+        k = bisect.bisect(cumulative_priors, rand)
         count_k[k] += 1
-        componentNodes = distribution[k]['nodes']
+        component_nodes = distribution[k]['nodes']
 
         # Draw parameter values from the Gaussian distribution defined by
-        # componentNodes.
+        # component_nodes.
         for node in nodes:
             nodeId = node['nodeId']
-            for paramName, distParams in componentNodes[nodeId].items():
-                node[paramName] = random.gauss(
-                        distParams['mean'], distParams['stdDev'])
-        print(generateNodeConfig(nodes))
+            for param_name, dist_params in component_nodes[nodeId].items():
+                node[param_name] = random.gauss(
+                        dist_params['mean'], dist_params['stdDev'])
+        print(generate_node_config(nodes))
 
     # Print number of times each component was chosen (for testing - proportions
     # should match priors)
     #print(count_k)
 
-def makeBaseConfigFromSpeciesList(speciesIdList,
-        basalBiomass=1000.0, nonBasalBiomass=1000.0, sort=True):
-    speciesData = util.get_species_data()
+def make_base_config_from_species_list(species_id_list,
+                                       basal_biomass=1000.0, non_basal_biomass=1000.0, sort=True):
+    species_data = util.get_species_data()
     nodes = []
 
-    for speciesId in speciesIdList:
-        species = speciesData[speciesId]
+    for species_id in species_id_list:
+        species = species_data[species_id]
         if len(species['node_id_list']) > 1:
             raise RuntimeError("Species with multiple nodes not handled yet")
         node = {
@@ -447,12 +447,12 @@ def makeBaseConfigFromSpeciesList(speciesIdList,
         }
         if species['organism_type'] == 1:
             # plant
-            node['initialBiomass'] = basalBiomass
+            node['initialBiomass'] = basal_biomass
             node['K'] = species['carrying_capacity']
             node['R'] = species['growth_rate']
         else:
             # animal
-            node['initialBiomass'] = nonBasalBiomass
+            node['initialBiomass'] = non_basal_biomass
             node['X'] = species['metabolism']
 
         nodes.append(node)
@@ -464,437 +464,437 @@ def makeBaseConfigFromSpeciesList(speciesIdList,
 
     return nodes
 
-def generateSet16():
+def generate_set_16():
     """
     Generate node configs for an algorithmically-generated 7-species food web.
     Only initial biomass is varied.
     """
-    speciesIds = [int(i) for i in '9 19 32 57 61 64 89'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 20, 200, 1000)
+    species_ids = [int(i) for i in '9 19 32 57 61 64 89'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 20, 200, 1000)
 
-def generateSet17():
+def generate_set_17():
     """
     Generate node configs for an algorithmically-generated 7-species food web.
     Only initial biomass is varied.
     """
-    speciesIds = [int(i) for i in '9 19 32 57 61 64 89'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+    species_ids = [int(i) for i in '9 19 32 57 61 64 89'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 10, 300, 2000)
 
-def generateSet18():
+def generate_set_18():
     """
     Generate node configs for an algorithmically-generated 7-species food web.
     Only initial biomass is varied.
     """
-    speciesIds = [int(i) for i in '8 9 31 52 55 1002 1005'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+    species_ids = [int(i) for i in '8 9 31 52 55 1002 1005'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 10, 300, 2000)
 
-def generateSet19():
+def generate_set_19():
     """
     Generate node configs for an algorithmically-generated 5-species food web.
     Only initial biomass is varied.
     """
-    speciesIds = [int(i) for i in '9 10 12 25 89'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+    species_ids = [int(i) for i in '9 10 12 25 89'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 10, 300, 2000)
 
-def generateSet20():
+def generate_set_20():
     """
     Generate node configs for an algorithmically-generated 5-species food web.
     Only initial biomass is varied.
     This one gives 10x as much initial biomass to the basal species.
     """
-    speciesIds = [int(i) for i in '15 17 26 77 1002'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 10, 300, 2000)
+    species_ids = [int(i) for i in '15 17 26 77 1002'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 10, 300, 2000)
 
-def generateSet21():
-    speciesIds = [int(i) for i in '15 17 26 77 1002'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            33, 300, 3000)
+def generate_set_21():
+    species_ids = [int(i) for i in '15 17 26 77 1002'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               33, 300, 3000)
 
-def generateSet22():
-    speciesIds = [int(i) for i in '42 31 5 85 1005'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[22] = generateSet22
+def generate_set_22():
+    species_ids = [int(i) for i in '42 31 5 85 1005'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[22] = generate_set_22
 
-def generateSet23():
-    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[23] = generateSet23
+def generate_set_23():
+    species_ids = [int(i) for i in '72 33 1003 28 51'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[23] = generate_set_23
 
-def generateSet24():
-    speciesIds = [int(i) for i in '1001 87 75 14 33'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[24] = generateSet24
+def generate_set_24():
+    species_ids = [int(i) for i in '1001 87 75 14 33'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[24] = generate_set_24
 
-def generateSet25():
-    speciesIds = [int(i) for i in '16 82 83 1004 86'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[25] = generateSet25
+def generate_set_25():
+    species_ids = [int(i) for i in '16 82 83 1004 86'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[25] = generate_set_25
 
-def generateSet26():
-    speciesIds = [int(i) for i in '65 66 51 85 6 63 74 1003 1004 45 31'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[26] = generateSet26
+def generate_set_26():
+    species_ids = [int(i) for i in '65 66 51 85 6 63 74 1003 1004 45 31'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[26] = generate_set_26
 
-def generateSet27():
-    speciesIds = [int(i) for i in '34 22 70 28 40 9 47 1004 1005 14 45'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[27] = generateSet27
+def generate_set_27():
+    species_ids = [int(i) for i in '34 22 70 28 40 9 47 1004 1005 14 45'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[27] = generate_set_27
 
-def generateSet28():
-    speciesIds = [int(i) for i in '83 85 6 39 8 44 1002 55 1004 74 31'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[28] = generateSet28
+def generate_set_28():
+    species_ids = [int(i) for i in '83 85 6 39 8 44 1002 55 1004 74 31'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[28] = generate_set_28
 
-def generateSet29():
-    speciesIds = [int(i) for i in '64 16 26 69 87 1001 42 1003 45 31'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[29] = generateSet29
+def generate_set_29():
+    species_ids = [int(i) for i in '64 16 26 69 87 1001 42 1003 45 31'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[29] = generate_set_29
 
-def generateSet30():
-    speciesIds = [int(i) for i in '48 33 82 52 25 17 1001 1003 13 46'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[30] = generateSet30
+def generate_set_30():
+    species_ids = [int(i) for i in '48 33 82 52 25 17 1001 1003 13 46'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[30] = generate_set_30
 
-def generateSet31():
-    speciesIds = [int(i) for i in '48 66 27 4 85 1001 10 11 1004 45'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[31] = generateSet31
+def generate_set_31():
+    species_ids = [int(i) for i in '48 66 27 4 85 1001 10 11 1004 45'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[31] = generate_set_31
 
-def generateSet32():
-    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[32] = generateSet32
+def generate_set_32():
+    species_ids = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[32] = generate_set_32
 
-def generateSet33():
-    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[33] = generateSet33
+def generate_set_33():
+    species_ids = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[33] = generate_set_33
 
-def generateSet34():
-    speciesIds = [int(i) for i in '85 70 71 40 41 26 59 1004 1005'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[34] = generateSet34
+def generate_set_34():
+    species_ids = [int(i) for i in '85 70 71 40 41 26 59 1004 1005'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[34] = generate_set_34
 
-def generateSet35():
-    speciesIds = [int(i) for i in '16 21 38 55 1002 1003 28 46 31'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[35] = generateSet35
+def generate_set_35():
+    species_ids = [int(i) for i in '16 21 38 55 1002 1003 28 46 31'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[35] = generate_set_35
 
-def generateSet36():
-    speciesIds = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[36] = generateSet36
+def generate_set_36():
+    species_ids = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[36] = generate_set_36
 
-def generateSet37():
-    speciesIds = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[37] = generateSet37
+def generate_set_37():
+    species_ids = [int(i) for i in '16 17 53 1001 1003 77 14 21'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[37] = generate_set_37
 
-def generateSet38():
-    speciesIds = [int(i) for i in '80 1 11 69 27 71 1001 1003'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[38] = generateSet38
+def generate_set_38():
+    species_ids = [int(i) for i in '80 1 11 69 27 71 1001 1003'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[38] = generate_set_38
 
-def generateSet39():
-    speciesIds = [int(i) for i in '80 49 55 8 1002 15'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[39] = generateSet39
+def generate_set_39():
+    species_ids = [int(i) for i in '80 49 55 8 1002 15'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[39] = generate_set_39
 
-def generateSet40():
-    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
-    nodes = makeBaseConfigFromSpeciesList(speciesIds)
+def generate_set_40():
+    species_ids = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    nodes = make_base_config_from_species_list(species_ids)
     for i in range(10):
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
         random.shuffle(nodes)
-generatorFunctions[40] = generateSet40
+generator_functions[40] = generate_set_40
 
-def generateSet41():
-    speciesIds = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
-    nodes = makeBaseConfigFromSpeciesList(speciesIds)
+def generate_set_41():
+    species_ids = [int(i) for i in '2 42 5 72 83 1002 1003 74 14 53'.split()]
+    nodes = make_base_config_from_species_list(species_ids)
     for i in range(10):
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
         nonBasalNodes = nodes[2:]
         random.shuffle(nonBasalNodes)
         nodes = nodes[0:2] + nonBasalNodes
-generatorFunctions[41] = generateSet41
+generator_functions[41] = generate_set_41
 
-def generateSet42():
-    nodes = parseNodeConfig(convergenceNodeConfigs[0])
+def generate_set_42():
+    nodes = parse_node_config(convergence_node_configs[0])
     for i in range(10):
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
         nonBasalNodes = nodes[1:]
         random.shuffle(nonBasalNodes)
         nodes = nodes[0:1] + nonBasalNodes
-generatorFunctions[42] = generateSet42
+generator_functions[42] = generate_set_42
 
-def generateSet43():
+def generate_set_43():
     # Topologically sorted version of set 29
-    speciesIds = [int(i) for i in '1003 1001 31 45 87 69 16 26 42 64'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds, sort=False)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[43] = generateSet43
+    species_ids = [int(i) for i in '1003 1001 31 45 87 69 16 26 42 64'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids, sort=False)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[43] = generate_set_43
 
-def generateSet44():
-    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    sweepParamForNode(templateNodes, 51, 'initialBiomass', 5, 100, 1000)
-generatorFunctions[44] = generateSet44
+def generate_set_44():
+    species_ids = [int(i) for i in '72 33 1003 28 51'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    sweepParamForNode(template_nodes, 51, 'initialBiomass', 5, 100, 1000)
+generator_functions[44] = generate_set_44
 
-def generateSet45():
-    speciesIds = [int(i) for i in '72 33 1003 28 51'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    sweepParamForNode(templateNodes, 51, 'X', 5, 100, 1000)
-generatorFunctions[45] = generateSet45
+def generate_set_45():
+    species_ids = [int(i) for i in '72 33 1003 28 51'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    sweepParamForNode(template_nodes, 51, 'X', 5, 100, 1000)
+generator_functions[45] = generate_set_45
 
-def generateSet46():
-    speciesIds = [1005, 14, 31, 42, 2]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 1000)
-generatorFunctions[46] = generateSet46
+def generate_set_46():
+    species_ids = [1005, 14, 31, 42, 2]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 1000)
+generator_functions[46] = generate_set_46
 
-def generateSet47():
-    templateNodes = parseNodeConfig(convergenceNodeConfigs[0])
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[47] = generateSet47
+def generate_set_47():
+    template_nodes = parse_node_config(convergence_node_configs[0])
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[47] = generate_set_47
 
-def generateSet48():
-    templateNodes = parseNodeConfig(convergenceNodeConfigs[1])
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[48] = generateSet48
+def generate_set_48():
+    template_nodes = parse_node_config(convergence_node_configs[1])
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[48] = generate_set_48
 
-def generateSet49():
-    speciesIds = [int(i) for i in '80 51 52 71 1001 75'.split()]
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 200, 100)
-generatorFunctions[49] = generateSet49
+def generate_set_49():
+    species_ids = [int(i) for i in '80 51 52 71 1001 75'.split()]
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 200, 100)
+generator_functions[49] = generate_set_49
 
-def generateSet50():
-    templateNodes = parseNodeConfig(convergenceNodeConfigs[2])
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[50] = generateSet50
+def generate_set_50():
+    template_nodes = parse_node_config(convergence_node_configs[2])
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[50] = generate_set_50
 
-def generateSet51():
+def generate_set_51():
     # Variations on set 47, sim 90
-    templateNodes = parseNodeConfig("5,[5],1555.63,1.0,1,K=11091.4,0,[14],1071.01,20.0,1,X=0.254849,0,[31],1844.15,0.0075,1,X=0.517565,0,[42],133.96,0.205,1,X=0.726891,0,[70],2110.84,13.0,1,X=0.194138,0")
-    generateRandomVariations(templateNodes, ['K', 'X'], 50, 150, 100)
-generatorFunctions[51] = generateSet51
+    template_nodes = parse_node_config("5,[5],1555.63,1.0,1,K=11091.4,0,[14],1071.01,20.0,1,X=0.254849,0,[31],1844.15,0.0075,1,X=0.517565,0,[42],133.96,0.205,1,X=0.726891,0,[70],2110.84,13.0,1,X=0.194138,0")
+    generate_random_variations(template_nodes, ['K', 'X'], 50, 150, 100)
+generator_functions[51] = generate_set_51
 
-def generateSet52():
+def generate_set_52():
     # Variations on set 50, sim 100
-    templateNodes = parseNodeConfig("11,[2],645.546,528.0,2,K=1660.64,R=1.0,0,[3],599.66,528.0,1,K=4441.54,0,[4],595.662,528.0,1,K=2754.94,0,[5],1426.75,1.0,1,K=2084.45,0,[7],639.183,816.0,1,K=4015.18,0,[49],1511.23,0.355,1,X=1.0,0,[55],739.104,0.213,1,X=0.496037,0,[61],392.821,54.0,1,X=0.00999599,0,[74],924.06,50.0,1,X=0.115569,0,[82],525.34,50.0,1,X=0.376351,0,[83],233.019,103.0,1,X=0.180538,0")
-    generateRandomVariations(templateNodes, ['K', 'X'], 50, 150, 100)
-generatorFunctions[52] = generateSet52
+    template_nodes = parse_node_config("11,[2],645.546,528.0,2,K=1660.64,R=1.0,0,[3],599.66,528.0,1,K=4441.54,0,[4],595.662,528.0,1,K=2754.94,0,[5],1426.75,1.0,1,K=2084.45,0,[7],639.183,816.0,1,K=4015.18,0,[49],1511.23,0.355,1,X=1.0,0,[55],739.104,0.213,1,X=0.496037,0,[61],392.821,54.0,1,X=0.00999599,0,[74],924.06,50.0,1,X=0.115569,0,[82],525.34,50.0,1,X=0.376351,0,[83],233.019,103.0,1,X=0.180538,0")
+    generate_random_variations(template_nodes, ['K', 'X'], 50, 150, 100)
+generator_functions[52] = generate_set_52
 
-def generateSet53():
+def generate_set_53():
     """ Like set 42, but shuffle all nodes, not just basal """
-    nodes = parseNodeConfig(convergenceNodeConfigs[0])
+    nodes = parse_node_config(convergence_node_configs[0])
     for i in range(10):
-        print(generateNodeConfig(nodes))
+        print(generate_node_config(nodes))
         random.shuffle(nodes)
-generatorFunctions[53] = generateSet53
+generator_functions[53] = generate_set_53
 
-def generateSet54():
-    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[54] = generateSet54
+def generate_set_54():
+    template_nodes = make_base_config_from_species_list([73, 1003, 61, 55, 33])
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[54] = generate_set_54
 
-def generateSet55():
-    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
-    sweepParamForNode(templateNodes, 3, 'R', 10, 300, 100)
-generatorFunctions[55] = generateSet55
+def generate_set_55():
+    template_nodes = make_base_config_from_species_list([73, 1003, 61, 55, 33])
+    sweepParamForNode(template_nodes, 3, 'R', 10, 300, 100)
+generator_functions[55] = generate_set_55
 
-def generateSet56():
-    templateNodes = makeBaseConfigFromSpeciesList([73, 1003, 61, 55, 33])
-    sweepParamForNode(templateNodes, 3, 'initialBiomass', 50, 500, 100)
-generatorFunctions[56] = generateSet56
+def generate_set_56():
+    template_nodes = make_base_config_from_species_list([73, 1003, 61, 55, 33])
+    sweepParamForNode(template_nodes, 3, 'initialBiomass', 50, 500, 100)
+generator_functions[56] = generate_set_56
 
-def generateSet57():
-    templateNodes = makeBaseConfigFromSpeciesList([8, 4, 1002, 36, 14])
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[57] = generateSet57
+def generate_set_57():
+    template_nodes = make_base_config_from_species_list([8, 4, 1002, 36, 14])
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[57] = generate_set_57
 
-def generateSet58():
-    templateNodes = makeBaseConfigFromSpeciesList([65, 50, 1003, 55, 33])
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[58] = generateSet58
+def generate_set_58():
+    template_nodes = make_base_config_from_species_list([65, 50, 1003, 55, 33])
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[58] = generate_set_58
 
-def generateSet59():
-    templateNodes = makeBaseConfigFromSpeciesList([1002, 36, 14, 46, 31])
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[59] = generateSet59
+def generate_set_59():
+    template_nodes = make_base_config_from_species_list([1002, 36, 14, 46, 31])
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[59] = generate_set_59
 
-def generateSet60():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_60():
+    template_nodes = make_base_config_from_species_list(
             [66, 83, 82, 53, 71, 88, 1001, 7, 1004, 1005])
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[60] = generateSet60
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[60] = generate_set_60
 
-def generateSet61():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_61():
+    template_nodes = make_base_config_from_species_list(
             [88, 2, 4, 21, 87, 8, 1001, 1002, 1003, 14]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[61] = generateSet61
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[61] = generate_set_61
 
-def generateSet62():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_62():
+    template_nodes = make_base_config_from_species_list(
             [49, 83, 53, 28, 1001, 42, 1003, 1004, 85, 44]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[62] = generateSet62
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[62] = generate_set_62
 
-def generateSet63():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_63():
+    template_nodes = make_base_config_from_species_list(
             [80, 66, 1003, 4, 31]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[63] = generateSet63
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[63] = generate_set_63
 
-def generateSet64():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_64():
+    template_nodes = make_base_config_from_species_list(
             [80, 49, 82, 50, 69, 71, 88, 1001, 1003, 1005]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
-generatorFunctions[64] = generateSet64
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+generator_functions[64] = generate_set_64
 
-def generateSet65():
-    origNodes = makeBaseConfigFromSpeciesList(
+def generate_set_65():
+    origNodes = make_base_config_from_species_list(
             [53, 73, 74, 80, 1005]
             )
-    print(generateNodeConfig(origNodes))
-generatorFunctions[65] = generateSet65
+    print(generate_node_config(origNodes))
+generator_functions[65] = generate_set_65
  
-def generateSet66():
-    origNodes = makeBaseConfigFromSpeciesList(
+def generate_set_66():
+    origNodes = make_base_config_from_species_list(
             [47, 49, 83, 86, 1003]
             )
-    print(generateNodeConfig(origNodes))
-generatorFunctions[66] = generateSet66
+    print(generate_node_config(origNodes))
+generator_functions[66] = generate_set_66
 
-def generateSet67():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_67():
+    template_nodes = make_base_config_from_species_list(
             [39, 80, 31, 72, 1003]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[67] = generateSet67
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[67] = generate_set_67
 
-def generateSet68():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_68():
+    template_nodes = make_base_config_from_species_list(
             [49, 4, 18, 50, 36, 9, 85, 14, 8, 1002]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[68] = generateSet68
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[68] = generate_set_68
 
-def generateSet69():
-    templateNodes = makeBaseConfigFromSpeciesList(
+def generate_set_69():
+    template_nodes = make_base_config_from_species_list(
             [3, 49, 41, 86, 47, 61, 83, 33, 1004, 1005]
             )
-    generateRandomVariations(templateNodes, ['initialBiomass', 'K', 'R', 'X'],
-            50, 150, 1000)
-generatorFunctions[69] = generateSet69
+    generate_random_variations(template_nodes, ['initialBiomass', 'K', 'R', 'X'],
+                               50, 150, 1000)
+generator_functions[69] = generate_set_69
 
-def varyInitialBiomass(speciesIds):
-    templateNodes = makeBaseConfigFromSpeciesList(speciesIds)
-    generateRandomVariations(templateNodes, ['initialBiomass'], 25, 175, 1000)
+def vary_initial_biomass(species_ids):
+    template_nodes = make_base_config_from_species_list(species_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
 
-def varyXK(nodeConfig):
-    templateNodes = parseNodeConfig(nodeConfig)
-    generateRandomVariations(templateNodes, ['X', 'K'], 50, 150, 1000)
+def vary_x_k(node_config):
+    template_nodes = parse_node_config(node_config)
+    generate_random_variations(template_nodes, ['X', 'K'], 50, 150, 1000)
 
 # 5-species initial biomass variations
-generatorFunctions[70] = lambda: varyInitialBiomass([15, 17, 55, 80, 1002])
-generatorFunctions[71] = lambda: varyInitialBiomass([2, 5, 57, 61, 1005])
-generatorFunctions[72] = lambda: varyInitialBiomass([26, 40, 49, 73, 1004])
-generatorFunctions[73] = lambda: varyInitialBiomass([5, 14, 67, 85, 1005])
-generatorFunctions[74] = lambda: varyInitialBiomass([53, 74, 82, 86, 1004])
+generator_functions[70] = lambda: vary_initial_biomass([15, 17, 55, 80, 1002])
+generator_functions[71] = lambda: vary_initial_biomass([2, 5, 57, 61, 1005])
+generator_functions[72] = lambda: vary_initial_biomass([26, 40, 49, 73, 1004])
+generator_functions[73] = lambda: vary_initial_biomass([5, 14, 67, 85, 1005])
+generator_functions[74] = lambda: vary_initial_biomass([53, 74, 82, 86, 1004])
 
 # 5-species X and K variations
-generatorFunctions[75] = lambda: varyXK('5,[2],408.544,20.0,2,K=10000.0,R=1.0,0,[15],388.199,0.071,1,X=0.00412167,0,[17],256.225,0.17,1,X=0.00331341,0,[55],866.213,0.213,1,X=0.344497,0,[80],736.208,41.5,1,X=0.0922079,0')
-generatorFunctions[76] = lambda: varyXK('5,[5],541.624,40.0,2,K=10000.0,R=1.0,0,[57],460.599,4.2,1,X=0.163481,0,[61],274.932,54.0,1,X=0.00361033,0,[67],444.404,9.6,1,X=0.132957,0,[70],304.869,13.0,1,X=0.123252,0')
-generatorFunctions[77] = lambda: varyXK('5,[4],1090.86,20.0,2,K=10000.0,R=1.0,0,[26],724.713,0.011,1,X=0.722657,0,[40],640.404,0.325,1,X=0.309963,0,[49],1242.61,0.355,1,X=0.303196,0,[73],396.618,17.0,1,X=0.115257,0')
-generatorFunctions[78] = lambda: varyXK('5,[5],262.045,40.0,2,K=10000.0,R=1.0,0,[14],1076.64,20.0,1,X=0.00100607,0,[67],1204.03,9.6,1,X=0.132957,0,[85],492.77,108.0,1,X=0.072598,0,[94],530.41,1550.0,1,X=0.037299,0')
-generatorFunctions[79] = lambda: varyXK('5,[4],756.561,20.0,2,K=10000.0,R=1.0,0,[74],667.793,23.8,1,X=0.105959,0,[82],1521.54,50.0,1,X=0.0880112,0,[86],1060.07,156.0,1,X=0.0662215,0,[89],1440.2,470.0,1,X=0.0502639,0')
+generator_functions[75] = lambda: vary_x_k('5,[2],408.544,20.0,2,K=10000.0,R=1.0,0,[15],388.199,0.071,1,X=0.00412167,0,[17],256.225,0.17,1,X=0.00331341,0,[55],866.213,0.213,1,X=0.344497,0,[80],736.208,41.5,1,X=0.0922079,0')
+generator_functions[76] = lambda: vary_x_k('5,[5],541.624,40.0,2,K=10000.0,R=1.0,0,[57],460.599,4.2,1,X=0.163481,0,[61],274.932,54.0,1,X=0.00361033,0,[67],444.404,9.6,1,X=0.132957,0,[70],304.869,13.0,1,X=0.123252,0')
+generator_functions[77] = lambda: vary_x_k('5,[4],1090.86,20.0,2,K=10000.0,R=1.0,0,[26],724.713,0.011,1,X=0.722657,0,[40],640.404,0.325,1,X=0.309963,0,[49],1242.61,0.355,1,X=0.303196,0,[73],396.618,17.0,1,X=0.115257,0')
+generator_functions[78] = lambda: vary_x_k('5,[5],262.045,40.0,2,K=10000.0,R=1.0,0,[14],1076.64,20.0,1,X=0.00100607,0,[67],1204.03,9.6,1,X=0.132957,0,[85],492.77,108.0,1,X=0.072598,0,[94],530.41,1550.0,1,X=0.037299,0')
+generator_functions[79] = lambda: vary_x_k('5,[4],756.561,20.0,2,K=10000.0,R=1.0,0,[74],667.793,23.8,1,X=0.105959,0,[82],1521.54,50.0,1,X=0.0880112,0,[86],1060.07,156.0,1,X=0.0662215,0,[89],1440.2,470.0,1,X=0.0502639,0')
 
 # 10-species initial biomass variations
-generatorFunctions[80] = lambda: varyInitialBiomass([14, 18, 31, 32, 49, 57, 63, 69, 1002, 1004])
-generatorFunctions[81] = lambda: varyInitialBiomass([2, 21, 43, 49, 50, 53, 69, 86, 1003, 1004])
-generatorFunctions[82] = lambda: varyInitialBiomass([3, 15, 27, 33, 38, 53, 69, 85, 1002, 1004])
-generatorFunctions[83] = lambda: varyInitialBiomass([31, 44, 45, 47, 49, 50, 66, 75, 1001, 1005])
-generatorFunctions[84] = lambda: varyInitialBiomass([53, 55, 59, 71, 74, 86, 87, 88, 1004, 1005])
+generator_functions[80] = lambda: vary_initial_biomass([14, 18, 31, 32, 49, 57, 63, 69, 1002, 1004])
+generator_functions[81] = lambda: vary_initial_biomass([2, 21, 43, 49, 50, 53, 69, 86, 1003, 1004])
+generator_functions[82] = lambda: vary_initial_biomass([3, 15, 27, 33, 38, 53, 69, 85, 1002, 1004])
+generator_functions[83] = lambda: vary_initial_biomass([31, 44, 45, 47, 49, 50, 66, 75, 1001, 1005])
+generator_functions[84] = lambda: vary_initial_biomass([53, 55, 59, 71, 74, 86, 87, 88, 1004, 1005])
 
 # 15-species initial biomass variations
-generatorFunctions[85] = lambda: varyInitialBiomass([11, 31, 39, 43, 49, 51, 66, 69, 72, 80, 82, 88, 1001, 1003, 1004])
-generatorFunctions[86] = lambda: varyInitialBiomass([15, 16, 22, 24, 26, 29, 31, 49, 53, 73, 74, 80, 1002, 1004, 1005])
-generatorFunctions[87] = lambda: varyInitialBiomass([16, 30, 31, 38, 49, 50, 53, 57, 66, 67, 83, 86, 1001, 1003, 1005])
-generatorFunctions[88] = lambda: varyInitialBiomass([2, 3, 15, 18, 22, 34, 42, 49, 50, 52, 57, 67, 1002, 1004, 1005])
-generatorFunctions[89] = lambda: varyInitialBiomass([4, 5, 27, 45, 53, 59, 61, 63, 67, 80, 82, 86, 1001, 1004, 1005])
+generator_functions[85] = lambda: vary_initial_biomass([11, 31, 39, 43, 49, 51, 66, 69, 72, 80, 82, 88, 1001, 1003, 1004])
+generator_functions[86] = lambda: vary_initial_biomass([15, 16, 22, 24, 26, 29, 31, 49, 53, 73, 74, 80, 1002, 1004, 1005])
+generator_functions[87] = lambda: vary_initial_biomass([16, 30, 31, 38, 49, 50, 53, 57, 66, 67, 83, 86, 1001, 1003, 1005])
+generator_functions[88] = lambda: vary_initial_biomass([2, 3, 15, 18, 22, 34, 42, 49, 50, 52, 57, 67, 1002, 1004, 1005])
+generator_functions[89] = lambda: vary_initial_biomass([4, 5, 27, 45, 53, 59, 61, 63, 67, 80, 82, 86, 1001, 1004, 1005])
 
 # 10-species X and K variations
-generatorFunctions[90] = lambda: varyXK('10,[2],907.82,20.0,2,K=10000.0,R=1.0,0,[4],1222.14,20.0,2,K=10000.0,R=1.0,0,[14],771.772,20.0,1,X=0.00100607,0,[18],250.02,0.00014,1,X=0.0195594,0,[31],854.717,0.0075,1,X=0.795271,0,[32],856.17,0.13,1,X=0.0162989,0,[49],938.492,0.355,1,X=0.303196,0,[57],1220.21,4.2,1,X=0.163481,0,[63],956.904,7.85,1,X=0.139818,0,[69],1390.3,12.5,1,X=0.124467,0')
-generatorFunctions[91] = lambda: varyXK('10,[3],1026.9,20.0,2,K=10000.0,R=1.0,0,[4],1048.15,20.0,2,K=10000.0,R=1.0,0,[21],1170.37,0.2,1,X=0.00318149,0,[43],313.774,0.03,1,X=0.562341,0,[49],280.525,0.355,1,X=0.303196,0,[50],1419.12,0.349,1,X=0.304491,0,[69],1079.11,12.5,1,X=0.124467,0,[70],1568.36,13.0,1,X=0.123252,0,[86],1517.79,156.0,1,X=0.0662215,0,[89],481.552,470.0,1,X=0.0502639,0')
-generatorFunctions[92] = lambda: varyXK('10,[2],712.521,20.0,2,K=10000.0,R=1.0,0,[4],1657.62,20.0,2,K=10000.0,R=1.0,0,[15],375.247,0.071,1,X=0.00412167,0,[27],440.093,0.009,1,X=0.759836,0,[33],515.328,0.4,1,X=0.294283,0,[38],1587.3,0.085,1,X=0.0181255,0,[53],400.787,2.8,1,X=0.180922,0,[69],1683.99,12.5,1,X=0.124467,0,[85],256.855,108.0,1,X=0.072598,0,[89],868.82,470.0,1,X=0.0502639,0')
-generatorFunctions[93] = lambda: varyXK('10,[5],892.537,40.0,2,K=10000.0,R=1.0,0,[7],271.895,40.0,2,K=10000.0,R=1.0,0,[31],1325.14,0.0075,1,X=0.795271,0,[44],730.286,0.028,1,X=0.0239252,0,[45],1229.58,0.425,1,X=0.289857,0,[47],1426.91,5.45,1,X=0.153173,0,[49],1360.18,0.355,1,X=0.303196,0,[50],1399.09,0.349,1,X=0.304491,0,[66],1106.88,10.2,1,X=0.130957,0,[92],1198.57,1250.0,1,X=0.0393598,0')
-generatorFunctions[94] = lambda: varyXK('10,[4],899.75,20.0,2,K=10000.0,R=1.0,0,[5],1461.61,40.0,2,K=10000.0,R=1.0,0,[55],920.492,0.213,1,X=0.344497,0,[71],1542.23,4.99,1,X=0.156587,0,[74],1383.73,23.8,1,X=0.105959,0,[86],1184.85,156.0,1,X=0.0662215,0,[87],622.142,112.0,1,X=0.0719409,0,[89],529.502,470.0,1,X=0.0502639,0,[91],267.641,388.0,1,X=0.00220515,0,[95],821.795,5520.0,1,X=0.0271516,0')
+generator_functions[90] = lambda: vary_x_k('10,[2],907.82,20.0,2,K=10000.0,R=1.0,0,[4],1222.14,20.0,2,K=10000.0,R=1.0,0,[14],771.772,20.0,1,X=0.00100607,0,[18],250.02,0.00014,1,X=0.0195594,0,[31],854.717,0.0075,1,X=0.795271,0,[32],856.17,0.13,1,X=0.0162989,0,[49],938.492,0.355,1,X=0.303196,0,[57],1220.21,4.2,1,X=0.163481,0,[63],956.904,7.85,1,X=0.139818,0,[69],1390.3,12.5,1,X=0.124467,0')
+generator_functions[91] = lambda: vary_x_k('10,[3],1026.9,20.0,2,K=10000.0,R=1.0,0,[4],1048.15,20.0,2,K=10000.0,R=1.0,0,[21],1170.37,0.2,1,X=0.00318149,0,[43],313.774,0.03,1,X=0.562341,0,[49],280.525,0.355,1,X=0.303196,0,[50],1419.12,0.349,1,X=0.304491,0,[69],1079.11,12.5,1,X=0.124467,0,[70],1568.36,13.0,1,X=0.123252,0,[86],1517.79,156.0,1,X=0.0662215,0,[89],481.552,470.0,1,X=0.0502639,0')
+generator_functions[92] = lambda: vary_x_k('10,[2],712.521,20.0,2,K=10000.0,R=1.0,0,[4],1657.62,20.0,2,K=10000.0,R=1.0,0,[15],375.247,0.071,1,X=0.00412167,0,[27],440.093,0.009,1,X=0.759836,0,[33],515.328,0.4,1,X=0.294283,0,[38],1587.3,0.085,1,X=0.0181255,0,[53],400.787,2.8,1,X=0.180922,0,[69],1683.99,12.5,1,X=0.124467,0,[85],256.855,108.0,1,X=0.072598,0,[89],868.82,470.0,1,X=0.0502639,0')
+generator_functions[93] = lambda: vary_x_k('10,[5],892.537,40.0,2,K=10000.0,R=1.0,0,[7],271.895,40.0,2,K=10000.0,R=1.0,0,[31],1325.14,0.0075,1,X=0.795271,0,[44],730.286,0.028,1,X=0.0239252,0,[45],1229.58,0.425,1,X=0.289857,0,[47],1426.91,5.45,1,X=0.153173,0,[49],1360.18,0.355,1,X=0.303196,0,[50],1399.09,0.349,1,X=0.304491,0,[66],1106.88,10.2,1,X=0.130957,0,[92],1198.57,1250.0,1,X=0.0393598,0')
+generator_functions[94] = lambda: vary_x_k('10,[4],899.75,20.0,2,K=10000.0,R=1.0,0,[5],1461.61,40.0,2,K=10000.0,R=1.0,0,[55],920.492,0.213,1,X=0.344497,0,[71],1542.23,4.99,1,X=0.156587,0,[74],1383.73,23.8,1,X=0.105959,0,[86],1184.85,156.0,1,X=0.0662215,0,[87],622.142,112.0,1,X=0.0719409,0,[89],529.502,470.0,1,X=0.0502639,0,[91],267.641,388.0,1,X=0.00220515,0,[95],821.795,5520.0,1,X=0.0271516,0')
 
 # 15-species X and K variations
-generatorFunctions[95] = lambda: varyXK('15,[3],345.236,20.0,2,K=10000.0,R=1.0,0,[4],979.309,20.0,2,K=10000.0,R=1.0,0,[7],946.448,40.0,2,K=10000.0,R=1.0,0,[11],620.562,4e-06,1,X=0.0475743,0,[31],1145.22,0.0075,1,X=0.795271,0,[39],973.271,0.085,1,X=0.433437,0,[43],290.491,0.03,1,X=0.562341,0,[49],1705.77,0.355,1,X=0.303196,0,[51],656.169,2.05,1,X=0.195588,0,[66],485.421,10.2,1,X=0.130957,0,[69],1263.74,12.5,1,X=0.124467,0,[72],1516.83,0.3,1,X=0.316228,0,[80],1414.73,41.5,1,X=0.0922079,0,[82],1349.92,50.0,1,X=0.0880112,0,[91],300.972,388.0,1,X=0.00220515,0')
-generatorFunctions[96] = lambda: varyXK('15,[2],1224.54,20.0,2,K=10000.0,R=1.0,0,[4],1269.58,20.0,2,K=10000.0,R=1.0,0,[5],1205.86,40.0,2,K=10000.0,R=1.0,0,[15],1239.14,0.071,1,X=0.00412167,0,[16],1315.66,0.9,1,X=0.00218437,0,[22],1007.89,0.68,1,X=0.257723,0,[24],261.373,0.005,1,X=0.00800102,0,[26],363.522,0.011,1,X=0.722657,0,[29],655.127,0.035,1,X=0.541082,0,[31],1637.7,0.0075,1,X=0.795271,0,[49],427.97,0.355,1,X=0.303196,0,[73],1530.05,17.0,1,X=0.115257,0,[74],916.42,23.8,1,X=0.105959,0,[80],1342.31,41.5,1,X=0.0922079,0,[89],1318.0,470.0,1,X=0.0502639,0')
-generatorFunctions[97] = lambda: varyXK('15,[3],612.341,20.0,2,K=10000.0,R=1.0,0,[5],1102.86,40.0,2,K=10000.0,R=1.0,0,[7],905.292,40.0,2,K=10000.0,R=1.0,0,[16],936.184,0.9,1,X=0.00218437,0,[30],1203.72,0.029,1,X=0.567128,0,[31],251.104,0.0075,1,X=0.795271,0,[38],1223.36,0.085,1,X=0.0181255,0,[49],1011.56,0.355,1,X=0.303196,0,[50],323.838,0.349,1,X=0.304491,0,[57],1288.02,4.2,1,X=0.163481,0,[66],789.805,10.2,1,X=0.130957,0,[83],1312.25,103.0,1,X=0.0734634,0,[86],349.541,156.0,1,X=0.0662215,0,[89],1114.34,470.0,1,X=0.0502639,0,[94],1539.7,1550.0,1,X=0.037299,0')
-generatorFunctions[98] = lambda: varyXK('15,[2],711.901,20.0,2,K=10000.0,R=1.0,0,[4],974.336,20.0,2,K=10000.0,R=1.0,0,[5],629.732,40.0,2,K=10000.0,R=1.0,0,[15],1148.67,0.071,1,X=0.00412167,0,[18],1220.46,0.00014,1,X=0.0195594,0,[22],1005.17,0.68,1,X=0.257723,0,[34],383.387,0.0709,1,X=0.0189664,0,[42],587.471,0.205,1,X=0.34781,0,[49],299.732,0.355,1,X=0.303196,0,[50],1268.74,0.349,1,X=0.304491,0,[52],1700.41,7.0,1,X=0.143882,0,[53],717.439,2.8,1,X=0.180922,0,[57],1478.02,4.2,1,X=0.163481,0,[70],1173.33,13.0,1,X=0.123252,0,[94],1330.07,1550.0,1,X=0.037299,0')
-generatorFunctions[99] = lambda: varyXK('15,[4],945.8,20.0,2,K=10000.0,R=1.0,0,[5],630.907,40.0,2,K=10000.0,R=1.0,0,[7],1251.03,40.0,2,K=10000.0,R=1.0,0,[27],750.751,0.009,1,X=0.759836,0,[45],1230.77,0.425,1,X=0.289857,0,[59],1151.0,3.35,1,X=0.172989,0,[61],640.964,54.0,1,X=0.00361033,0,[63],1282.38,7.85,1,X=0.139818,0,[67],1170.44,9.6,1,X=0.132957,0,[80],634.219,41.5,1,X=0.0922079,0,[82],1332.68,50.0,1,X=0.0880112,0,[86],253.817,156.0,1,X=0.0662215,0,[89],1355.82,470.0,1,X=0.0502639,0,[94],1014.92,1550.0,1,X=0.037299,0,[95],1434.45,5520.0,1,X=0.0271516,0')
+generator_functions[95] = lambda: vary_x_k('15,[3],345.236,20.0,2,K=10000.0,R=1.0,0,[4],979.309,20.0,2,K=10000.0,R=1.0,0,[7],946.448,40.0,2,K=10000.0,R=1.0,0,[11],620.562,4e-06,1,X=0.0475743,0,[31],1145.22,0.0075,1,X=0.795271,0,[39],973.271,0.085,1,X=0.433437,0,[43],290.491,0.03,1,X=0.562341,0,[49],1705.77,0.355,1,X=0.303196,0,[51],656.169,2.05,1,X=0.195588,0,[66],485.421,10.2,1,X=0.130957,0,[69],1263.74,12.5,1,X=0.124467,0,[72],1516.83,0.3,1,X=0.316228,0,[80],1414.73,41.5,1,X=0.0922079,0,[82],1349.92,50.0,1,X=0.0880112,0,[91],300.972,388.0,1,X=0.00220515,0')
+generator_functions[96] = lambda: vary_x_k('15,[2],1224.54,20.0,2,K=10000.0,R=1.0,0,[4],1269.58,20.0,2,K=10000.0,R=1.0,0,[5],1205.86,40.0,2,K=10000.0,R=1.0,0,[15],1239.14,0.071,1,X=0.00412167,0,[16],1315.66,0.9,1,X=0.00218437,0,[22],1007.89,0.68,1,X=0.257723,0,[24],261.373,0.005,1,X=0.00800102,0,[26],363.522,0.011,1,X=0.722657,0,[29],655.127,0.035,1,X=0.541082,0,[31],1637.7,0.0075,1,X=0.795271,0,[49],427.97,0.355,1,X=0.303196,0,[73],1530.05,17.0,1,X=0.115257,0,[74],916.42,23.8,1,X=0.105959,0,[80],1342.31,41.5,1,X=0.0922079,0,[89],1318.0,470.0,1,X=0.0502639,0')
+generator_functions[97] = lambda: vary_x_k('15,[3],612.341,20.0,2,K=10000.0,R=1.0,0,[5],1102.86,40.0,2,K=10000.0,R=1.0,0,[7],905.292,40.0,2,K=10000.0,R=1.0,0,[16],936.184,0.9,1,X=0.00218437,0,[30],1203.72,0.029,1,X=0.567128,0,[31],251.104,0.0075,1,X=0.795271,0,[38],1223.36,0.085,1,X=0.0181255,0,[49],1011.56,0.355,1,X=0.303196,0,[50],323.838,0.349,1,X=0.304491,0,[57],1288.02,4.2,1,X=0.163481,0,[66],789.805,10.2,1,X=0.130957,0,[83],1312.25,103.0,1,X=0.0734634,0,[86],349.541,156.0,1,X=0.0662215,0,[89],1114.34,470.0,1,X=0.0502639,0,[94],1539.7,1550.0,1,X=0.037299,0')
+generator_functions[98] = lambda: vary_x_k('15,[2],711.901,20.0,2,K=10000.0,R=1.0,0,[4],974.336,20.0,2,K=10000.0,R=1.0,0,[5],629.732,40.0,2,K=10000.0,R=1.0,0,[15],1148.67,0.071,1,X=0.00412167,0,[18],1220.46,0.00014,1,X=0.0195594,0,[22],1005.17,0.68,1,X=0.257723,0,[34],383.387,0.0709,1,X=0.0189664,0,[42],587.471,0.205,1,X=0.34781,0,[49],299.732,0.355,1,X=0.303196,0,[50],1268.74,0.349,1,X=0.304491,0,[52],1700.41,7.0,1,X=0.143882,0,[53],717.439,2.8,1,X=0.180922,0,[57],1478.02,4.2,1,X=0.163481,0,[70],1173.33,13.0,1,X=0.123252,0,[94],1330.07,1550.0,1,X=0.037299,0')
+generator_functions[99] = lambda: vary_x_k('15,[4],945.8,20.0,2,K=10000.0,R=1.0,0,[5],630.907,40.0,2,K=10000.0,R=1.0,0,[7],1251.03,40.0,2,K=10000.0,R=1.0,0,[27],750.751,0.009,1,X=0.759836,0,[45],1230.77,0.425,1,X=0.289857,0,[59],1151.0,3.35,1,X=0.172989,0,[61],640.964,54.0,1,X=0.00361033,0,[63],1282.38,7.85,1,X=0.139818,0,[67],1170.44,9.6,1,X=0.132957,0,[80],634.219,41.5,1,X=0.0922079,0,[82],1332.68,50.0,1,X=0.0880112,0,[86],253.817,156.0,1,X=0.0662215,0,[89],1355.82,470.0,1,X=0.0502639,0,[94],1014.92,1550.0,1,X=0.037299,0,[95],1434.45,5520.0,1,X=0.0271516,0')
 
-generatorFunctions[100] = lambda: varyInitialBiomass([2, 3, 42, 52, 53, 69, 75, 86, 1001, 1005])
-generatorFunctions[101] = lambda: varyXK('10,[5],1539.57,40.0,2,K=10000.0,R=1.0,0,[7],841.602,40.0,2,K=10000.0,R=1.0,0,[42],597.749,0.205,1,X=0.34781,0,[52],928.551,7.0,1,X=0.143882,0,[53],395.806,2.8,1,X=0.180922,0,[69],1625.66,12.5,1,X=0.124467,0,[70],1096.04,13.0,1,X=0.123252,0,[86],1192.29,156.0,1,X=0.0662215,0,[89],341.895,470.0,1,X=0.0502639,0,[92],1612.24,1250.0,1,X=0.0393598,0')
+generator_functions[100] = lambda: vary_initial_biomass([2, 3, 42, 52, 53, 69, 75, 86, 1001, 1005])
+generator_functions[101] = lambda: vary_x_k('10,[5],1539.57,40.0,2,K=10000.0,R=1.0,0,[7],841.602,40.0,2,K=10000.0,R=1.0,0,[42],597.749,0.205,1,X=0.34781,0,[52],928.551,7.0,1,X=0.143882,0,[53],395.806,2.8,1,X=0.180922,0,[69],1625.66,12.5,1,X=0.124467,0,[70],1096.04,13.0,1,X=0.123252,0,[86],1192.29,156.0,1,X=0.0662215,0,[89],341.895,470.0,1,X=0.0502639,0,[92],1612.24,1250.0,1,X=0.0393598,0')
 
 # 25 additional 5-species food webs, initial biomass
 for set_num, species_ids in enumerate([
@@ -928,7 +928,7 @@ for set_num, species_ids in enumerate([
     # Python has late-binding closures, but I want to bind the current value
     # of species_id. Using default argument s=species_ids to get around the
     # problem.
-    generatorFunctions[set_num] = lambda s=species_ids: varyInitialBiomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
 
 # 25 additional 10-species food webs, initial biomass
 for set_num, species_ids in enumerate([
@@ -959,7 +959,7 @@ for set_num, species_ids in enumerate([
     [42, 53, 61, 67, 73, 80, 82, 88, 1001, 1005]
     ], start=127):
 
-    generatorFunctions[set_num] = lambda s=species_ids: varyInitialBiomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
 
 # 25 additional 15-species food webs, initial biomass
 for set_num, species_ids in enumerate([
@@ -990,7 +990,7 @@ for set_num, species_ids in enumerate([
     [31, 41, 46, 49, 50, 53, 56, 59, 64, 75, 83, 86, 1001, 1004, 1005]
     ], start=152):
 
-    generatorFunctions[set_num] = lambda s=species_ids: varyInitialBiomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
 
 #
 # X and K variations for above 75 food webs
@@ -1077,9 +1077,9 @@ node_configs = [
 assert len(node_configs) == 75
 
 for set_num, node_config in enumerate(node_configs, start=177):
-    generatorFunctions[set_num] = lambda nc=node_config: varyXK(nc)
+    generator_functions[set_num] = lambda nc=node_config: vary_x_k(nc)
 
-def printUsageAndExit():
+def print_usage_and_exit():
     print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
     sys.exit(1)
 
@@ -1089,16 +1089,16 @@ if __name__ == '__main__':
     # can be chosen from the command line
 
     if len(sys.argv) != 2:
-        printUsageAndExit()
+        print_usage_and_exit()
     try:
-        setNumber = int(sys.argv[1])
+        set_number = int(sys.argv[1])
     except ValueError:
-        printUsageAndExit()
+        print_usage_and_exit()
 
-    if setNumber not in generatorFunctions:
+    if set_number not in generator_functions:
         print("Invalid set number (valid set numbers: {})".format(
-            ' '.join(map(str, generatorFunctions.keys()))),
+            ' '.join(map(str, generator_functions.keys()))),
             file=sys.stderr)
-        printUsageAndExit()
+        print_usage_and_exit()
 
-    generatorFunctions[setNumber]()
+    generator_functions[set_number]()

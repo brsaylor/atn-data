@@ -72,24 +72,24 @@ def parse_weka_em_output(priors, text):
         if len(line.strip()) == 0:
             # skip blank line
             continue
-        firstDigitPos = re.search(r'\d', line).start()
+        first_digit_pos = re.search(r'\d', line).start()
         if line[0] != ' ':
             # Found a line giving the attribute name
-            paramName = line[:firstDigitPos]
-            nodeId = int(line[firstDigitPos:])
+            param_name = line[:first_digit_pos]
+            node_id = int(line[first_digit_pos:])
         else:
             # Found a line giving means or standard deviations for an attribute
             if line.lstrip().startswith('mean'):
-                distParamName = 'mean'
+                dist_param_name = 'mean'
             if line.lstrip().startswith('std. dev.'):
-                distParamName = 'stdDev'
-            for k, distParamValue in enumerate(
-                    [float(x) for x in line[firstDigitPos:].split()]):
-                if nodeId not in dist[k]['nodes']:
-                    dist[k]['nodes'][nodeId] = {}
-                if paramName not in dist[k]['nodes'][nodeId]:
-                    dist[k]['nodes'][nodeId][paramName] = {}
-                dist[k]['nodes'][nodeId][paramName][distParamName] = distParamValue
+                dist_param_name = 'stdDev'
+            for k, dist_param_value in enumerate(
+                    [float(x) for x in line[first_digit_pos:].split()]):
+                if node_id not in dist[k]['nodes']:
+                    dist[k]['nodes'][node_id] = {}
+                if param_name not in dist[k]['nodes'][node_id]:
+                    dist[k]['nodes'][node_id][param_name] = {}
+                dist[k]['nodes'][node_id][param_name][dist_param_name] = dist_param_value
     
     return dist
 
@@ -100,7 +100,7 @@ def parse_weka_em_output_file(filename):
     """
     f = open(filename)
     priors = None
-    paramOutputLines = []
+    param_output_lines = []
     for line in f:
         if line.lstrip().startswith('('):
             # We've found the line with the priors
@@ -111,7 +111,7 @@ def parse_weka_em_output_file(filename):
         elif priors is not None:
             if line.startswith('Time taken'):
                 break
-            paramOutputLines.append(line)
-    clusters = parse_weka_em_output(priors, ''.join(paramOutputLines))
+            param_output_lines.append(line)
+    clusters = parse_weka_em_output(priors, ''.join(param_output_lines))
     return clusters
 
