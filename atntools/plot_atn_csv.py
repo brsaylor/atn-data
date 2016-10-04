@@ -20,8 +20,8 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from create_feature_file import getSpeciesData, environmentScore
-from nodeconfig_generator import parseNodeConfig
+from atntools.create_feature_file import getSpeciesData, environmentScore
+from atntools.nodeconfig_generator import parseNodeConfig
 
 speciesData = None
 

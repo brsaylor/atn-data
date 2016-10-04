@@ -6,9 +6,9 @@ import json
 import numpy as np
 import pandas as pd
 
-import trees
-from nodeconfig_generator import validParamRanges
-import util
+from atntools import trees
+from atntools.nodeconfig_generator import validParamRanges
+from atntools import util
 
 def get_ranges_for_leaf(leaf):
     """

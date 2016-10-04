@@ -8,7 +8,8 @@ import os
 import csv
 import re
 
-WOB_DB_DIR = 'wob-database'
+WOB_DB_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+        'data/wob-database')
 
 def typecast_dict_values(d, types):
     """

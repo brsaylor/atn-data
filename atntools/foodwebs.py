@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 
-from util import WOB_DB_DIR
+from atntools.util import WOB_DB_DIR
 
 def read_serengeti_from_csv():
     """
@@ -49,6 +49,12 @@ def read_serengeti(remove_isolated_species=True):
                 [54, 58, 62, 78, 79, 81, 84, 1006, 1007, 1008, 1009])
 
     return graph
+
+def read_species_table():
+    # FIXME: Redundant; should read data from graph
+    species_table = pd.read_csv(os.path.join(WOB_DB_DIR,
+        'species-table.csv'), index_col='species_id')
+    return species_table
 
 def draw_food_web(graph, include_names=False, include_legend=False):
     """
@@ -107,8 +113,7 @@ def draw_food_web(graph, include_names=False, include_legend=False):
     
     if include_legend:
         # FIXME: Read data from graph
-        species_table = pd.read_csv(os.path.join(WOB_DB_DIR,
-            'species-table.csv'), index_col='species_id')
+        species_table = read_species_table()
         df = species_table[['name', 'trophic_level']]
         table_text = df.loc[graph.nodes()].sort_values('trophic_level', 0, False).to_string(
             formatters={'name': lambda s: '{:<31}'.format(s)},

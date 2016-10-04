@@ -10,9 +10,8 @@ import re
 import itertools
 import bisect
 
-import util
-
-from weka_em import parse_weka_em_output
+from atntools import util
+from atntools.weka_em import parse_weka_em_output
 
 # Functions that generate and print out node configs, keyed by set number.
 generatorFunctions = {}

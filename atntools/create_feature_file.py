@@ -19,7 +19,7 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from nodeconfig_generator import parseNodeConfig
+from atntools.nodeconfig_generator import parseNodeConfig
 
 NO_EXTINCTION = 99999999
 
@@ -64,7 +64,7 @@ def getSpeciesData(filename=None):
 
     if filename is None:
         filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                'species-data.csv')
+                'data/species-data.csv')
 
     data = {}
     with open(filename, 'r') as f:
