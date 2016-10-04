@@ -1,0 +1,12 @@
+name: atn-tools
+dependencies:
+    - python=3.5
+    - numpy
+    - scipy
+    - matplotlib
+    - jupyter
+    - pandas
+    - networkx
+    - pip:
+        - pydotplus
+        - pygraphviz
