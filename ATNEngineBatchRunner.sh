@@ -5,7 +5,13 @@
 # Uncomment to enable assertions
 #JVM_ARGS="-enableassertions"
 
+# Get absolute path to node config file
+WORKING_DIR=`pwd`
+cd `dirname $2`
+NODECONFIG_FILE=`pwd`/`basename $2`
+cd $WORKING_DIR
+
 cd ../WoB_Server_ATNEngine
 java $JVM_ARGS \
     -cp 'build/libs/WoB_Server_ATNEngine.jar:lib/*:chartlib/*' \
-    atn.ATNEngineBatchRunner $1 ../atn-data/$2 $3
+    atn.ATNEngineBatchRunner $1 $NODECONFIG_FILE $3
