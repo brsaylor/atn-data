@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-
+import json
 import os
 import csv
 import random
 
 import matplotlib.pyplot as plt
 import networkx as nx
-import pandas as pd
 
 from atntools.util import WOB_DB_DIR
 
@@ -50,10 +49,11 @@ def read_serengeti_from_csv():
     return graph
 
 
-read_serengeti = read_serengeti_from_csv
+def read_serengeti():
+    return read_serengeti_from_csv()
 
 
-def draw_food_web(graph, include_names=False, include_legend=False):
+def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
     """
     Note: Does not draw cannibalism loops
     """
@@ -83,13 +83,15 @@ def draw_food_web(graph, include_names=False, include_legend=False):
 
     colors = [float(data['trophic_level']) * -1 + 5 for node, data in graph.nodes_iter(data=True)]
 
-    nx.draw_networkx_nodes(graph, pos, node_color=colors, cmap='RdYlGn', vmin=1, vmax=4)
+    # True vmin and vmax defining the color range are 1 and 4, but setting vmax to 4.5 to avoid the green getting too dark
+    nx.draw_networkx_nodes(graph, pos, node_color=colors, cmap='RdYlGn', vmin=1, vmax=4.5)
+
     # nx.draw_networkx_nodes(graph, pos, node_size=colors)
     nx.draw_networkx_edges(graph, pos)
 
     plt.gca().set_axis_bgcolor('white')
 
-    if include_names:
+    if show_names:
         labels = {node[0]: '  ' + node[1]['node_id'] + ' ' + node[1]['name']
                   for node in graph.nodes(data=True)}
 
@@ -108,7 +110,7 @@ def draw_food_web(graph, include_names=False, include_legend=False):
 
     # plt.axis('off')
 
-    if include_legend:
+    if show_legend:
         # Build text of legend, adding 1 character of padding all around
         # ('pad' in bbox arg below adds padding inside and outside border,
         # interfering with alignment)
@@ -121,9 +123,19 @@ def draw_food_web(graph, include_names=False, include_legend=False):
             rows.append(template.format(data['node_id'], data['name'], data['trophic_level']))
         table_text = "\n{}\n{}\n{}\n".format(header, divider, "\n".join(rows))
 
-        plt.text(plt.gca().get_xlim()[1] * 1.02, plt.gca().get_ylim()[1], table_text, family='monospace',
+        lgd = plt.text(plt.gca().get_xlim()[1] * 1.02, plt.gca().get_ylim()[1], table_text, family='monospace',
                  bbox={'edgecolor': 'black', 'facecolor': 'white', 'pad': 0},
                  verticalalignment='top')
+
+    if output_file:
+        dpi=200
+        if show_legend:
+            plt.savefig(output_file, bbox_extra_artists=(lgd,),
+                        bbox_inches='tight', dpi=dpi)
+        else:
+            plt.savefig(output_file, dpi=dpi)
+    else:
+        plt.show()
 
 
 def random_subgraph(graph, N):
@@ -287,6 +299,23 @@ def species_node_id_map(graph):
         assert species_id not in id_map
         id_map[species_id] = node_id
     return id_map
+
+
+def food_web_json(graph):
+    """ Generate a JSON representation of the given food web.
+
+    Parameters
+    ----------
+    graph : networkx.DiGraph
+        The food web
+
+    Returns
+    -------
+    str
+        JSON representation of the food web
+    """
+    obj = {'node_ids': sorted(graph.nodes())}
+    return json.dumps(obj)
 
 
 if __name__ == '__main__':
