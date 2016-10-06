@@ -268,6 +268,27 @@ def serengeti_predator_complete_subweb(size, num_basal_species, retry=10):
                                     seed_size=num_basal_species, retry=retry)
 
 
+def species_node_id_map(graph):
+    """ Build a map of species IDs to node IDs.
+
+    Parameters
+    ----------
+    graph : networkx.DiGraph
+        The Serengeti food web
+
+    Returns
+    -------
+    dict
+        Dictionary mapping species ID to node ID
+    """
+    id_map = {}
+    for node_id, data in graph.nodes(data=True):
+        species_id = int(data['species_id'])
+        assert species_id not in id_map
+        id_map[species_id] = node_id
+    return id_map
+
+
 if __name__ == '__main__':
     subweb = serengeti_predator_complete_subweb(10, 2)
     node_ids = sorted(subweb.nodes())
