@@ -13,9 +13,9 @@ if args.existing_dir is None:
     print("--existing-dir is required for now", file=sys.stderr)
     sys.exit(1)
 
-food_web_id = args.existing_dir
+food_web_id = os.path.normpath(args.existing_dir)
 
-node_ids = [int(x) for x in args.existing_dir.split('-')]
+node_ids = [int(x) for x in food_web_id.split('-')]
 
 serengeti = foodwebs.read_serengeti()
 subweb = serengeti.subgraph(node_ids)
