@@ -9,7 +9,7 @@ from atntools import foodwebs
 if len(sys.argv) < 2:
     print("Renames the given food web directories from species-ID-based names\n"
           + "to node-ID-based names.", file=sys.stdout)
-    print("Usage: rename_food_web_directories.py DIR [DIR]...", file=sys.stdout)
+    print("Usage: atn-rename-food-web-directories.py DIR [DIR]...", file=sys.stdout)
     sys.exit(1)
 
 serengeti = foodwebs.read_serengeti()

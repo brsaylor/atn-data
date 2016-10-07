@@ -4,7 +4,7 @@
 # ending with a labelled feature file.
 
 if [ $# -lt 2 ]; then
-    echo "Usage: ./generate-dataset.sh <set#> <timesteps>"
+    echo "Usage: ./atn-generate-dataset.sh <set#> <timesteps>"
     echo "Assumes set# is a valid set# for nodeconfig_generator.py"
     exit 1
 fi
