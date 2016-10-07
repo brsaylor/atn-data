@@ -4,6 +4,8 @@ import os
 import csv
 import random
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import networkx as nx
 
