@@ -3,18 +3,23 @@
 # This script automates the workflow starting with generating nodeconfigs and
 # ending with a labelled feature file.
 
+eval $(atn-settings.py)
+
 if [ $# -lt 2 ]; then
     echo "Usage: ./atn-generate-dataset.sh <set#> <timesteps>"
     echo "Assumes set# is a valid set# for nodeconfig_generator.py"
     exit 1
 fi
 
-LOGDIR=../WoB_Server_ATNEngine/src/log/atn
+LOGDIR=$WOB_SERVER_HOME/src/log/atn
+
+# Clear the log directory
+rm $LOGDIR/*
 
 SET=$1
 TIMESTEPS=$2
 
-SETDIR=../data/set$SET
+SETDIR=$DATA_HOME/set$SET
 mkdir $SETDIR
 NODECONFIG_FILE=$SETDIR/nodeconfigs.set$SET.txt
 

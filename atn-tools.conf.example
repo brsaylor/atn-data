@@ -1,0 +1,4 @@
+DATA_HOME = /persist/data
+DEFAULT_CLASS_ATTRIBUTE = label_environmentScoreSlope_1000_5000
+WEKA_JAR_PATH = /persist/sw/weka-3-8-0/weka.jar
+WOB_SERVER_HOME = /persist/sw/WoB_Server_ATNEngine

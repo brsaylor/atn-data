@@ -2,13 +2,9 @@
 
 # Trains Weka's J48 decision tree on the given feature file.
 
-### CONFIGURATION OPTIONS
+eval $(atn-settings.py)
 
-# Path to weka.jar
-WEKA_JAR_PATH=/opt/homebrew-cask/Caskroom/weka/3.8.0/weka-3-8-0/weka.jar
-
-# Attribute to use for class label
-CLASS_ATTRIBUTE=label_environmentScoreSlope_1000_5000
+CLASS_ATTRIBUTE=$DEFAULT_CLASS_ATTRIBUTE
 
 ### END CONFIGURATION OPTIONS
 
