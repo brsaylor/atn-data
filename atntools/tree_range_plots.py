@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 
 import os
-import sys
-import json
 import argparse
 
-import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 
-from trees import *
-from tree_ranges import * 
+from atntools.trees import *
+from atntools.tree_ranges import *
 
 DEPENDENT_VAR = 'environmentScoreSlope_1000_5000'
+
 
 def plot_tree_ranges(tree_file, feature_file, output_dir):
     """
@@ -106,6 +103,7 @@ def plot_tree_ranges(tree_file, feature_file, output_dir):
         json.dump(distributions, f, indent=4, sort_keys=True)
     with open(os.path.join(output_dir, 'range-weights.json'), 'w') as f:
         json.dump(range_weights, f, indent=4, sort_keys=True)
+
 
 if __name__ == '__main__':
 
