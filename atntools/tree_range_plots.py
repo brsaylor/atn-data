@@ -1,5 +1,7 @@
 import os
 
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 from atntools import settings
