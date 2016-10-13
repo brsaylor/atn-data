@@ -1,14 +1,12 @@
-#!/usr/bin/env python3
-
 import os
-import argparse
 
 from matplotlib import pyplot as plt
 
+from atntools import settings
 from atntools.trees import *
 from atntools.tree_ranges import *
 
-DEPENDENT_VAR = 'environmentScoreSlope_1000_5000'
+DEPENDENT_VAR = settings.DEFAULT_CLASS_ATTRIBUTE.replace('label_', '')
 
 
 def plot_tree_ranges(tree_file, feature_file, output_dir):
@@ -104,21 +102,3 @@ def plot_tree_ranges(tree_file, feature_file, output_dir):
     with open(os.path.join(output_dir, 'range-weights.json'), 'w') as f:
         json.dump(range_weights, f, indent=4, sort_keys=True)
 
-
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('tree_file', help="Weka J48 output file")
-    parser.add_argument('feature_file', help="Labeled feature file")
-    parser.add_argument('output_dir', help="Output directory for plot and json")
-    args = parser.parse_args()
-
-    if not os.path.isfile(args.tree_file):
-        print("Error: {}: no such file".format(args.tree_file))
-        sys.exit(1)
-
-    if not os.path.isfile(args.feature_file):
-        print("Error: {}: no such file".format(args.feature_file))
-        sys.exit(1)
-
-    plot_tree_ranges(args.tree_file, args.feature_file, args.output_dir)
