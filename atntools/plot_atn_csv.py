@@ -22,7 +22,7 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from atntools.create_feature_file import get_species_data, environment_score
+from atntools.features import get_species_data, environment_score
 from atntools.nodeconfig_generator import parse_node_config
 
 species_data = None

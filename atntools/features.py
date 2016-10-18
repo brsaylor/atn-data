@@ -363,36 +363,29 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
 
     return out
 
-if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print("Usage: create_feature_file.py <set#> <outfile.csv> ATN.csv [ATN_1.csv ...]")
-        sys.exit(1)
 
-    set_number = int(sys.argv[1])
-    outfilename = sys.argv[2]
-    infilenames = sys.argv[3:]
-
+def generate_feature_file(set_number, output_file, biomass_files):
     species_data = get_species_data()
 
     outfile = None
     writer = None
 
     for sim_number, infilename in sorted(
-            [(get_sim_number(f), f) for f in infilenames]):
+            [(get_sim_number(f), f) for f in biomass_files]):
 
         # Create the output row from the simulation identifiers, input and
         # output attributes
         outrow = {}
         identifiers = {
-                'filename': os.path.basename(infilename),
-                'setNumber': set_number,
-                'simNumber': sim_number,
-                }
+            'filename': os.path.basename(infilename),
+            'setNumber': set_number,
+            'simNumber': sim_number,
+        }
         outrow.update(identifiers)
         node_config, input_attributes, biomass_data = get_simulation_data(infilename)
         outrow.update(input_attributes)
         output_attributes = get_output_attributes(
-                species_data, node_config, biomass_data)
+            species_data, node_config, biomass_data)
         outrow.update(output_attributes)
 
         if writer is None:
@@ -402,7 +395,7 @@ if __name__ == '__main__':
                 list(identifiers.keys()) +
                 sorted(input_attributes.keys()) +
                 sorted(output_attributes.keys()))
-            outfile = open(outfilename, 'w')
+            outfile = open(output_file, 'w')
             writer = csv.DictWriter(outfile, fieldnames)
             writer.writeheader()
 

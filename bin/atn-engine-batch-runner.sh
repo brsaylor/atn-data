@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval $(atn-settings.py)
+
 # Args: <timesteps> <node config input file>
 
 # Uncomment to enable assertions
@@ -11,7 +13,7 @@ cd `dirname $2`
 NODECONFIG_FILE=`pwd`/`basename $2`
 cd $WORKING_DIR
 
-cd ../WoB_Server_ATNEngine
+cd $WOB_SERVER_HOME
 java $JVM_ARGS \
     -cp 'build/libs/WoB_Server_ATNEngine.jar:lib/*:chartlib/*' \
     atn.ATNEngineBatchRunner $1 $NODECONFIG_FILE $3
