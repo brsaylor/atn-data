@@ -8,12 +8,28 @@ attributes of this module.
 import sys
 import os.path
 
-valid_properties = [
-    'DATA_HOME',
-    'DEFAULT_CLASS_ATTRIBUTE',
-    'WEKA_JAR_PATH',
-    'WOB_SERVER_HOME',
-]
+
+def filter_path(path):
+    return os.path.expanduser(path)
+
+"""
+Valid properties that may be included in configuration files.
+Key: name of valid property
+Value: dict with metadata about the property. Keys:
+    - filter: a function through which to pass the property value when read
+"""
+valid_properties = {
+    'DATA_HOME': {
+        'filter': filter_path
+    },
+    'DEFAULT_CLASS_ATTRIBUTE': {},
+    'WEKA_JAR_PATH': {
+        'filter': filter_path
+    },
+    'WOB_SERVER_HOME': {
+        'filter': filter_path
+    },
+}
 
 # Check that the configuration file exists
 conf_file_path = os.path.expanduser('~/.atn-tools/atn-tools.conf')
@@ -37,7 +53,10 @@ for line in conf_file:
         print("Warning: {}: {} is not a valid configuration property.".format(conf_file_path, prop), file=sys.stderr)
         continue
 
-    # Valid property: set it as a module attribute
+    # Valid property: set it as a module attribute, first applying a filter (if any)
+    filter_ = valid_properties[prop].get('filter')
+    if filter_:
+        value = filter_(value)
     globals()[prop] = value
 
 conf_file.close()
@@ -49,5 +68,5 @@ def print_configuration():
     Each line has the form PROPERTY=VALUE so that the output is valid
     shell script for setting environment variables.
     """
-    for prop in valid_properties:
+    for prop in sorted(valid_properties.keys()):
         print('{}={}'.format(prop, globals()[prop]))
