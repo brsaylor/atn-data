@@ -1138,8 +1138,8 @@ for set_num, node_config in enumerate(node_configs, start=177):
 assert max(generator_functions.keys()) == 251
 
 # 20-species initialBiomass variations
-generator_functions[253] = lambda: vary_initial_biomass([2, 3, 4, 5, 14, 15, 16, 31, 34, 39, 41, 42, 53, 57, 65, 80, 82, 83, 85, 86])
-generator_functions[254] = lambda: vary_initial_biomass([2, 3, 4, 5, 8, 9, 16, 27, 29, 30, 38, 49, 50, 59, 66, 75, 83, 86, 87, 93])
-generator_functions[255] = lambda: vary_initial_biomass([2, 3, 4, 7, 9, 13, 15, 26, 27, 44, 48, 49, 52, 61, 66, 67, 73, 80, 86, 89])
-generator_functions[256] = lambda: vary_initial_biomass([2, 3, 4, 5, 26, 27, 30, 33, 49, 50, 55, 59, 69, 82, 83, 86, 87, 88, 93, 95])
-generator_functions[257] = lambda: vary_initial_biomass([2, 3, 4, 7, 8, 9, 11, 20, 30, 33, 36, 47, 49, 50, 61, 67, 74, 75, 79, 85])
+generator_functions[252] = lambda: vary_initial_biomass([2, 3, 4, 5, 14, 15, 16, 31, 34, 39, 41, 42, 53, 57, 65, 80, 82, 83, 85, 86])
+generator_functions[253] = lambda: vary_initial_biomass([2, 3, 4, 5, 8, 9, 16, 27, 29, 30, 38, 49, 50, 59, 66, 75, 83, 86, 87, 93])
+generator_functions[254] = lambda: vary_initial_biomass([2, 3, 4, 7, 9, 13, 15, 26, 27, 44, 48, 49, 52, 61, 66, 67, 73, 80, 86, 89])
+generator_functions[255] = lambda: vary_initial_biomass([2, 3, 4, 5, 26, 27, 30, 33, 49, 50, 55, 59, 69, 82, 83, 86, 87, 88, 93, 95])
+generator_functions[256] = lambda: vary_initial_biomass([2, 3, 4, 7, 8, 9, 11, 20, 30, 33, 36, 47, 49, 50, 61, 67, 74, 75, 79, 85])
