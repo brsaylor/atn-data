@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from atntools import trees
-from atntools.nodeconfig_generator import validParamRanges
+from atntools.nodeconfigs import valid_param_ranges
 from atntools import util
 
 def get_ranges_for_leaf(leaf):
@@ -199,7 +199,7 @@ def get_parameter_distributions(tree):
             # valid value for the parameter.
             if param not in limits:
                 param_base_name = util.remove_trailing_digits(param)
-                limits[param] = validParamRanges[param_base_name]
+                limits[param] = valid_param_ranges[param_base_name]
             low = low or limits[param][0]
             high = high or limits[param][1]
             

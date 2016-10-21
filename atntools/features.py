@@ -19,7 +19,7 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from atntools.nodeconfig_generator import parse_node_config
+from atntools.nodeconfigs import parse_node_config
 
 NO_EXTINCTION = 99999999
 

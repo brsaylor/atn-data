@@ -9,7 +9,7 @@ import os
 import sys
 import argparse
 
-from atntools.nodeconfig_generator import parse_node_config
+from atntools.nodeconfigs import parse_node_config
 
 parser = argparse.ArgumentParser(description=globals()['__doc__'])
 parser.add_argument('set_directory', help="Directory containing the set (i.e. set999)")

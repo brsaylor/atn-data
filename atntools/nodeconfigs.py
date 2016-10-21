@@ -17,7 +17,7 @@ from atntools.weka_em import parse_weka_em_output
 generator_functions = {}
 
 # Parameter sliders in Convergence game are bounded by these ranges
-validParamRanges = {
+valid_param_ranges = {
     'K': (1000, 15000),
     'R': (0, 3),
     'X': (0, 1),
@@ -324,9 +324,9 @@ def generate_random_variations(template_nodes,
                     node[param] = (template_nodes[j][param] *
                             random.uniform(minRatio, maxRatio))
                     # Limit parameter ranges
-                    if param in validParamRanges:
+                    if param in valid_param_ranges:
                         node[param] = util.clip(node[param],
-                                *validParamRanges[param])
+                                                *valid_param_ranges[param])
         print(generate_node_config(nodes))
 
 def sweepParamForNode(template_nodes, nodeId, param,
@@ -432,6 +432,7 @@ def generate_gaussian_mixture_variations(template_nodes, distribution, count):
     # should match priors)
     #print(count_k)
 
+
 def make_base_config_from_species_list(species_id_list,
                                        basal_biomass=1000.0, non_basal_biomass=1000.0, sort=True):
     species_data = util.get_species_data()
@@ -463,6 +464,53 @@ def make_base_config_from_species_list(species_id_list,
     # Otherwise, it's assumed speciesIdList is sorted as desired
 
     return nodes
+
+
+def make_base_config_from_node_list(node_id_list,
+                                       basal_biomass=1000.0, non_basal_biomass=1000.0, sort=True):
+    species_data = util.get_species_data()
+
+    # Build a version of species_data indexed by node ID
+    species_data_by_node_id = {}
+    for species_id, species in species_data.items():
+        if species_id >= 1006:
+            # It's a plant species not included in food web,
+            # most of which break the 1-1 relationship between node ID and species ID
+            continue
+        node_id = species['node_id_list'][0]
+        assert node_id not in species_data_by_node_id
+        species_data_by_node_id[node_id] = species
+
+    nodes = []
+
+    for node_id in node_id_list:
+
+        species = species_data_by_node_id[node_id]
+
+        assert len(species['node_id_list']) == 1
+        node = {
+            'nodeId': species['node_id_list'][0],
+            'perUnitBiomass': species['biomass'],
+        }
+        if species['organism_type'] == 1:
+            # plant
+            node['initialBiomass'] = basal_biomass
+            node['K'] = species['carrying_capacity']
+            node['R'] = species['growth_rate']
+        else:
+            # animal
+            node['initialBiomass'] = non_basal_biomass
+            node['X'] = species['metabolism']
+
+        nodes.append(node)
+
+    if sort:
+        # Sort by node ID to avoid triggering bug in unpatched ATNEngine
+        nodes.sort(key=lambda n: n['nodeId'])
+    # Otherwise, it's assumed speciesIdList is sorted as desired
+
+    return nodes
+
 
 def generate_set_16():
     """
@@ -811,7 +859,7 @@ def generate_set_65():
             )
     print(generate_node_config(origNodes))
 generator_functions[65] = generate_set_65
- 
+
 def generate_set_66():
     origNodes = make_base_config_from_species_list(
             [47, 49, 83, 86, 1003]
@@ -843,20 +891,28 @@ def generate_set_69():
                                50, 150, 1000)
 generator_functions[69] = generate_set_69
 
-def vary_initial_biomass(species_ids):
+
+def vary_initial_biomass_species_ids(species_ids):
     template_nodes = make_base_config_from_species_list(species_ids)
     generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+
+
+def vary_initial_biomass(node_ids):
+    template_nodes = make_base_config_from_node_list(node_ids)
+    generate_random_variations(template_nodes, ['initialBiomass'], 25, 175, 1000)
+
 
 def vary_x_k(node_config):
     template_nodes = parse_node_config(node_config)
     generate_random_variations(template_nodes, ['X', 'K'], 50, 150, 1000)
 
+
 # 5-species initial biomass variations
-generator_functions[70] = lambda: vary_initial_biomass([15, 17, 55, 80, 1002])
-generator_functions[71] = lambda: vary_initial_biomass([2, 5, 57, 61, 1005])
-generator_functions[72] = lambda: vary_initial_biomass([26, 40, 49, 73, 1004])
-generator_functions[73] = lambda: vary_initial_biomass([5, 14, 67, 85, 1005])
-generator_functions[74] = lambda: vary_initial_biomass([53, 74, 82, 86, 1004])
+generator_functions[70] = lambda: vary_initial_biomass_species_ids([15, 17, 55, 80, 1002])
+generator_functions[71] = lambda: vary_initial_biomass_species_ids([2, 5, 57, 61, 1005])
+generator_functions[72] = lambda: vary_initial_biomass_species_ids([26, 40, 49, 73, 1004])
+generator_functions[73] = lambda: vary_initial_biomass_species_ids([5, 14, 67, 85, 1005])
+generator_functions[74] = lambda: vary_initial_biomass_species_ids([53, 74, 82, 86, 1004])
 
 # 5-species X and K variations
 generator_functions[75] = lambda: vary_x_k('5,[2],408.544,20.0,2,K=10000.0,R=1.0,0,[15],388.199,0.071,1,X=0.00412167,0,[17],256.225,0.17,1,X=0.00331341,0,[55],866.213,0.213,1,X=0.344497,0,[80],736.208,41.5,1,X=0.0922079,0')
@@ -866,18 +922,18 @@ generator_functions[78] = lambda: vary_x_k('5,[5],262.045,40.0,2,K=10000.0,R=1.0
 generator_functions[79] = lambda: vary_x_k('5,[4],756.561,20.0,2,K=10000.0,R=1.0,0,[74],667.793,23.8,1,X=0.105959,0,[82],1521.54,50.0,1,X=0.0880112,0,[86],1060.07,156.0,1,X=0.0662215,0,[89],1440.2,470.0,1,X=0.0502639,0')
 
 # 10-species initial biomass variations
-generator_functions[80] = lambda: vary_initial_biomass([14, 18, 31, 32, 49, 57, 63, 69, 1002, 1004])
-generator_functions[81] = lambda: vary_initial_biomass([2, 21, 43, 49, 50, 53, 69, 86, 1003, 1004])
-generator_functions[82] = lambda: vary_initial_biomass([3, 15, 27, 33, 38, 53, 69, 85, 1002, 1004])
-generator_functions[83] = lambda: vary_initial_biomass([31, 44, 45, 47, 49, 50, 66, 75, 1001, 1005])
-generator_functions[84] = lambda: vary_initial_biomass([53, 55, 59, 71, 74, 86, 87, 88, 1004, 1005])
+generator_functions[80] = lambda: vary_initial_biomass_species_ids([14, 18, 31, 32, 49, 57, 63, 69, 1002, 1004])
+generator_functions[81] = lambda: vary_initial_biomass_species_ids([2, 21, 43, 49, 50, 53, 69, 86, 1003, 1004])
+generator_functions[82] = lambda: vary_initial_biomass_species_ids([3, 15, 27, 33, 38, 53, 69, 85, 1002, 1004])
+generator_functions[83] = lambda: vary_initial_biomass_species_ids([31, 44, 45, 47, 49, 50, 66, 75, 1001, 1005])
+generator_functions[84] = lambda: vary_initial_biomass_species_ids([53, 55, 59, 71, 74, 86, 87, 88, 1004, 1005])
 
 # 15-species initial biomass variations
-generator_functions[85] = lambda: vary_initial_biomass([11, 31, 39, 43, 49, 51, 66, 69, 72, 80, 82, 88, 1001, 1003, 1004])
-generator_functions[86] = lambda: vary_initial_biomass([15, 16, 22, 24, 26, 29, 31, 49, 53, 73, 74, 80, 1002, 1004, 1005])
-generator_functions[87] = lambda: vary_initial_biomass([16, 30, 31, 38, 49, 50, 53, 57, 66, 67, 83, 86, 1001, 1003, 1005])
-generator_functions[88] = lambda: vary_initial_biomass([2, 3, 15, 18, 22, 34, 42, 49, 50, 52, 57, 67, 1002, 1004, 1005])
-generator_functions[89] = lambda: vary_initial_biomass([4, 5, 27, 45, 53, 59, 61, 63, 67, 80, 82, 86, 1001, 1004, 1005])
+generator_functions[85] = lambda: vary_initial_biomass_species_ids([11, 31, 39, 43, 49, 51, 66, 69, 72, 80, 82, 88, 1001, 1003, 1004])
+generator_functions[86] = lambda: vary_initial_biomass_species_ids([15, 16, 22, 24, 26, 29, 31, 49, 53, 73, 74, 80, 1002, 1004, 1005])
+generator_functions[87] = lambda: vary_initial_biomass_species_ids([16, 30, 31, 38, 49, 50, 53, 57, 66, 67, 83, 86, 1001, 1003, 1005])
+generator_functions[88] = lambda: vary_initial_biomass_species_ids([2, 3, 15, 18, 22, 34, 42, 49, 50, 52, 57, 67, 1002, 1004, 1005])
+generator_functions[89] = lambda: vary_initial_biomass_species_ids([4, 5, 27, 45, 53, 59, 61, 63, 67, 80, 82, 86, 1001, 1004, 1005])
 
 # 10-species X and K variations
 generator_functions[90] = lambda: vary_x_k('10,[2],907.82,20.0,2,K=10000.0,R=1.0,0,[4],1222.14,20.0,2,K=10000.0,R=1.0,0,[14],771.772,20.0,1,X=0.00100607,0,[18],250.02,0.00014,1,X=0.0195594,0,[31],854.717,0.0075,1,X=0.795271,0,[32],856.17,0.13,1,X=0.0162989,0,[49],938.492,0.355,1,X=0.303196,0,[57],1220.21,4.2,1,X=0.163481,0,[63],956.904,7.85,1,X=0.139818,0,[69],1390.3,12.5,1,X=0.124467,0')
@@ -893,7 +949,7 @@ generator_functions[97] = lambda: vary_x_k('15,[3],612.341,20.0,2,K=10000.0,R=1.
 generator_functions[98] = lambda: vary_x_k('15,[2],711.901,20.0,2,K=10000.0,R=1.0,0,[4],974.336,20.0,2,K=10000.0,R=1.0,0,[5],629.732,40.0,2,K=10000.0,R=1.0,0,[15],1148.67,0.071,1,X=0.00412167,0,[18],1220.46,0.00014,1,X=0.0195594,0,[22],1005.17,0.68,1,X=0.257723,0,[34],383.387,0.0709,1,X=0.0189664,0,[42],587.471,0.205,1,X=0.34781,0,[49],299.732,0.355,1,X=0.303196,0,[50],1268.74,0.349,1,X=0.304491,0,[52],1700.41,7.0,1,X=0.143882,0,[53],717.439,2.8,1,X=0.180922,0,[57],1478.02,4.2,1,X=0.163481,0,[70],1173.33,13.0,1,X=0.123252,0,[94],1330.07,1550.0,1,X=0.037299,0')
 generator_functions[99] = lambda: vary_x_k('15,[4],945.8,20.0,2,K=10000.0,R=1.0,0,[5],630.907,40.0,2,K=10000.0,R=1.0,0,[7],1251.03,40.0,2,K=10000.0,R=1.0,0,[27],750.751,0.009,1,X=0.759836,0,[45],1230.77,0.425,1,X=0.289857,0,[59],1151.0,3.35,1,X=0.172989,0,[61],640.964,54.0,1,X=0.00361033,0,[63],1282.38,7.85,1,X=0.139818,0,[67],1170.44,9.6,1,X=0.132957,0,[80],634.219,41.5,1,X=0.0922079,0,[82],1332.68,50.0,1,X=0.0880112,0,[86],253.817,156.0,1,X=0.0662215,0,[89],1355.82,470.0,1,X=0.0502639,0,[94],1014.92,1550.0,1,X=0.037299,0,[95],1434.45,5520.0,1,X=0.0271516,0')
 
-generator_functions[100] = lambda: vary_initial_biomass([2, 3, 42, 52, 53, 69, 75, 86, 1001, 1005])
+generator_functions[100] = lambda: vary_initial_biomass_species_ids([2, 3, 42, 52, 53, 69, 75, 86, 1001, 1005])
 generator_functions[101] = lambda: vary_x_k('10,[5],1539.57,40.0,2,K=10000.0,R=1.0,0,[7],841.602,40.0,2,K=10000.0,R=1.0,0,[42],597.749,0.205,1,X=0.34781,0,[52],928.551,7.0,1,X=0.143882,0,[53],395.806,2.8,1,X=0.180922,0,[69],1625.66,12.5,1,X=0.124467,0,[70],1096.04,13.0,1,X=0.123252,0,[86],1192.29,156.0,1,X=0.0662215,0,[89],341.895,470.0,1,X=0.0502639,0,[92],1612.24,1250.0,1,X=0.0393598,0')
 
 # 25 additional 5-species food webs, initial biomass
@@ -928,7 +984,7 @@ for set_num, species_ids in enumerate([
     # Python has late-binding closures, but I want to bind the current value
     # of species_id. Using default argument s=species_ids to get around the
     # problem.
-    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass_species_ids(s)
 
 # 25 additional 10-species food webs, initial biomass
 for set_num, species_ids in enumerate([
@@ -959,7 +1015,7 @@ for set_num, species_ids in enumerate([
     [42, 53, 61, 67, 73, 80, 82, 88, 1001, 1005]
     ], start=127):
 
-    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass_species_ids(s)
 
 # 25 additional 15-species food webs, initial biomass
 for set_num, species_ids in enumerate([
@@ -990,7 +1046,7 @@ for set_num, species_ids in enumerate([
     [31, 41, 46, 49, 50, 53, 56, 59, 64, 75, 83, 86, 1001, 1004, 1005]
     ], start=152):
 
-    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass(s)
+    generator_functions[set_num] = lambda s=species_ids: vary_initial_biomass_species_ids(s)
 
 #
 # X and K variations for above 75 food webs
@@ -1079,26 +1135,11 @@ assert len(node_configs) == 75
 for set_num, node_config in enumerate(node_configs, start=177):
     generator_functions[set_num] = lambda nc=node_config: vary_x_k(nc)
 
-def print_usage_and_exit():
-    print("Usage: ./nodeconfig_generator.py <set#>", file=sys.stderr)
-    sys.exit(1)
+assert max(generator_functions.keys()) == 251
 
-if __name__ == '__main__':
-
-    # Starting with set 22, putting generator functions in a dict, so the set
-    # can be chosen from the command line
-
-    if len(sys.argv) != 2:
-        print_usage_and_exit()
-    try:
-        set_number = int(sys.argv[1])
-    except ValueError:
-        print_usage_and_exit()
-
-    if set_number not in generator_functions:
-        print("Invalid set number (valid set numbers: {})".format(
-            ' '.join(map(str, generator_functions.keys()))),
-            file=sys.stderr)
-        print_usage_and_exit()
-
-    generator_functions[set_number]()
+# 20-species initialBiomass variations
+generator_functions[253] = lambda: vary_initial_biomass([2, 3, 4, 5, 14, 15, 16, 31, 34, 39, 41, 42, 53, 57, 65, 80, 82, 83, 85, 86])
+generator_functions[254] = lambda: vary_initial_biomass([2, 3, 4, 5, 8, 9, 16, 27, 29, 30, 38, 49, 50, 59, 66, 75, 83, 86, 87, 93])
+generator_functions[255] = lambda: vary_initial_biomass([2, 3, 4, 7, 9, 13, 15, 26, 27, 44, 48, 49, 52, 61, 66, 67, 73, 80, 86, 89])
+generator_functions[256] = lambda: vary_initial_biomass([2, 3, 4, 5, 26, 27, 30, 33, 49, 50, 55, 59, 69, 82, 83, 86, 87, 88, 93, 95])
+generator_functions[257] = lambda: vary_initial_biomass([2, 3, 4, 7, 8, 9, 11, 20, 30, 33, 36, 47, 49, 50, 61, 67, 74, 75, 79, 85])
