@@ -76,9 +76,52 @@ def get_species_data(filename=None):
             }
     return data
 
+
 def get_simulation_data(filename):
+    """ Read simulation output data from a CSV file """
+
+    result = None
+
+    with (gzip.open(filename, 'rt') if filename.endswith('gz')
+            else open(filename, 'r')) as f:
+        if f.readline().startswith('Job_id'):
+            f.seek(0)
+            result = get_simulation_data_sim_format(f)
+        else:
+            f.seek(0)
+            result = get_simulation_data_atn_format(f)
+
+    return result
+
+
+def get_simulation_data_sim_format(file_object):
+    """ Read simulation output data from the given file in Simulation Engine format """
+
+    biomass_data = {}
+
+    reader = csv.reader(file_object)
+    for row in reader:
+
+        # Skip rows until we get to the biomass data
+        if len(row) == 0 or '[' not in row[0]:
+            continue
+
+        if row[0] == 'node':  # End of biomass data
+            break
+
+        species_name, node_id = row[0].split(' [')
+        node_id = int(node_id.split(']')[0])
+        biomass_data[node_id] = [float(x or 0) for x in row[1:]]
+
+    # Unfortunately, the sim-format file does not contain the node config
+    node_config = None
+    node_config_attributes = None
+    return node_config, node_config_attributes, biomass_data
+
+
+def get_simulation_data_atn_format(file_object):
     """
-    Given a filename of an ATN CSV file,
+    Given an ATN CSV file,
     return a tuple (node_config, node_config_attributes, biomass_data).
 
     node_config_attributes is a dictionary with the node config parameters (as
@@ -91,24 +134,23 @@ def get_simulation_data(filename):
     node_config_attributes = None
     biomass_data = {}
 
-    with (gzip.open(filename, 'rt') if filename.endswith('gz')
-            else open(filename, 'r')) as f:
-        reader = csv.reader(f)
-        reader.__next__()  # Skip the header row
-        for row in reader:
-            if len(row) == 0 or row[0] == '':
-                # Blank line: end of biomass data
-                break
-            nodeId = int(row[0].split('.')[1])
-            biomass_data[nodeId] = [int(x) for x in row[1:]]
+    reader = csv.reader(file_object)
+    reader.__next__()  # Skip the header row
+    for row in reader:
+        if len(row) == 0 or row[0] == '':
+            # Blank line: end of biomass data
+            break
+        node_id = int(row[0].split('.')[1])
+        biomass_data[node_id] = [float(x) for x in row[1:]]
 
-        # The next row should have the node config
-        row = reader.__next__()
-        node_config_str = row[0].split(': ')[1]
-        node_config = parse_node_config(node_config_str)
-        node_config_attributes = node_config_to_params(node_config)
+    # The next row should have the node config
+    row = reader.__next__()
+    node_config_str = row[0].split(': ')[1]
+    node_config = parse_node_config(node_config_str)
+    node_config_attributes = node_config_to_params(node_config)
 
-    return (node_config, node_config_attributes, biomass_data)
+    return node_config, node_config_attributes, biomass_data
+
 
 def rmse(df1, df2):
     """ Calculate the root mean squared error between the two DataFrames and

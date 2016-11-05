@@ -22,45 +22,20 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from atntools.features import get_species_data, environment_score
+from atntools.features import get_species_data, get_simulation_data, environment_score
 from atntools.nodeconfigs import parse_node_config
 
 species_data = None
+
 
 def plot_csv(filename, score_function, show_legend=False, figsize=None,
              output_file=None):
     global species_data
     if species_data is None:
         species_data = get_species_data()
+
+    node_config, node_config_attributes, biomass_data = get_simulation_data(filename)
     
-    if filename.endswith('.gz'):
-        f = gzip.open(filename, 'rt')
-    else:
-        f = open(filename)
-    reader = csv.reader(f)
-
-    reader.__next__() # skip header row
-
-    # data rows indexed by nodeId
-    data = {}
-
-    for row in reader:
-        if len(row) == 0 or row[0] == '':
-            # Blank line: end of biomass data
-            break
-        node_id = int(row[0].split('.')[1])
-        data[node_id] = [float(x) for x in row[1:]]
-
-    # The next row should have the node config
-    row = reader.__next__()
-    node_config_str = row[0].split(': ')[1]
-    node_config = parse_node_config(node_config_str)
-
-    # node config split into one string per node
-    node_config_split = ['[' + s for s in node_config_str.split('[')[1:]]
-
-    f.close()
-
     if figsize is not None:
         fig, ax1 = plt.subplots(figsize=figsize)
     else:
@@ -69,66 +44,65 @@ def plot_csv(filename, score_function, show_legend=False, figsize=None,
     ax1.set_ylabel("biomass")
 
     legend = []
-    for node_config_section in node_config_split:
-        match = re.match(r'\[(\d+)\]', node_config_section)
-        node_id = int(match.group(1))
-        plt.plot(data[node_id])
-        legend.append(species_data[node_id]['name'] + ' ' + node_config_section)
+    for node_id, series in sorted(biomass_data.items()):
+        plt.plot(biomass_data[node_id])
+        legend.append(species_data[node_id]['name'])
     if show_legend:
         lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
-    scores = score_function(species_data, node_config, data)
-    ax2 = ax1.twinx()
-    ax2.plot(scores, linewidth=2)
-    #ax2.legend(['score'])  # gets drawn on top of main legend
-    ax2.set_ylabel("score")
+    if score_function and node_config:
+        scores = score_function(species_data, node_config, biomass_data)
+        ax2 = ax1.twinx()
+        ax2.plot(scores, linewidth=2)
+        #ax2.legend(['score'])  # gets drawn on top of main legend
+        ax2.set_ylabel("score")
 
-    # Linear regression
-    t = np.arange(len(scores))
-    tn = len(scores) - 1
-    slope, intercept, r_value, p_value, std_err = stats.linregress(
-            t, scores)
-    #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'g', linewidth=2)
+        # Linear regression
+        t = np.arange(len(scores))
+        tn = len(scores) - 1
+        slope, intercept, r_value, p_value, std_err = stats.linregress(
+                t, scores)
+        #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'g', linewidth=2)
 
-    # Linear regression, but starting at timestep 200
-    #startTime = 400
-    #slope, intercept, r_value, p_value, std_err = stats.linregress(
-    #        t[startTime:], scores[startTime:])
-    #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'b', linewidth=2)
+        # Linear regression, but starting at timestep 200
+        #startTime = 400
+        #slope, intercept, r_value, p_value, std_err = stats.linregress(
+        #        t[startTime:], scores[startTime:])
+        #ax2.plot([0, tn], [intercept, slope * tn + intercept], 'b', linewidth=2)
 
-    # Log-linear regression
-    log_slope, log_intercept, r_value, p_value, std_err = stats.linregress(
-            t, np.log(scores))
-    #ax2.plot(t, np.e**(log_slope*t + log_intercept))
+        # Log-linear regression
+        log_slope, log_intercept, r_value, p_value, std_err = stats.linregress(
+                t, np.log(scores))
+        #ax2.plot(t, np.e**(log_slope*t + log_intercept))
 
-    # Regions between local "maxima" (may be plateaus due to rounding)
-    # To round off plateaus, do some smoothing by convolving with a Hanning
-    # window
-    smoothed = np.convolve(scores, np.hanning(20), mode='same')
-    max_indices, = signal.argrelmax(smoothed)
-    max_values = np.take(scores, max_indices)
-    #ax2.plot(maxIndices, maxValues, 'r^')
-    #
-    regions = np.split(scores, max_indices)
-    region_averages = [region.mean() for region in regions]
-    region_centers = np.empty(len(regions))
-    tprev = 0
-    for i, t in enumerate(max_indices):
-        region_centers[i] = (tprev + t) / 2
-        tprev = t
-    region_centers[-1] = (tprev + len(scores)) / 2
-    #ax2.plot(regionCenters, regionAverages, 'ro')
+        # Regions between local "maxima" (may be plateaus due to rounding)
+        # To round off plateaus, do some smoothing by convolving with a Hanning
+        # window
+        smoothed = np.convolve(scores, np.hanning(20), mode='same')
+        max_indices, = signal.argrelmax(smoothed)
+        max_values = np.take(scores, max_indices)
+        #ax2.plot(maxIndices, maxValues, 'r^')
+        #
+        regions = np.split(scores, max_indices)
+        region_averages = [region.mean() for region in regions]
+        region_centers = np.empty(len(regions))
+        tprev = 0
+        for i, t in enumerate(max_indices):
+            region_centers[i] = (tprev + t) / 2
+            tprev = t
+        region_centers[-1] = (tprev + len(scores)) / 2
+        #ax2.plot(regionCenters, regionAverages, 'ro')
 
-    # Linear regression on local maxima
-    #mSlope, mIntercept, r_value, p_value, std_err = stats.linregress(
-    #        maxIndices, maxValues)
-    #ax2.plot([0, tn], [mIntercept, mSlope * tn + mIntercept], 'g:')
+        # Linear regression on local maxima
+        #mSlope, mIntercept, r_value, p_value, std_err = stats.linregress(
+        #        maxIndices, maxValues)
+        #ax2.plot([0, tn], [mIntercept, mSlope * tn + mIntercept], 'g:')
 
-    # Log-linear regression on local maxima
-    #mLogSlope, mLogIntercept, r_value, p_value, std_err = stats.linregress(
-    #        maxIndices, np.log(maxValues))
-    t = np.arange(len(scores))
-    #ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
+        # Log-linear regression on local maxima
+        #mLogSlope, mLogIntercept, r_value, p_value, std_err = stats.linregress(
+        #        maxIndices, np.log(maxValues))
+        t = np.arange(len(scores))
+        #ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
 
     plt.title(filename)
 
@@ -164,6 +138,7 @@ def plot_csv(filename, score_function, show_legend=False, figsize=None,
 
     print("\nSPECIES DATA:")
     print_species_data(species_data, node_config)
+
 
 def print_species_data(species_data, node_config):
     """
