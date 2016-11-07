@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script automates the workflow starting with generating nodeconfigs and
-# ending with a labelled feature file.
+# ending with a labeled feature file.
 
 eval $(atn-settings.py)
 
@@ -23,13 +23,13 @@ SETDIR=$DATA_HOME/set$SET
 mkdir $SETDIR
 NODECONFIG_FILE=$SETDIR/nodeconfigs.set$SET.txt
 
-python nodeconfig_generator.py $SET > $NODECONFIG_FILE
-bash ATNEngineBatchRunner.sh $TIMESTEPS $NODECONFIG_FILE
+atn-generate-node-configs.py $SET > $NODECONFIG_FILE
+atn-engine-batch-runner.sh $TIMESTEPS $NODECONFIG_FILE
 mkdir $SETDIR/biomass-data
 mv $LOGDIR/*.csv $SETDIR/biomass-data/
 echo "Compressing data..."
 gzip $SETDIR/biomass-data/*.csv
 echo "Creating feature file..."
-python create_feature_file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv.gz
+atn-generate-feature-file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv.gz
 echo "Assigning labels..."
-python assign_labels.py features.set$SET.csv features.set$SET.labelled.csv
+atn-assign-labels.py features.set$SET.csv features.set$SET.labeled.csv

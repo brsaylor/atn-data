@@ -28,8 +28,26 @@ from atntools.nodeconfigs import parse_node_config
 species_data = None
 
 
-def plot_csv(filename, score_function, show_legend=False, figsize=None,
-             output_file=None):
+def plot_csv(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None):
+    """ Plot the given biomass CSV file produced by WoB Server.
+
+    Parameters
+    ----------
+    filename : str
+        CSV filename (may be gzipped)
+    score_function : callable
+        Function of species_data, node_config, biomass_data returning an ndarray
+    show_legend : bool
+        If True, include legend in plot
+    figsize : tuple
+        Figure size passed to plt.subplots()
+    output_file : str
+        Name of output file to save (if None, no output file will be created)
+    xlim : tuple
+        x-axis limits (xmin, xmax)
+    ylim : tuple
+        y-axis limits (ymin, ymax)
+    """
     global species_data
     if species_data is None:
         species_data = get_species_data()
@@ -43,10 +61,16 @@ def plot_csv(filename, score_function, show_legend=False, figsize=None,
     ax1.set_xlabel("timestep")
     ax1.set_ylabel("biomass")
 
+    # Set x-axis and y-axis limits if requested
+    if xlim:
+        plt.xlim(xlim)
+    if ylim:
+        plt.ylim(ylim)
+
     legend = []
     for node_id, series in sorted(biomass_data.items()):
         plt.plot(biomass_data[node_id])
-        legend.append(species_data[node_id]['name'])
+        legend.append("[{}] {}".format(node_id, species_data[node_id]['name']))
     if show_legend:
         lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
