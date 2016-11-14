@@ -7,9 +7,10 @@ November 2015, January 2016
 Process a set of biomass data files (ATN*.csv) - one file per simulation -
 create a summary CSV file with one row per simulation with various features
 calculated from the biomass data.
+
+FIXME: update description
 """
 
-import sys
 import os.path
 import gzip
 import csv
@@ -18,10 +19,12 @@ from math import log2
 import numpy as np
 from scipy import stats, signal
 import pandas as pd
+import h5py
 
 from atntools.nodeconfigs import parse_node_config
 
 NO_EXTINCTION = 99999999
+
 
 def get_sim_number(filename):
     """
@@ -40,6 +43,7 @@ def get_sim_number(filename):
     else:
         return int(split1[1].split('.')[0])
 
+
 def node_config_to_params(node_config):
     """
     Given a node config as returned by parseNodeConfig(), return a dictionary
@@ -53,6 +57,7 @@ def node_config_to_params(node_config):
                 continue
             params[key + str(node['nodeId'])] = value
     return params
+
 
 def get_species_data(filename=None):
     """
@@ -78,23 +83,47 @@ def get_species_data(filename=None):
 
 
 def get_simulation_data(filename):
-    """ Read simulation output data from a CSV file """
+    """ Read simulation output data from a CSV or HDF5 file """
 
-    result = None
+    if filename.endswith('.h5'):
+        return get_simulation_data_hdf5(filename)
 
     with (gzip.open(filename, 'rt') if filename.endswith('gz')
             else open(filename, 'r')) as f:
         if f.readline().startswith('Job_id'):
             f.seek(0)
-            result = get_simulation_data_sim_format(f)
+            return get_simulation_data_sim_csv_format(f)
         else:
             f.seek(0)
-            result = get_simulation_data_atn_format(f)
-
-    return result
+            return get_simulation_data_atn_csv_format(f)
 
 
-def get_simulation_data_sim_format(file_object):
+def get_simulation_data_hdf5(filename):
+    """ Read ATN simulation data from an HDF5 file produced by WoB Server.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the HDF5 file
+
+    Returns
+    -------
+    (node_config : str, node_config_attributes : dict, biomass_data : pd.DataFrame)
+        - node_config is the node configuration string
+        - node_config_attributes is the corresponding output of node_config_to_params()
+        - DataFrame columns are node IDs and whose index is the timeteps of the simulation.
+    """
+
+    with h5py.File(filename, 'r') as f:
+        biomass_data = pd.DataFrame(f['biomass'][:, :], columns=list(f['node_ids']))
+        node_config_str = f.attrs['node_config'].decode('utf-8')
+        node_config = parse_node_config(node_config_str)
+        node_config_attributes = node_config_to_params(node_config)
+
+        return node_config, node_config_attributes, biomass_data
+
+
+def get_simulation_data_sim_csv_format(file_object):
     """ Read simulation output data from the given file in Simulation Engine format """
 
     biomass_data = {}
@@ -119,7 +148,7 @@ def get_simulation_data_sim_format(file_object):
     return node_config, node_config_attributes, biomass_data
 
 
-def get_simulation_data_atn_format(file_object):
+def get_simulation_data_atn_csv_format(file_object):
     """
     Given an ATN CSV file,
     return a tuple (node_config, node_config_attributes, biomass_data).
@@ -158,6 +187,7 @@ def rmse(df1, df2):
     for an attempt in the Convergence game. """
     return np.sqrt(((df1 - df2) ** 2).mean())
 
+
 def environment_score(species_data, node_config, biomass_data):
     """
     Compute the Environment Score for all timesteps for the given data and
@@ -192,8 +222,10 @@ def environment_score(species_data, node_config, biomass_data):
 
     return scores
 
+
 def get_avg_ecosystem_score(species_data, node_config, biomass_data):
     return environment_score(species_data, node_config, biomass_data).mean()
+
 
 def total_biomass(speciesData, node_config, biomass_data):
     """
@@ -205,6 +237,7 @@ def total_biomass(speciesData, node_config, biomass_data):
         total_biomass[timestep] = sum(
                 [biomass[timestep] for biomass in biomass_data.values()])
     return total_biomass
+
 
 def net_production(species_data, node_config, biomass_data):
     """
@@ -218,6 +251,7 @@ def net_production(species_data, node_config, biomass_data):
     net_prod[0] = net_prod[-1] = 0
     
     return net_prod
+
 
 def shannon_index_biomass_product(species_data, node_config, biomass_data):
     """
@@ -242,6 +276,7 @@ def shannon_index_biomass_product(species_data, node_config, biomass_data):
     
     return scores
 
+
 def shannon_index_biomass_product_norm(species_data, node_config, biomass_data):
     """
     A version of shannonIndexBiomassProduct normalized by initial total biomass
@@ -258,6 +293,7 @@ def shannon_index_biomass_product_norm(species_data, node_config, biomass_data):
     return (shannon_index_biomass_product(species_data, node_config, biomass_data)
             / (total_initial_biomass * perfect_shannon))
 
+
 def last_nonzero_timestep(biomass_data_frame):
     """
     Returns the last timestep at which there is nonzero biomass.
@@ -267,6 +303,7 @@ def last_nonzero_timestep(biomass_data_frame):
     for col in df:
         nonzero |= (df[col] != 0)
     return nonzero.sort_index(ascending=False).argmax()
+
 
 def get_output_attributes(speciesData, nodeConfig, biomass_data):
     """

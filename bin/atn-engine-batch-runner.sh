@@ -16,4 +16,4 @@ cd $WORKING_DIR
 cd $WOB_SERVER_HOME
 java $JVM_ARGS \
     -cp 'build/libs/WoB_Server_ATNEngine.jar:lib/*:chartlib/*' \
-    atn.ATNEngineBatchRunner $1 $NODECONFIG_FILE $3
+    atn.ATNEngineBatchRunner $1 $NODECONFIG_FILE $3 $4

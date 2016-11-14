@@ -4,15 +4,12 @@
 # October 2015
 
 """
-Plot a CSV output by ATNEngine
+Plot a biomass data file output by ATNEngine
 """
 
 import sys
 import os
-import csv
-import re
 import json
-import gzip
 import argparse
 
 import matplotlib
@@ -23,18 +20,17 @@ from scipy import stats, signal
 import pandas as pd
 
 from atntools.features import get_species_data, get_simulation_data, environment_score
-from atntools.nodeconfigs import parse_node_config
 
 species_data = None
 
 
-def plot_csv(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None):
-    """ Plot the given biomass CSV file produced by WoB Server.
+def plot_biomass_data(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None):
+    """ Plot the given biomass file produced by WoB Server.
 
     Parameters
     ----------
     filename : str
-        CSV filename (may be gzipped)
+        CSV filename (may be gzipped) or HDF5 filename
     score_function : callable
         Function of species_data, node_config, biomass_data returning an ndarray
     show_legend : bool
@@ -178,6 +174,7 @@ def print_species_data(species_data, node_config):
         dataByNodeId[nodeId] = data
     print(json.dumps(dataByNodeId, indent=4, sort_keys=True))
 
+
 def plot_top_bottom_n(n, biomass_dir, feature_file, ranking_col, output_dir):
     if output_dir is None:
         output_dir = '.'
@@ -198,12 +195,12 @@ def plot_top_bottom_n(n, biomass_dir, feature_file, ranking_col, output_dir):
         """
         Plot the given file and save to an image file.
         rank: 1-based rank in terms of ranking_col
-        filename: basename of gzipped biomass CSV
+        filename: basename of gzipped biomass CSV or HDF5 file
         """
         input_file = os.path.join(biomass_dir, filename)
         output_file = os.path.join(output_dir, 'rank_{}_{}'.format(
-            rank, filename.replace('.csv.gz', '.png')))
-        plot_csv(input_file, environment_score, show_legend=True, output_file=output_file)
+            rank, filename.replace('.csv.gz', '.png').replace('.h5', '.png')))
+        plot_biomass_data(input_file, environment_score, show_legend=True, output_file=output_file)
 
     for rank, filename in enumerate(ranked_filenames[:n], start=1):
         save_plot(rank, filename)
@@ -212,11 +209,13 @@ def plot_top_bottom_n(n, biomass_dir, feature_file, ranking_col, output_dir):
             start=len(ranked_filenames)-n+1):
         save_plot(rank, filename)
 
+
 # FIXME: Refactoring needed
 def sum_derivative(series):
     # Note: sum of finite-difference derivative is last value minus first
     # value
     return series[-1] - series[0]
+
 
 if __name__ == '__main__':
 
@@ -224,7 +223,7 @@ if __name__ == '__main__':
     parser.add_argument('--top-bottom-n', type=int,
             help="Plot the top and bottom N simulations")
     parser.add_argument('--biomass-dir',
-            help="Path to biomass CSV files")
+            help="Path to biomass data files")
     parser.add_argument('--feature-file',
             help="Path to feature file")
     parser.add_argument('--ranking-col',
@@ -257,4 +256,4 @@ if __name__ == '__main__':
 
         filenames = sys.argv[1:]
         for filename in filenames:
-            plot_csv(filename)
+            plot_biomass_data(filename)
