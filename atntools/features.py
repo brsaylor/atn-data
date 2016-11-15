@@ -126,7 +126,7 @@ def get_simulation_data_hdf5(filename):
 def get_simulation_data_sim_csv_format(file_object):
     """ Read simulation output data from the given file in Simulation Engine format """
 
-    biomass_data = {}
+    biomass_data = pd.DataFrame()
 
     reader = csv.reader(file_object)
     for row in reader:
@@ -156,12 +156,11 @@ def get_simulation_data_atn_csv_format(file_object):
     node_config_attributes is a dictionary with the node config parameters (as
     returned by nodeConfigToParams()).
 
-    biomass_data is a dictionary mapping node ID to a list of biomass values over
-    time.
+    biomass_data is a DataFrame whose columns are node IDs and whose index is the timeteps of the simulation.
     """
 
     node_config_attributes = None
-    biomass_data = {}
+    biomass_data = pd.DataFrame()
 
     reader = csv.reader(file_object)
     reader.__next__()  # Skip the header row
@@ -195,30 +194,19 @@ def environment_score(species_data, node_config, biomass_data):
     model.Ecosystem.updateEcosystemScore() in WoB_Server.
     """
 
-    num_timesteps = len(biomass_data[node_config[0]['nodeId']])
-    scores = np.empty(num_timesteps)
+    node_config_dict = {n['nodeId']: n for n in node_config}
 
-    for timestep in range(num_timesteps):
+    # 1-D Arrays of per_unit_biomass and trophic_level, lined up to the columns in the dataframe
+    per_unit_biomass = np.array([node_config_dict[node_id]['perUnitBiomass'] for node_id in biomass_data.columns])
+    trophic_level = np.array([species_data[node_id]['trophicLevel'] for node_id in biomass_data.columns])
 
-        # Calculate the Ecosystem Score for this timestep
-        biomass = 0
-        num_species = 0
-        for node in node_config:
-            node_id = node['nodeId']
-            per_unit_biomass = node['perUnitBiomass']
-
-            # Sometimes biomass can go slightly negative.
-            # Clip to 0 to avoid complex numbers in score calculation.
-            total_biomass = max(0, biomass_data[node_id][timestep])
-
-            if total_biomass > 0:
-                num_species += 1
-
-            biomass += per_unit_biomass * pow(total_biomass / per_unit_biomass,
-                                              species_data[node_id]['trophicLevel'])
-        if biomass > 0:
-            biomass = round(log2(biomass)) * 5
-        scores[timestep] = int(round(pow(biomass, 2) + pow(num_species, 2)))
+    clipped_biomass = np.array(biomass_data).clip(0)
+    num_species = (clipped_biomass > 0).sum(axis=1)
+    species_scores = per_unit_biomass * ((clipped_biomass / per_unit_biomass) ** trophic_level)
+    scores = species_scores.sum(axis=1)
+    with np.errstate(divide='ignore'):  # Ignore divide-by-zero; we handle the resulting -inf by clipping
+        scores = (np.round(np.log2(scores)) * 5.0).clip(0)
+    scores = np.round(scores ** 2 + num_species ** 2)
 
     return scores
 
@@ -294,11 +282,11 @@ def shannon_index_biomass_product_norm(species_data, node_config, biomass_data):
             / (total_initial_biomass * perfect_shannon))
 
 
-def last_nonzero_timestep(biomass_data_frame):
+def last_nonzero_timestep(biomass_data):
     """
     Returns the last timestep at which there is nonzero biomass.
     """
-    df = biomass_data_frame
+    df = biomass_data
     nonzero = pd.Series(index=df.index, data=False)
     for col in df:
         nonzero |= (df[col] != 0)
@@ -326,10 +314,6 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
     avgEcosystemScore: average EcosystemScore over all timesteps
     """
 
-    # Convert biomass data to a pandas DataFrame
-    # FIXME: Should use pandas throughout
-    biomass_data_frame = pd.DataFrame(biomass_data)
-
     # Output attributes
     out = {}
 
@@ -341,6 +325,7 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
     # Store sd(log N) amplitudes for all species
     amplitudes_sd_log_n = []
 
+    # FIXME: optimize this
     for node_id, biomass_series in biomass_data.items():
         num_timesteps = len(biomass_series)
         cumulative_biomass = 0
@@ -366,7 +351,7 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
                 / float(num_timesteps))
 
         # Amplitude measured as SD(log N) (Kendall et al. 1998)
-        amp = np.std(np.log10(biomass_data_frame[node_id] + 1))
+        amp = np.std(np.log10(biomass_data[node_id] + 1))
         amplitudes_sd_log_n.append(amp)
         out['amplitude_sdLogN_' + str(node_id)] = amp
 
@@ -432,13 +417,13 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
         out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
                 scores[mean_start_time:end_time].mean()
 
-    last_nonzero_t = last_nonzero_timestep(biomass_data_frame)
+    last_nonzero_t = last_nonzero_timestep(biomass_data)
     out['timesteps'] = num_timesteps
     out['lastNonzeroTimestep'] = last_nonzero_t
-    out['lastNonzeroBiomass'] = biomass_data_frame.loc[last_nonzero_t].sum()
+    out['lastNonzeroBiomass'] = biomass_data.loc[last_nonzero_t].sum()
 
-    out['maxBiomass'] = biomass_data_frame.max().max()
-    out['minBiomass'] = biomass_data_frame.min().min()
+    out['maxBiomass'] = biomass_data.max().max()
+    out['minBiomass'] = biomass_data.min().min()
 
     return out
 
@@ -451,6 +436,8 @@ def generate_feature_file(set_number, output_file, biomass_files):
 
     for sim_number, infilename in sorted(
             [(get_sim_number(f), f) for f in biomass_files]):
+
+        print("file: " + infilename)
 
         # Create the output row from the simulation identifiers, input and
         # output attributes
