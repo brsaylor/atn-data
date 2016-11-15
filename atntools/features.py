@@ -471,7 +471,7 @@ def generate_feature_file(set_number, output_file, biomass_files):
             # Set up the CSV writer
 
             fieldnames = (
-                list(identifiers.keys()) +
+                sorted(identifiers.keys()) +
                 sorted(input_attributes.keys()) +
                 sorted(output_attributes.keys()))
             outfile = open(output_file, 'w')
