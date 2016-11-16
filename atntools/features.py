@@ -293,13 +293,13 @@ def last_nonzero_timestep(biomass_data):
     return nonzero.sort_index(ascending=False).argmax()
 
 
-def get_output_attributes(speciesData, nodeConfig, biomass_data):
+def get_output_attributes(species_data, node_config, biomass_data):
     """
-    Given speciesData as returned by getSpeciesData,
-    nodeConfig and biomassData as returned by get_simulation_data,
+    Given species_data as returned by get_species_data,
+    node_config and biomass_data as returned by get_simulation_data,
     return a dictionary of attributes whose keys are
-    "<attributeName>_<nodeId>" for species-specific attributes and
-    "<attributeName>"          for non-species-specific attributes
+    "<attribute_name>_<node_id>" for species-specific attributes and
+    "<attribute_name>"          for non-species-specific attributes
 
     Species-specific attributes
     ---------------------------
@@ -317,50 +317,37 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
     # Output attributes
     out = {}
 
-    num_species = len(biomass_data)
+    num_species = len(biomass_data.columns)
+    num_timesteps = len(biomass_data)
     surviving20 = num_species
     surviving1000 = num_species
-    extinction_timesteps = []
 
     # Store sd(log N) amplitudes for all species
     amplitudes_sd_log_n = []
 
-    # FIXME: optimize this
     for node_id, biomass_series in biomass_data.items():
-        num_timesteps = len(biomass_series)
-        cumulative_biomass = 0
-        cumulative_biomass2 = 0
-        extinct = False
-        out['extinction_' + str(node_id)] = NO_EXTINCTION
-        for timestep, biomass in enumerate(biomass_series):
-            if not extinct:
-                if biomass == 0:
-                    out['extinction_' + str(node_id)] = timestep
-                    extinction_timesteps.append(timestep)
-                    extinct = True
-                    if timestep <= 20:
-                        surviving20 -= 1
-                    if timestep <= 1000:
-                        surviving1000 -= 1
-                else:
-                    cumulative_biomass += biomass
-            cumulative_biomass2 += biomass
-        out['avgBiomass_' + str(node_id)] = (cumulative_biomass
-                / float(num_timesteps))
-        out['avgBiomass2_' + str(node_id)] = (cumulative_biomass2
-                / float(num_timesteps))
-
-        # Amplitude measured as SD(log N) (Kendall et al. 1998)
+        min_biomass_t = biomass_series.argmin()
+        if biomass_series[min_biomass_t] > 0:
+            extinction = NO_EXTINCTION
+        else:
+            extinction = min_biomass_t
+        out['extinction_' + str(node_id)] = extinction
+        out['avgBiomass_' + str(node_id)] = biomass_series[:extinction].sum() / num_timesteps
+        out['avgBiomass2_' + str(node_id)] = biomass_series.mean()
+        if extinction <= 20:
+            surviving20 -= 1
+        if extinction <= 1000:
+            surviving1000 -= 1
         amp = np.std(np.log10(biomass_data[node_id] + 1))
         amplitudes_sd_log_n.append(amp)
         out['amplitude_sdLogN_' + str(node_id)] = amp
 
-    out['amplitude_sdLogN_min'] = min(amplitudes_sd_log_n)
-    out['amplitude_sdLogN_mean'] = sum(amplitudes_sd_log_n) / len(amplitudes_sd_log_n)
-    out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
-
     out['surviving20'] = surviving20
     out['surviving1000'] = surviving1000
+
+    out['amplitude_sdLogN_min'] = min(amplitudes_sd_log_n)
+    out['amplitude_sdLogN_mean'] = sum(amplitudes_sd_log_n) / num_species
+    out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
 
     #
     # Scalar measures of ecosystem health
@@ -368,27 +355,27 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
 
     # Average of original environment score formula
     #out['avgEcosystemScore'] = getAvgEcosystemScore(
-    #        speciesData, nodeConfig, biomassData)
+    #        species_data, node_config, biomassData)
 
     t = np.arange(num_timesteps)
 
     # Slope of linear regression of shannonIndexBiomassProduct
     #health = shannonIndexBiomassProduct(
-    #        speciesData, nodeConfig, biomassData)
+    #        species_data, node_config, biomassData)
     #slope, intercept, r_value, p_value, std_err = stats.linregress(
     #        t, health)
     #out['shannonBiomassSlope'] = slope
 
     # Slope of linear regression of shannonIndexBiomassProduct
     #health = shannonIndexBiomassProductNorm(
-    #        speciesData, nodeConfig, biomassData)
+    #        species_data, node_config, biomassData)
     #slope, intercept, r_value, p_value, std_err = stats.linregress(
     #        t, health)
     #out['shannonBiomassNormSlope'] = slope
 
     # Slope of linear regression on local peaks in net production
     #netProd = netProduction(
-    #        speciesData, nodeConfig, biomassData)
+    #        species_data, node_config, biomassData)
     # Without smoothing, there are many tiny local peaks
     #smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
     #maxIndices, = signal.argrelmax(smoothedNetProd)
@@ -401,7 +388,7 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
 
 
     # Slope of linear regression on environment score
-    scores = environment_score(speciesData, nodeConfig, biomass_data)
+    scores = environment_score(species_data, node_config, biomass_data)
     #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
     #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
@@ -412,10 +399,10 @@ def get_output_attributes(speciesData, nodeConfig, biomass_data):
     for start_time, end_time in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
         out['environmentScoreSlope_{}_{}'.format(start_time, end_time)] = \
                 stats.linregress(t[start_time:end_time],
-                        scores[start_time:end_time])[0]
+                                 scores[start_time:end_time])[0]
         mean_start_time = end_time - mean_period
         out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
-                scores[mean_start_time:end_time].mean()
+            scores[mean_start_time:end_time].mean()
 
     last_nonzero_t = last_nonzero_timestep(biomass_data)
     out['timesteps'] = num_timesteps
@@ -434,10 +421,16 @@ def generate_feature_file(set_number, output_file, biomass_files):
     outfile = None
     writer = None
 
+
     for sim_number, infilename in sorted(
             [(get_sim_number(f), f) for f in biomass_files]):
 
-        print("file: " + infilename)
+        print("\rprocessing simulation: {}".format(sim_number), end='', flush=True)
+
+        # if sim_number % 100 == 0:
+        #     print(sim_number, end='', flush=True)
+        # elif sim_number % 20 == 0:
+        #     print('.', end='', flush=True)
 
         # Create the output row from the simulation identifiers, input and
         # output attributes
@@ -466,6 +459,8 @@ def generate_feature_file(set_number, output_file, biomass_files):
             writer.writeheader()
 
         writer.writerow(outrow)
+
+    print()
 
     if outfile is not None:
         outfile.close()
