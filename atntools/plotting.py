@@ -11,6 +11,7 @@ import sys
 import os
 import json
 import argparse
+import itertools
 
 import matplotlib
 matplotlib.use('Agg')
@@ -24,7 +25,8 @@ from atntools.features import get_species_data, get_simulation_data, environment
 species_data = None
 
 
-def plot_biomass_data(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None):
+def plot_biomass_data(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None,
+                      grayscale=False):
     """ Plot the given biomass file produced by WoB Server.
 
     Parameters
@@ -63,9 +65,18 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     if ylim:
         plt.ylim(ylim)
 
+    # Make a cycle of line colors and styles
+    if grayscale:
+        line_colors = ('0.0', '0.5')
+    else:
+        line_colors = 'g b r m y c'.split()
+    line_styles = ('-', '--', '-.', ':')  # These are all the line styles supported by pyplot
+    line_style_cycle = itertools.cycle(itertools.product(line_styles, line_colors))
+
     legend = []
     for node_id, series in sorted(biomass_data.items()):
-        plt.plot(biomass_data[node_id])
+        linestyle, color = next(line_style_cycle)
+        plt.plot(biomass_data[node_id], color=color, linestyle=linestyle)
         legend.append("[{}] {}".format(node_id, species_data[node_id]['name']))
     if show_legend:
         lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
@@ -124,7 +135,7 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
         t = np.arange(len(scores))
         #ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
 
-    plt.title(filename)
+    #plt.title(filename)
 
     if output_file:
         dpi=200
