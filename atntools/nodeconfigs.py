@@ -1,13 +1,7 @@
-import sys
-from copy import copy, deepcopy
 import random
-import re
-import itertools
-import bisect
+import json
 
-from atntools import util
 from atntools import foodwebs
-from atntools.weka_em import parse_weka_em_output
 
 # Parameter sliders in Convergence game are bounded by these ranges
 valid_param_ranges = {
@@ -133,6 +127,9 @@ def generate_node_config(nodes):
 # assert(generate_node_config(test_nodes) == test_node_config)
 
 
+_generators = {}
+
+
 def generate_uniform(node_ids, param_ranges, count):
     """
     Generate `count` node configs for the given node ID's with parameter
@@ -179,3 +176,36 @@ def generate_uniform(node_ids, param_ranges, count):
                     node['R'] = random.uniform(*param_ranges['R'])
             nodes.append(node)
         yield generate_node_config(nodes)
+
+_generators['uniform'] = generate_uniform
+
+
+def generate_node_configs_from_metaparameter_file(filename):
+    """
+    Generate node config strings based on the given metaparameter JSON file.
+
+    Parameters
+    ----------
+    filename : str
+        Path to JSON metaparameter file
+
+    Returns
+    -------
+    generator
+        A generator that yields node config strings
+    """
+
+    global _generators
+
+    with open(filename) as f:
+        metaparameters = json.load(f)
+    generator_name = metaparameters.get('generator')
+    if generator_name in _generators:
+        generator_function = _generators[generator_name]
+    else:
+        return None
+    kwargs = metaparameters.get('args')
+    if isinstance(kwargs, dict):
+        return generator_function(**kwargs)
+    else:
+        return None
