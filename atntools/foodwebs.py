@@ -11,6 +11,9 @@ import networkx as nx
 
 from atntools.util import WOB_DB_DIR
 
+ORGANISM_TYPE_ANIMAL = 0
+ORGANISM_TYPE_PLANT = 1
+
 
 def read_serengeti_from_csv():
     """
@@ -44,8 +47,17 @@ def read_serengeti_from_csv():
         if species_id in consume_species_ids:
             # Skip species that are not part of the food web
             # Add species attributes to node
-            for k, v in row.items():
-                graph.node[node_id][k] = v
+            graph.node[node_id].update({
+                'name': row['name'],
+                'organism_type': int(row['organism_type']),
+                'category': row['category'],
+                'biomass': float(row['biomass']),
+                'diet_type': int(row['diet_type']),
+                'carrying_capacity': int(row['carrying_capacity']),
+                'metabolism': float(row['metabolism']),
+                'trophic_level': float(row['trophic_level']),
+                'growth_rate': float(row['growth_rate']),
+            })
     f.close()
 
     return graph
@@ -53,6 +65,16 @@ def read_serengeti_from_csv():
 
 def read_serengeti():
     return read_serengeti_from_csv()
+
+
+_serengeti = None
+
+
+def get_serengeti():
+    global _serengeti
+    if _serengeti is None:
+        _serengeti = read_serengeti_from_csv()
+    return _serengeti
 
 
 def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
@@ -271,7 +293,7 @@ def predator_complete_subweb(G, N, seed_nodes=None, seed_size=1, retry=1):
 
 
 def serengeti_predator_complete_subweb(size, num_basal_species, retry=10):
-    serengeti = read_serengeti()
+    serengeti = get_serengeti()
 
     # For the seed nodes, use the basal species excluding Decaying Material
     seed_nodes = get_basal_species(serengeti)

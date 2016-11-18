@@ -5,16 +5,19 @@
 import sys
 import argparse
 
-from atntools.nodeconfigs import generator_functions
+from atntools import nodeconfigs
 
-parser = argparse.ArgumentParser(description=globals()['__doc__'])
-parser.add_argument('set_number', type=int)
-args = parser.parse_args()
+#parser = argparse.ArgumentParser(description=globals()['__doc__'])
+#parser.add_argument('set_number', type=int)
+#args = parser.parse_args()
 
-if args.set_number not in generator_functions:
-    print("Invalid set number (valid set numbers: {})".format(
-        ' '.join(map(str, generator_functions.keys()))),
-        file=sys.stderr)
-    sys.exit(1)
-
-generator_functions[args.set_number]()
+for node_config in nodeconfigs.generate_uniform(
+        [2, 15, 17, 22, 26],
+        {
+            'initialBiomass': [100, 5000],
+            'X': [0, 1],
+            'R': 1,
+            'K': [1000, 15000],
+        },
+        10):
+    print(node_config)
