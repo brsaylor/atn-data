@@ -68,7 +68,7 @@ def generate_node_config(nodes):
     node_config = str(len(nodes))
     for node in nodes:
         node_config += (',[{nodeId}],{initialBiomass:.6},{perUnitBiomass},'
-                .format(**node))
+                        .format(**node))
 
         param_count = 0
         param_config = ''
@@ -180,14 +180,17 @@ def generate_uniform(node_ids, param_ranges, count):
 _generators['uniform'] = generate_uniform
 
 
-def generate_node_configs_from_metaparameter_file(filename):
+def generate_node_configs_from_metaparameter_file(metaparameter_filename, food_web_filename=None):
     """
     Generate node config strings based on the given metaparameter JSON file.
 
     Parameters
     ----------
-    filename : str
+    metaparameter_filename : str
         Path to JSON metaparameter file
+    food_web_filename : str, optional
+        If supplied, the node IDs are taken from this file instead of the
+        metaparameter file.
 
     Returns
     -------
@@ -197,7 +200,7 @@ def generate_node_configs_from_metaparameter_file(filename):
 
     global _generators
 
-    with open(filename) as f:
+    with open(metaparameter_filename) as f:
         metaparameters = json.load(f)
     generator_name = metaparameters.get('generator')
     if generator_name in _generators:
@@ -205,7 +208,12 @@ def generate_node_configs_from_metaparameter_file(filename):
     else:
         return None
     kwargs = metaparameters.get('args')
-    if isinstance(kwargs, dict):
-        return generator_function(**kwargs)
-    else:
+    if not isinstance(kwargs, dict):
         return None
+
+    if food_web_filename is not None:
+        with open(food_web_filename) as f:
+            food_web_data = json.load(f)
+            kwargs.update(food_web_data)
+
+    return generator_function(**kwargs)
