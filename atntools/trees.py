@@ -1,13 +1,11 @@
-#!/usr/bin/env python3
-
 """
 Classes and functions for working with decision trees
 
 For now, these deal with parsing and representing Weka's J48 decision tree.
 """
 
-import sys
 import re
+
 
 class TreeNode(object):
     """
@@ -81,14 +79,14 @@ class TreeNode(object):
             # print leaf
             if self.misclassified_count > 0:
                 string = ("{0.class_label} ({0.instance_count}/{0.misclassified_count})"
-                        .format(self))
+                          .format(self))
             else:
                 string = ("{0.class_label} ({0.instance_count})".format(self))
 
         else:
             # print first line of this node
-            string = ('|  ' * indent +
-                    "{0.split_attribute} <= {0.split_value}".format(self))
+            string = ('|   ' * indent +
+                      "{0.split_attribute} <= {0.split_value}".format(self))
 
             # print <= child
             if self.child_lte.is_leaf:
@@ -97,8 +95,8 @@ class TreeNode(object):
                 string += "\n" + self.child_lte.to_string(indent + 1)
 
             # print matching line of this node
-            string += "\n" + ("|  " * indent +
-                    "{0.split_attribute} > {0.split_value}".format(self))
+            string += "\n" + ("|   " * indent +
+                              "{0.split_attribute} > {0.split_value}".format(self))
 
             # print > child
             if self.child_gt.is_leaf:
@@ -107,6 +105,7 @@ class TreeNode(object):
                 string += "\n" + self.child_gt.to_string(indent + 1)
 
         return string
+
 
 def parse_weka_j48_output(lines, parent=None):
     """
@@ -197,6 +196,38 @@ def parse_weka_j48_output(lines, parent=None):
 
     return node
 
+
+def get_weka_j48_tree_lines(filename):
+    """
+    Get the section representing the tree from the given Weka J48 output file.
+
+    Parameters
+    ----------
+    filename : str
+        Output filename
+
+    Returns
+    -------
+    list
+        List of lines from the file representing the tree
+    """
+
+    tree_lines = []
+    with open(filename) as f:
+        for line in f:
+            if line.startswith('J48'):
+                f.__next__()  # skip ------- line
+                f.__next__()  # skip blank line
+                break
+        for line in f:
+            line = line.strip()
+            if line == '':
+                # end of tree lines
+                break
+            tree_lines.append(line)
+    return tree_lines
+
+
 def parse_weka_j48_output_file(filename):
     """
     Parse an output file from Weka's J48 classifier.
@@ -212,30 +243,5 @@ def parse_weka_j48_output_file(filename):
         Root node of parsed decision tree.
     """
 
-    tree_lines = []
-    with open(filename) as f:
-        for line in f:
-            if line.startswith('J48'):
-                f.__next__() # skip ------- line
-                f.__next__() # skip blank line
-                break
-        for line in f:
-            line = line.strip()
-            if line == '':
-                # end of tree lines
-                break
-            tree_lines.append(line)
-
+    tree_lines = get_weka_j48_tree_lines(filename)
     return parse_weka_j48_output(tree_lines)
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Run this script to test parsing. Output should match input.")
-        print("Usage: ./trees.py weka-J48-output-file.txt")
-        sys.exit(1)
-    tree = parse_weka_j48_output_file(sys.argv[1])
-    print(str(tree))
-    print()
-    print("Leaves:")
-    for leaf in tree.get_leaves():
-        print(str(leaf))

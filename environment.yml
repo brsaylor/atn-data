@@ -7,6 +7,8 @@ dependencies:
     - jupyter
     - pandas
     - networkx
+    - h5py
+    - pytest
     - pip:
         - pydotplus
         - pygraphviz

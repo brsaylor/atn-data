@@ -1,0 +1,135 @@
+
+Options: -F "weka.filters.unsupervised.attribute.RemoveByName -E ^(X|K|label_environmentScoreSlope_1000_5000).*$ -V" -W weka.classifiers.trees.J48 
+
+FilteredClassifier using weka.classifiers.trees.J48 -C 0.25 -M 2 on data filtered through weka.filters.unsupervised.attribute.RemoveByName -E ^(X|K|label_environmentScoreSlope_1000_5000).*$ -V
+
+Filtered Header
+@relation 'features.set183.labelled-weka.filters.unsupervised.attribute.Remove-V-R4,6-9,58-weka.filters.unsupervised.attribute.RemoveByName-E^(X|K|label_environmentScoreSlope_1000_5000).*$-V'
+
+@attribute K2 numeric
+@attribute X55 numeric
+@attribute X8 numeric
+@attribute X80 numeric
+@attribute X9 numeric
+@attribute label_environmentScoreSlope_1000_5000 {good,bad}
+
+@data
+
+
+Classifier Model
+J48 pruned tree
+------------------
+
+X55 <= 0.486663
+|   X8 <= 0.00255
+|   |   X80 <= 0.123574
+|   |   |   X55 <= 0.320383
+|   |   |   |   K2 <= 9901.45
+|   |   |   |   |   X55 <= 0.180557
+|   |   |   |   |   |   X8 <= 0.00196: bad (5.0/1.0)
+|   |   |   |   |   |   X8 > 0.00196: good (8.0)
+|   |   |   |   |   X55 > 0.180557: bad (62.0/8.0)
+|   |   |   |   K2 > 9901.45
+|   |   |   |   |   X80 <= 0.085752
+|   |   |   |   |   |   X55 <= 0.197914: good (6.0)
+|   |   |   |   |   |   X55 > 0.197914: bad (34.0/9.0)
+|   |   |   |   |   X80 > 0.085752
+|   |   |   |   |   |   X55 <= 0.254278
+|   |   |   |   |   |   |   X8 <= 0.001864: bad (7.0/1.0)
+|   |   |   |   |   |   |   X8 > 0.001864
+|   |   |   |   |   |   |   |   K2 <= 12372.6: good (5.0)
+|   |   |   |   |   |   |   |   K2 > 12372.6
+|   |   |   |   |   |   |   |   |   X55 <= 0.191454: good (2.0)
+|   |   |   |   |   |   |   |   |   X55 > 0.191454: bad (2.0)
+|   |   |   |   |   |   X55 > 0.254278: good (19.0)
+|   |   |   X55 > 0.320383
+|   |   |   |   X8 <= 0.002193: good (80.0/1.0)
+|   |   |   |   X8 > 0.002193
+|   |   |   |   |   X55 <= 0.418497
+|   |   |   |   |   |   X55 <= 0.34243: bad (4.0/1.0)
+|   |   |   |   |   |   X55 > 0.34243: good (8.0)
+|   |   |   |   |   X55 > 0.418497: bad (12.0)
+|   |   X80 > 0.123574: good (53.0/1.0)
+|   X8 > 0.00255
+|   |   X55 <= 0.39967
+|   |   |   X55 <= 0.19457: good (18.0)
+|   |   |   X55 > 0.19457
+|   |   |   |   X55 <= 0.35938
+|   |   |   |   |   K2 <= 11068.3: bad (43.0/3.0)
+|   |   |   |   |   K2 > 11068.3
+|   |   |   |   |   |   X80 <= 0.078314
+|   |   |   |   |   |   |   X55 <= 0.222187: good (2.0)
+|   |   |   |   |   |   |   X55 > 0.222187: bad (11.0)
+|   |   |   |   |   |   X80 > 0.078314: good (13.0/3.0)
+|   |   |   |   X55 > 0.35938
+|   |   |   |   |   X8 <= 0.002904: good (15.0)
+|   |   |   |   |   X8 > 0.002904
+|   |   |   |   |   |   K2 <= 11664.4: bad (2.0)
+|   |   |   |   |   |   K2 > 11664.4: good (3.0)
+|   |   X55 > 0.39967: bad (50.0)
+X55 > 0.486663: bad (36.0)
+
+Number of Leaves  : 	25
+
+Size of the tree : 	49
+
+
+Time taken to build model: 0.13 seconds
+Time taken to test model on training data: 0.16 seconds
+
+=== Error on training data ===
+
+Correctly Classified Instances         472               94.4    %
+Incorrectly Classified Instances        28                5.6    %
+Kappa statistic                          0.888 
+Mean absolute error                      0.0922
+Root mean squared error                  0.2148
+Relative absolute error                 18.4476 %
+Root relative squared error             42.9507 %
+Total Number of Instances              500     
+Ignored Class Unknown Instances                500     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.908    0.020    0.978      0.908    0.942      0.890    0.816     0.517     good
+                 0.980    0.092    0.914      0.980    0.946      0.890    0.843     0.517     bad
+Weighted Avg.    0.944    0.056    0.946      0.944    0.944      0.890    0.829     0.517     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 227  23 |   a = good
+   5 245 |   b = bad
+
+
+
+=== Stratified cross-validation ===
+
+Correctly Classified Instances         427               85.4    %
+Incorrectly Classified Instances        73               14.6    %
+Kappa statistic                          0.708 
+Mean absolute error                      0.1773
+Root mean squared error                  0.3592
+Relative absolute error                 35.4519 %
+Root relative squared error             71.845  %
+Total Number of Instances              500     
+Ignored Class Unknown Instances                500     
+
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.852    0.144    0.855      0.852    0.854      0.708    0.730     0.409     good
+                 0.856    0.148    0.853      0.856    0.854      0.708    0.803     0.505     bad
+Weighted Avg.    0.854    0.146    0.854      0.854    0.854      0.708    0.767     0.457     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 213  37 |   a = good
+  36 214 |   b = bad
+
