@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Utility functions
 """
@@ -7,9 +5,13 @@ Utility functions
 import os
 import csv
 import re
+import collections
+
+from atntools import settings
 
 WOB_DB_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
         'data/wob-database')
+
 
 def typecast_dict_values(d, types):
     """
@@ -24,7 +26,10 @@ def typecast_dict_values(d, types):
             d2[k] = v
     return d2
 
+
 _species_data = None
+
+
 def get_species_data():
     """
     Returns species data from the WoB database export as read by
@@ -34,6 +39,7 @@ def get_species_data():
     if _species_data is None:
         _species_data = read_species_csv()
     return _species_data
+
 
 def read_species_csv():
     """
@@ -74,20 +80,100 @@ def read_species_csv():
 
     return species_data
 
+
 def read_species_data_test():
     import json
     species_data = read_species_csv()
     print(json.dumps(species_data, sort_keys=True, indent=4))
+
 
 def clip(x, xmin, xmax):
     """ Return the value of the first argument limited to the range given by the
     other two arguments. """
     return min(xmax, max(x, xmin))
 
+
 def remove_trailing_digits(string):
     """ Return the string with trailing digits removed. """
     return re.match(r'(\D+)', string).group()
 
-if __name__ == '__main__':
-    pass
-    #read_species_data_test()
+
+def get_food_web_dir(identifier):
+    """ Get the food web directory path corresponding to the given identifier.
+
+    This directory may or may not exist.
+
+    Parameters
+    ----------
+    identifier : str or list of int
+        A food web ID string or list of node IDs
+
+    Returns
+    -------
+    str
+        Food web directory path corresponding to `identifier`
+    """
+    if isinstance(identifier, str):
+        food_web_id = identifier
+        node_ids = food_web_id.split('-')
+    elif isinstance(identifier, collections.Sequence):
+        node_ids = sorted(identifier)
+        food_web_id = '-'.join(map(str, node_ids))
+    else:
+        raise TypeError('{} is neither a food web ID nor a sequence of node IDs'.format(identifier))
+
+    return os.path.join(settings.DATA_HOME, '{}-species'.format(len(node_ids)), food_web_id)
+
+
+_set_dir_pattern = re.compile(r'set-(\d+)')
+
+
+def list_set_dirs():
+    """ List all set directories under DATA_HOME.
+
+    Yields
+    -------
+    set_num : int, set_dir : str
+        Each item yielded is a tuple containing the set number and
+        the path to the set directory.
+    """
+    for root, dirs, files in os.walk(settings.DATA_HOME):
+        remove_dirs = []
+        for d in dirs:
+            match = _set_dir_pattern.match(d)
+            if match:
+                remove_dirs.append(d)
+                set_num = int(match.group(1))
+                set_dir = os.path.join(root, d)
+                yield set_num, set_dir
+        (dirs.remove(d) for d in remove_dirs)
+
+
+def find_set_dir(set_num):
+    """ Find a set directory under DATA_HOME.
+
+    Parameters
+    ----------
+    set_num : int
+        Set number of the directory to find
+
+    Returns
+    -------
+    str or None
+        Path to the set directory, or None if it doesn't exist
+    """
+    for set_num_, set_dir in list_set_dirs():
+        if set_num_ == set_num:
+            return set_dir
+    return None
+
+
+def get_max_set_number():
+    """ Find the maximum set number under DATA_HOME.
+
+    Returns
+    -------
+        int
+            The maximum set number
+    """
+    return max(set_num for set_num, set_dir in list_set_dirs())
