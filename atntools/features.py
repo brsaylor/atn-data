@@ -15,6 +15,7 @@ import os.path
 import gzip
 import csv
 from math import log2
+import re
 
 import numpy as np
 from scipy import stats, signal
@@ -37,11 +38,8 @@ def get_sim_number(filename):
     1
     123
     """
-    split1 = os.path.basename(filename).split('_')
-    if len(split1) == 1:
-        return 0
-    else:
-        return int(split1[1].split('.')[0])
+    match = re.match(r'.+_(\d+)\..+', filename)
+    return int(match.group(1)) if match else 0
 
 
 def node_config_to_params(node_config):
