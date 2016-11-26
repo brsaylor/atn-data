@@ -1,6 +1,8 @@
 import random
 import json
 
+import numpy as np
+
 from atntools import foodwebs
 
 # Parameter sliders in Convergence game are bounded by these ranges
@@ -134,6 +136,59 @@ def generate_uniform(node_ids, param_ranges, count):
         yield generate_node_config(nodes)
 
 _generators['uniform'] = generate_uniform
+
+
+def generate_parallel_sweep(node_ids, param_ranges, count):
+    """
+    Generate `count` node configs for the given node ID's with parameter
+    values evenly spaced across the given ranges for successive node
+    configs. All parameter values change in parallel.
+
+    Parameters
+    ----------
+    node_ids : list
+        Node IDs of nodes to include in the generated node configs
+    param_ranges : dict
+        Ranges of values to use for each parameter.
+        Key: parameter name
+        Value: [low, high] (or a single fixed value)
+    count
+        Number of node configs to generate
+
+    Yields
+    -------
+    str
+        Node config string
+    """
+
+    serengeti = foodwebs.get_serengeti()
+
+    # Compute sequence of values for each parameter
+    param_values = {}
+    for param, range_ in param_ranges.items():
+        # Handle fixed parameter values (convert single values into lists with the same value for low and high)
+        if not isinstance(range_, list):
+            range_ = [range_, range_]
+        param_values[param] = np.linspace(*range_, num=count, endpoint=True, dtype=np.float64)
+
+    for i in range(count):
+        nodes = []
+        for node_id in node_ids:
+            node = {
+                'nodeId': node_id,
+                'initialBiomass': param_values['initialBiomass'][i],
+                'perUnitBiomass': serengeti.node[node_id]['biomass']
+            }
+            if serengeti.node[node_id]['organism_type'] == foodwebs.ORGANISM_TYPE_ANIMAL:
+                node['X'] = param_values['X'][i]
+            else:
+                node['K'] = param_values['K'][i]
+                if 'R' in param_ranges:
+                    node['R'] = param_values['R'][i]
+            nodes.append(node)
+        yield generate_node_config(nodes)
+
+_generators['parallel_sweep'] = generate_parallel_sweep
 
 
 def generate_node_configs_from_metaparameter_file(metaparameter_filename, food_web_filename=None):
