@@ -21,6 +21,5 @@ def atn_engine_batch_runner(timesteps, node_config_file, use_webservices=False, 
     if output_dir:
         output_dir = os.path.abspath(os.path.expanduser(output_dir))
         args.extend(['--output-dir', output_dir])
-    args.append('blah')
     process = subprocess.run(args, cwd=settings.WOB_SERVER_HOME)
     process.check_returncode()
