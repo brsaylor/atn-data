@@ -9,6 +9,7 @@ from atntools import nodeconfigs
 
 parser = argparse.ArgumentParser(description=globals()['__doc__'])
 parser.add_argument('metaparameter_file', help="metaparameter JSON file")
+parser.add_argument('output_file', help="output file")
 parser.add_argument('-w', '--food-web-file', help="food web JSON file; overrides node IDs in metaparameter file")
 args = parser.parse_args()
 
@@ -17,5 +18,6 @@ if generator is None:
     print("Error processing metaparameter file", file=sys.stderr)
     sys.exit(1)
 
-for node_config in generator:
-    print(node_config)
+with open(args.output_file, 'w') as f:
+    for node_config in generator:
+        print(node_config, file=f)
