@@ -11,6 +11,8 @@ from atntools.util import *
 # Directories to populate fake DATA_HOME for testing
 directories = [
     '5-species/1-2-3-4-5/set-0',
+    '5-species/1-2-3-4-5/set-0/batch-0',
+    '5-species/1-2-3-4-5/set-0/batch-1',
     '5-species/1-2-3-4-5/set-1',
     '6-species/1-2-3-4-5-6/set-2',
     '6-species/1-2-3-4-5-6/set-3',
@@ -40,7 +42,14 @@ def test_get_food_web_dir(fake_data_home):
 
 
 def test_list_set_dirs(fake_data_home):
-    assert sorted(list_set_dirs()) == list(enumerate(os.path.join(settings.DATA_HOME, d) for d in directories))
+    assert sorted(list_set_dirs()) == list(enumerate(os.path.join(settings.DATA_HOME, d)
+                                                     for d in directories if 'batch' not in d))
+
+
+def test_list_batch_dirs(fake_data_home):
+    expected_list = list(enumerate(os.path.join(settings.DATA_HOME, d) for d in directories if 'batch' in d))
+    assert sorted(list_batch_dirs(0)) == expected_list
+    assert sorted(list_batch_dirs(os.path.join(settings.DATA_HOME, '5-species/1-2-3-4-5/set-0'))) == expected_list
 
 
 def test_find_set_dir(fake_data_home):
@@ -90,3 +99,15 @@ def test_create_set_dir(fake_data_home):
             "count": 1000
         }
     }
+
+
+def test_create_batch_dir(fake_data_home):
+    batch_num, batch_dir = create_batch_dir(0)
+    assert batch_num == 2
+    assert batch_dir == os.path.join(settings.DATA_HOME, '5-species/1-2-3-4-5/set-0/batch-2')
+    assert os.path.isdir(batch_dir)
+
+    batch_num, batch_dir = create_batch_dir(1)
+    assert batch_num == 0
+    assert batch_dir == os.path.join(settings.DATA_HOME, '5-species/1-2-3-4-5/set-1/batch-0')
+    assert os.path.isdir(batch_dir)

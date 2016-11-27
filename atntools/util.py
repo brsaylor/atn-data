@@ -8,6 +8,7 @@ import re
 import collections
 import json
 import copy
+import glob
 
 from atntools import settings
 
@@ -151,6 +152,31 @@ def list_set_dirs():
         (dirs.remove(d) for d in remove_dirs)
 
 
+def list_batch_dirs(set_identifier):
+    """ List all batch directories for the given set.
+
+    Parameters
+    ----------
+    set_identifier : int or str
+        Set number or set directory
+
+    Yields
+    -------
+    batch_num : int, batch_dir : str
+        Each item yielded is a tuple containing the batch number and
+        the path to the batch directory.
+    """
+    if isinstance(set_identifier, int):
+        set_dir = find_set_dir(set_identifier)
+    else:
+        set_dir = set_identifier
+
+    for batch_dir in glob.iglob(os.path.join(set_dir, 'batch-*')):
+        match = re.match(r'.+/batch-(\d+)', batch_dir)
+        batch_num = int(match.group(1))
+        yield batch_num, batch_dir
+
+
 def find_set_dir(set_num):
     """ Find a set directory under DATA_HOME.
 
@@ -175,10 +201,30 @@ def get_max_set_number():
 
     Returns
     -------
-        int
-            The maximum set number
+    int
+        The maximum set number
     """
     return max(set_num for set_num, set_dir in list_set_dirs())
+
+
+def get_max_batch_number(set_identifier):
+    """ Find the maximum batch number for the given set.
+
+    Parameters
+    ----------
+    set_identifier : int or str
+        Set number or set directory
+
+    Returns
+    -------
+    int
+        The maximum batch number, or None if no batch directories exist
+    """
+    batch_dirs = list(list_batch_dirs(set_identifier))
+    if len(batch_dirs) == 0:
+        return None
+    else:
+        return max(batch_num for batch_num, batch_dir in batch_dirs)
 
 
 def create_set_dir(food_web, metaparameter_template):
@@ -216,3 +262,29 @@ def create_set_dir(food_web, metaparameter_template):
         json.dump(metaparameters, f)
 
     return set_num, set_dir
+
+
+def create_batch_dir(set_num):
+    """ Create a batch directory for the given set.
+
+    Parameters
+    ----------
+    set_num : int
+        The set number
+
+    Returns
+    -------
+    batch_num : int, batch_dir : str
+        A tuple containing the batch number and the path to the newly
+        created batch directory
+    """
+
+    set_dir = find_set_dir(set_num)
+    max_batch_num = get_max_batch_number(set_num)
+    if max_batch_num is None:
+        batch_num = 0
+    else:
+        batch_num = max_batch_num + 1
+    batch_dir = os.path.join(set_dir, 'batch-{}'.format(batch_num))
+    os.mkdir(batch_dir)
+    return batch_num, batch_dir
