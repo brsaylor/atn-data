@@ -4,6 +4,7 @@ Functions for running simulations
 
 import os
 import subprocess
+import re
 
 from atntools import settings
 
@@ -21,5 +22,10 @@ def atn_engine_batch_runner(timesteps, node_config_file, use_webservices=False, 
     if output_dir:
         output_dir = os.path.abspath(os.path.expanduser(output_dir))
         args.extend(['--output-dir', output_dir])
-    process = subprocess.run(args, cwd=settings.WOB_SERVER_HOME)
-    process.check_returncode()
+
+    process = subprocess.Popen(args, cwd=settings.WOB_SERVER_HOME,
+                               stdout=subprocess.PIPE, universal_newlines=True, bufsize=1)  # for reading stdout
+    for line in process.stdout:
+        match = re.match(r'Simulation (\d+)', line)
+        if match:
+            print("\rRunning simulation " + match.group(1), end='', flush=True)
