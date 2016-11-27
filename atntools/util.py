@@ -6,6 +6,8 @@ import os
 import csv
 import re
 import collections
+import json
+import copy
 
 from atntools import settings
 
@@ -177,3 +179,40 @@ def get_max_set_number():
             The maximum set number
     """
     return max(set_num for set_num, set_dir in list_set_dirs())
+
+
+def create_set_dir(food_web, metaparameter_template):
+    """ Create and initialize a new set directory for the given food web.
+
+    Parameters
+    ----------
+    food_web : str or list of int
+        A food web ID string or list of node IDs
+    metaparameter_template : dict
+        Metaparameter template to use. Node IDs are filled in from the
+        food web info file.
+
+    Returns
+    -------
+    set_num : int, set_dir : str
+        A tuple containing the set number and the path to the set directory.
+    """
+
+    # Determine food web directory (assumed to exist) and set directory (does not exist)
+    food_web_dir = get_food_web_dir(food_web)
+    set_num = get_max_set_number() + 1
+    set_dir = os.path.join(food_web_dir, 'set-{}'.format(set_num))
+
+    # Create the set directory
+    os.mkdir(set_dir)
+
+    # Generate the metaparameter file from the template
+    with open(os.path.join(food_web_dir, 'food-web.json')) as f:
+        food_web_info = json.load(f)
+    node_ids = food_web_info['node_ids']
+    metaparameters = copy.copy(metaparameter_template)
+    metaparameters['args']['node_ids'] = node_ids
+    with open(os.path.join(set_dir, 'metaparameters.json'), 'w') as f:
+        json.dump(metaparameters, f)
+
+    return set_num, set_dir
