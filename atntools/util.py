@@ -202,9 +202,13 @@ def get_max_set_number():
     Returns
     -------
     int
-        The maximum set number
+        The maximum set number, or None if no sets exist
     """
-    return max(set_num for set_num, set_dir in list_set_dirs())
+    set_dirs = list(list_set_dirs())
+    if len(set_dirs) == 0:
+        return None
+    else:
+        return max(set_num for set_num, set_dir in set_dirs)
 
 
 def get_max_batch_number(set_identifier):
@@ -246,7 +250,11 @@ def create_set_dir(food_web, metaparameter_template):
 
     # Determine food web directory (assumed to exist) and set directory (does not exist)
     food_web_dir = get_food_web_dir(food_web)
-    set_num = get_max_set_number() + 1
+    max_set_num = get_max_set_number()
+    if max_set_num is None:
+        set_num = 0
+    else:
+        set_num = max_set_num + 1
     set_dir = os.path.join(food_web_dir, 'set-{}'.format(set_num))
 
     # Create the set directory
@@ -259,7 +267,7 @@ def create_set_dir(food_web, metaparameter_template):
     metaparameters = copy.copy(metaparameter_template)
     metaparameters['args']['node_ids'] = node_ids
     with open(os.path.join(set_dir, 'metaparameters.json'), 'w') as f:
-        json.dump(metaparameters, f)
+        json.dump(metaparameters, f, indent=4, sort_keys=True)
 
     return set_num, set_dir
 
