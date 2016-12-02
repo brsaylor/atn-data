@@ -116,11 +116,11 @@ def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
     plt.gca().set_axis_bgcolor('white')
 
     if show_names:
-        labels = {node[0]: '  ' + node[1]['node_id'] + ' ' + node[1]['name']
+        labels = {node[0]: '  ' + node[0] + ' ' + node[1]['name']
                   for node in graph.nodes(data=True)}
 
     else:
-        labels = {node[0]: node[1]['node_id']
+        labels = {node[0]: node[0]
                   for node in graph.nodes(data=True)}
     nx.draw_networkx_labels(graph, pos, labels)
 
@@ -144,7 +144,7 @@ def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
         rows = []
         for node, data in sorted(graph.nodes(data=True), reverse=True,
                                  key=lambda t: t[1]['trophic_level']):
-            rows.append(template.format(data['node_id'], data['name'], data['trophic_level']))
+            rows.append(template.format(node, data['name'], data['trophic_level']))
         table_text = "\n{}\n{}\n{}\n".format(header, divider, "\n".join(rows))
 
         lgd = plt.text(plt.gca().get_xlim()[1] * 1.02, plt.gca().get_ylim()[1], table_text, family='monospace',
