@@ -2,8 +2,10 @@
 
 """ Generates a plot and JSON file describing a food web.
 
-The output directory is determined automatically based on DATA_HOME and
-the species in the food web.
+Files are stored in a directory named based on the species in the food web.
+
+If --parent-dir is not specified, the parent directory is determined
+automatically based on DATA_HOME.
 """
 
 import os
@@ -12,6 +14,7 @@ import argparse
 
 from atntools import settings
 from atntools import foodwebs
+from atntools import util
 
 parser = argparse.ArgumentParser(description=globals()['__doc__'])
 subparsers = parser.add_subparsers(dest='subparser_name')
@@ -20,6 +23,7 @@ subparsers = parser.add_subparsers(dest='subparser_name')
 parser_generate = subparsers.add_parser('generate', help="Generate a new food web and save plot and JSON")
 parser_generate.add_argument('size', type=int, help="Number of species")
 parser_generate.add_argument('num_basal_species', type=int, help="Number of basal species")
+parser_generate.add_argument('--parent-dir', help="Parent directory")
 
 # 'regenerate' sub-command
 parser_regenerate = subparsers.add_parser('regenerate', help="Regenerate files in existing food web directory")
@@ -37,7 +41,10 @@ if args.subparser_name == 'generate':
     subweb = foodwebs.serengeti_predator_complete_subweb(args.size, args.num_basal_species)
     node_ids = sorted(subweb.nodes())
     food_web_id = '-'.join([str(x) for x in node_ids])
-    food_web_dir = os.path.join(settings.DATA_HOME, '{}-species'.format(args.size), food_web_id)
+    if args.parent_dir is None:
+        food_web_dir = util.get_food_web_dir(food_web_id)
+    else:
+        food_web_dir = os.path.join(os.path.expanduser(args.parent_dir), food_web_id)
     print("Creating food web directory " + food_web_dir)
     os.makedirs(food_web_dir)
 
