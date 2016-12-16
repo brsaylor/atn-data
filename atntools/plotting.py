@@ -26,7 +26,7 @@ species_data = None
 
 
 def plot_biomass_data(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None,
-                      grayscale=False, log_scale=False):
+                      grayscale=False, logx=False, logy=False):
     """ Plot the given biomass file produced by WoB Server.
 
     Parameters
@@ -47,7 +47,9 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
         y-axis limits (ymin, ymax)
     grayscale : bool
         If true, render plot in grayscale instead of color
-    log_scale : bool
+    logx : bool
+        If true, use a logarithmic scale for the x axis
+    logy : bool
         If true, use a logarithmic scale for the y axis
     """
     global species_data
@@ -69,7 +71,10 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     if ylim:
         plt.ylim(ylim)
 
-    if log_scale:
+    if logx:
+        ax1.set_xscale('log')
+
+    if logy:
         ax1.set_yscale('log')
 
     # Make a cycle of line colors and styles
