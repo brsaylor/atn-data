@@ -189,6 +189,54 @@ def get_source_nodes(graph, allow_selfloops=True):
     return source_nodes
 
 
+def all_simple_paths_from(graph, source, visited=set()):
+    """ Compute all simple paths in the given directed graph from the given source node.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph
+        The graph to search
+    source : int
+        The source node
+    visited : set of int, optional
+        The set of nodes that have been visited so far
+
+    Returns
+    -------
+    list of list of int
+        The simple paths from `source`
+    """
+    paths = []
+    for successor in graph.successors(source):
+        if successor not in visited and successor != source:
+            paths.append([source, successor])
+            for successor_path in all_simple_paths_from(graph, successor, visited | set([source])):
+                paths.append([source] + successor_path)
+    return paths
+
+
+def get_food_chains(graph):
+    """ Get all food chains in the graph.
+
+    A food chain is defined here as a simple path from a source node
+    (a node with no predecessors) to another node.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph
+        The graph to search for food chains
+
+    Returns
+    -------
+    list of list of int
+        All food chains in the graph as a list of simple paths
+    """
+    food_chains = []
+    for source in get_source_nodes(graph):
+        food_chains += all_simple_paths_from(graph, source)
+    return food_chains
+
+
 def get_basal_species(graph):
     basal_species = []
     for node_id, species_attributes in graph.nodes_iter(data=True):

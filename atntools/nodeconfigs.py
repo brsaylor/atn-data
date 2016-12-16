@@ -62,7 +62,7 @@ def parse_node_config(node_config):
     return nodes
 
 
-def generate_node_config(nodes):
+def node_config_to_string(nodes):
     """
     Convert a list-of-dicts representation of a node config into a string.
     """
@@ -133,9 +133,55 @@ def generate_uniform(node_ids, param_ranges, count):
                 if 'R' in param_ranges:
                     node['R'] = random.uniform(*param_ranges['R'])
             nodes.append(node)
-        yield generate_node_config(nodes)
+        yield nodes
 
 _generators['uniform'] = generate_uniform
+
+
+def generate_trophic_level_scaling(node_ids, param_ranges, factor, count):
+    """ Like generate_uniform, but reduce initialBiomass according to
+    trophic level.
+
+    initialBiomass is multiplied by factor ** max_food_chain_length
+    (food chain length is the number of links).
+
+    Parameters
+    ----------
+    node_ids : list
+        Node IDs of nodes to include in the generated node configs
+    param_ranges : dict
+        Ranges of values to use for each parameter.
+        Key: parameter name
+        Value: [low, high] (or a single fixed value)
+    factor : float
+        Factor by which to multiply initial biomass for each increase in
+        trophic level
+    count
+        Number of node configs to generate
+
+    Yields
+    -------
+    str
+        Node config string
+    """
+    subweb = foodwebs.get_serengeti().subgraph(node_ids)
+
+    max_chain_length = {node_id: 0 for node_id in node_ids}  # maximum food chain length by species
+    food_chains = foodwebs.get_food_chains(subweb)
+    food_chains.sort(key=lambda c: list(reversed(c)))
+    for chain in food_chains:
+        print(str(chain))
+
+    for chain in food_chains:
+        node_id = chain[-1]
+        max_chain_length[node_id] = max(max_chain_length[node_id], len(chain) - 1)  # subtract 1 to count edges
+
+    for node_config in generate_uniform(node_ids, param_ranges, count):
+        for node in node_config:
+            node['initialBiomass'] *= factor ** (max_chain_length[node['nodeId']])
+        yield node_config
+
+_generators['trophic-level-scaling'] = generate_trophic_level_scaling
 
 
 def generate_parallel_sweep(node_ids, param_ranges, count):
@@ -186,7 +232,7 @@ def generate_parallel_sweep(node_ids, param_ranges, count):
                 if 'R' in param_ranges:
                     node['R'] = param_values['R'][i]
             nodes.append(node)
-        yield generate_node_config(nodes)
+        yield nodes
 
 _generators['parallel_sweep'] = generate_parallel_sweep
 
@@ -227,4 +273,4 @@ def generate_node_configs_from_metaparameter_file(metaparameter_filename, food_w
             food_web_data = json.load(f)
             kwargs.update(food_web_data)
 
-    return generator_function(**kwargs)
+    return (node_config_to_string(nc) for nc in generator_function(**kwargs))

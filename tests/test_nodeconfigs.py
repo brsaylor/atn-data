@@ -1,3 +1,5 @@
+import random
+
 from atntools.nodeconfigs import *
 
 # Change from Convergence 5-species template: addition of R for the grass.
@@ -43,6 +45,32 @@ def test_parse_node_config():
     assert parse_node_config(test_node_config) == test_nodes
 
 
-def test_generate_node_config():
-    assert generate_node_config(test_nodes) == test_node_config
+def test_node_config_to_string():
+    assert node_config_to_string(test_nodes) == test_node_config
 
+
+def test_generate_trophic_level_scaling(monkeypatch):
+
+    # Make random.uniform() just return the high value
+    monkeypatch.setattr(random, 'uniform', lambda low, high: high)
+
+    args = {
+        "node_ids": [3, 4, 5, 7, 13, 30, 31, 42, 45, 49, 50, 51, 52, 53, 57, 65, 72, 74, 75, 85],
+        "param_ranges": {
+            "initialBiomass": [100, 8000],
+            "X": [0, 1],
+            "R": 1,
+            "K": [100, 10000]
+        },
+        "factor": 0.25,
+        "count": 1
+    }
+
+    node_configs = list(generate_trophic_level_scaling(**args))
+
+    assert len(node_configs) == 1
+    node_config = node_configs[0]
+
+    max_chain_lengths = {13: 1, 30: 1, 31: 1, 42: 2, 45: 2, 49: 3, 50: 2, 51: 3, 52: 1, 53: 3, 57: 3, 65: 1, 72: 1, 74: 2, 75: 2, 85: 1}
+    for node in node_config:
+        assert node['initialBiomass'] == 8000 * 0.25 ** max_chain_lengths.get(node['nodeId'], 0)
