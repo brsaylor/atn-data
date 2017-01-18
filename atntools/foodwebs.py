@@ -116,12 +116,17 @@ def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
     plt.gca().set_axis_bgcolor('white')
 
     if show_names:
-        labels = {node[0]: '  ' + node[0] + ' ' + node[1]['name']
+        labels = {node[0]: '  ' + str(node[0]) + ' ' + node[1]['name']
                   for node in graph.nodes(data=True)}
 
     else:
-        labels = {node[0]: node[0]
+        labels = {node[0]: str(node[0])
                   for node in graph.nodes(data=True)}
+
+    # Networkx can't draw self-loop edges, so add a ' C' to the label for cannibals
+    for node in graph.nodes_with_selfloops():
+        labels[node] = 'C{}  '.format(node)
+
     nx.draw_networkx_labels(graph, pos, labels)
 
     # Draw images
