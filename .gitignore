@@ -1,3 +1,6 @@
 notebooks/scratch.ipynb
 .idea
 .cache
+atn_tools.egg-info/
+build/
+dist/
