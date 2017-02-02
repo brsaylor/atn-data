@@ -14,7 +14,7 @@ def atn_engine_batch_runner(timesteps, node_config_file, use_webservices=False, 
 
     node_config_file = os.path.abspath(os.path.expanduser(node_config_file))
     args = ['java', '-cp', 'build/libs/WoB_Server_ATNEngine.jar:lib/*:chartlib/*',
-               'atn.ATNEngineBatchRunner', str(timesteps), node_config_file]
+            'shared.atn.ATNEngineBatchRunner', str(timesteps), node_config_file]
     if use_webservices:
         args.append('--use-webservices')
     if use_csv:
