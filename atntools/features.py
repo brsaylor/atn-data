@@ -22,7 +22,8 @@ from scipy import stats, signal
 import pandas as pd
 import h5py
 
-from atntools.nodeconfigs import parse_node_config
+from .nodeconfigs import parse_node_config, node_config_to_params
+from .simulationdata import SimulationData
 
 NO_EXTINCTION = 99999999
 
@@ -40,21 +41,6 @@ def get_sim_number(filename):
     """
     match = re.match(r'.+_(\d+)\..+', filename)
     return int(match.group(1)) if match else 0
-
-
-def node_config_to_params(node_config):
-    """
-    Given a node config as returned by parseNodeConfig(), return a dictionary
-    with one key-value pair for each node-parameter pair, where the keys are
-    named with the parameter name with the node ID appended.
-    """
-    params = {}
-    for node in node_config:
-        for key, value in node.items():
-            if key == 'nodeId':
-                continue
-            params[key + str(node['nodeId'])] = value
-    return params
 
 
 def get_species_data(filename=None):
@@ -94,88 +80,6 @@ def get_simulation_data(filename):
         else:
             f.seek(0)
             return get_simulation_data_atn_csv_format(f)
-
-
-def get_simulation_data_hdf5(filename):
-    """ Read ATN simulation data from an HDF5 file produced by WoB Server.
-
-    Parameters
-    ----------
-    filename : str
-        The name of the HDF5 file
-
-    Returns
-    -------
-    (node_config : str, node_config_attributes : dict, biomass_data : pd.DataFrame)
-        - node_config is the node configuration string
-        - node_config_attributes is the corresponding output of node_config_to_params()
-        - DataFrame columns are node IDs and whose index is the timeteps of the simulation.
-    """
-
-    with h5py.File(filename, 'r') as f:
-        biomass_data = pd.DataFrame(f['biomass'][:, :], columns=list(f['node_ids']))
-        node_config_str = f.attrs['node_config'].decode('utf-8')
-        node_config = parse_node_config(node_config_str)
-        node_config_attributes = node_config_to_params(node_config)
-
-        return node_config, node_config_attributes, biomass_data
-
-
-def get_simulation_data_sim_csv_format(file_object):
-    """ Read simulation output data from the given file in Simulation Engine format """
-
-    biomass_data = pd.DataFrame()
-
-    reader = csv.reader(file_object)
-    for row in reader:
-
-        # Skip rows until we get to the biomass data
-        if len(row) == 0 or '[' not in row[0]:
-            continue
-
-        if row[0] == 'node':  # End of biomass data
-            break
-
-        species_name, node_id = row[0].split(' [')
-        node_id = int(node_id.split(']')[0])
-        biomass_data[node_id] = [float(x or 0) for x in row[1:]]
-
-    # Unfortunately, the sim-format file does not contain the node config
-    node_config = None
-    node_config_attributes = None
-    return node_config, node_config_attributes, biomass_data
-
-
-def get_simulation_data_atn_csv_format(file_object):
-    """
-    Given an ATN CSV file,
-    return a tuple (node_config, node_config_attributes, biomass_data).
-
-    node_config_attributes is a dictionary with the node config parameters (as
-    returned by nodeConfigToParams()).
-
-    biomass_data is a DataFrame whose columns are node IDs and whose index is the timeteps of the simulation.
-    """
-
-    node_config_attributes = None
-    biomass_data = pd.DataFrame()
-
-    reader = csv.reader(file_object)
-    reader.__next__()  # Skip the header row
-    for row in reader:
-        if len(row) == 0 or row[0] == '':
-            # Blank line: end of biomass data
-            break
-        node_id = int(row[0].split('.')[1])
-        biomass_data[node_id] = [float(x) for x in row[1:]]
-
-    # The next row should have the node config
-    row = reader.__next__()
-    node_config_str = row[0].split(': ')[1]
-    node_config = parse_node_config(node_config_str)
-    node_config_attributes = node_config_to_params(node_config)
-
-    return node_config, node_config_attributes, biomass_data
 
 
 def rmse(df1, df2):
@@ -419,7 +323,6 @@ def generate_feature_file(set_number, output_file, biomass_files):
     outfile = None
     writer = None
 
-
     for sim_number, infilename in sorted(
             [(get_sim_number(f), f) for f in biomass_files]):
 
@@ -439,7 +342,10 @@ def generate_feature_file(set_number, output_file, biomass_files):
             'simNumber': sim_number,
         }
         outrow.update(identifiers)
-        node_config, input_attributes, biomass_data = get_simulation_data(infilename)
+        simdata = SimulationData(infilename)
+        node_config = simdata.node_config_list
+        input_attributes = simdata.node_config_attributes
+        biomass_data = simdata.biomass
         outrow.update(input_attributes)
         output_attributes = get_output_attributes(
             species_data, node_config, biomass_data)

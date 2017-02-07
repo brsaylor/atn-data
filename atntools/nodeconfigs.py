@@ -85,6 +85,21 @@ def node_config_to_string(nodes):
     return node_config
 
 
+def node_config_to_params(node_config):
+    """
+    Given a node config as returned by parseNodeConfig(), return a dictionary
+    with one key-value pair for each node-parameter pair, where the keys are
+    named with the parameter name with the node ID appended.
+    """
+    params = {}
+    for node in node_config:
+        for key, value in node.items():
+            if key == 'nodeId':
+                continue
+            params[key + str(node['nodeId'])] = value
+    return params
+
+
 _generators = {}
 
 

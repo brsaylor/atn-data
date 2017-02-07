@@ -20,7 +20,8 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from atntools.features import get_species_data, get_simulation_data, environment_score
+from .features import get_species_data, environment_score
+from .simulationdata import SimulationData
 
 species_data = None
 
@@ -56,7 +57,10 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     if species_data is None:
         species_data = get_species_data()
 
-    node_config, node_config_attributes, biomass_data = get_simulation_data(filename)
+    simdata = SimulationData(filename)
+    node_config = simdata.node_config_list
+    node_config_attributes = simdata.node_config_attributes
+    biomass_data = simdata.biomass
     
     if figsize is not None:
         fig, ax1 = plt.subplots(figsize=figsize)
