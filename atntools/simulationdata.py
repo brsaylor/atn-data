@@ -3,6 +3,11 @@ import h5py
 from cached_property import cached_property
 
 
+# ATNEngine extinction threshold is 1e-15.
+# It scales biomass by 1000 for output, so our extinction threshold is:
+EXTINCT = 1e-12
+
+
 class SimulationData(object):
     """ ATN simulation data from an HDF5 file produced by WoB Server.
 

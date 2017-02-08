@@ -7,7 +7,7 @@ import pdb
 import numpy as np
 
 from . import foodwebs
-from .simulationdata import SimulationData
+from .simulationdata import SimulationData, EXTINCT
 
 # Parameter sliders in Convergence game are bounded by these ranges
 valid_param_ranges = {
@@ -133,10 +133,15 @@ def generate_filter_sustaining(input_dir):
             # Not a sustaining simulation
             continue
         nodes = parse_node_config(simdata.node_config)
+        sustaining_nodes = []
         for node in nodes:
             # Set initial biomass to final biomass
-            node['initialBiomass'] = simdata.biomass.iloc[-1][node['nodeId']]
-        yield nodes
+            final_biomass = simdata.biomass.iloc[-1][node['nodeId']]
+            if final_biomass > EXTINCT:
+                node['initialBiomass'] = final_biomass
+                sustaining_nodes.append(node)
+
+        yield sustaining_nodes
 
 
 _generators['filter-sustaining'] = generate_filter_sustaining
