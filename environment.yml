@@ -9,6 +9,7 @@ dependencies:
     - networkx
     - h5py
     - pytest
+    - cached-property
     - pip:
         - pydotplus
         - pygraphviz

@@ -1,7 +1,6 @@
 import pandas as pd
 import h5py
-
-from .nodeconfigs import parse_node_config, node_config_to_params
+from cached_property import cached_property
 
 
 class SimulationData(object):
@@ -19,30 +18,32 @@ class SimulationData(object):
         the timeteps of the simulation.
     node_config : str
         The node configuration string
-    node_config_list : list
-        The node configuration parsed by nodeconfigs.parse_node_config()
-    node_config_attributes : dict
-        A dictionary with one key-value pair for each node-parameter pair, where
-        the keys are named with the parameter name with the node ID appended
     stop_event : str
         The event (if any) that stopped the simulation. Possible values:
             NONE
             UNKNOWN_EVENT
             TOTAL_EXTINCTION
-            CONSTANT_BIOMASS
+            CONSTANT_BIOMASS_PRODUCERS_ONLY
+            CONSTANT_BIOMASS_WITH_CONSUMERS
             OSCILLATING_STEADY_STATE
     """
 
     def __init__(self, filename):
 
-        with h5py.File(filename, 'r') as f:
+        self.filename = filename
 
-            self.biomass = pd.DataFrame(
+        # Read all data other than biomass array
+        with h5py.File(filename, 'r') as f:
+            self.node_config = f.attrs['node_config'].decode('utf-8')
+            self.stop_event = f.attrs['stop_event'].decode('utf-8')
+
+    # Read biomass data once when first accessed, since it is large and
+    # expensive to read
+    @cached_property
+    def biomass(self):
+        _biomass = None
+        with h5py.File(self.filename, 'r') as f:
+            _biomass = pd.DataFrame(
                 f['biomass'][:, :],
                 columns=list(f['node_ids']))
-
-            self.node_config = f.attrs['node_config'].decode('utf-8')
-            self.node_config_list = parse_node_config(self.node_config)
-            self.node_config_attributes = node_config_to_params(self.node_config_list)
-
-            self.stop_event = f.attrs['stop_event'].decode('utf-8')
+        return _biomass

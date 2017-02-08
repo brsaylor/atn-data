@@ -22,6 +22,7 @@ import pandas as pd
 
 from .features import get_species_data, environment_score
 from .simulationdata import SimulationData
+from .nodeconfigs import parse_node_config, node_config_to_params
 
 species_data = None
 
@@ -58,8 +59,8 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
         species_data = get_species_data()
 
     simdata = SimulationData(filename)
-    node_config = simdata.node_config_list
-    node_config_attributes = simdata.node_config_attributes
+    node_config = parse_node_config(simdata.node_config)
+    node_config_attributes = node_config_to_params(node_config)
     biomass_data = simdata.biomass
     
     if figsize is not None:

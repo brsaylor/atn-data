@@ -1,9 +1,13 @@
 import random
 import json
+import glob
+import os.path
+import pdb
 
 import numpy as np
 
-from atntools import foodwebs
+from . import foodwebs
+from .simulationdata import SimulationData
 
 # Parameter sliders in Convergence game are bounded by these ranges
 valid_param_ranges = {
@@ -101,6 +105,41 @@ def node_config_to_params(node_config):
 
 
 _generators = {}
+
+
+def generate_filter_sustaining(input_dir):
+    """ Generate node configs that will result in sustaining simulations.
+
+    A "sustaining" simulation has a nonzero (possibly oscillating) steady state that
+    includes consumer species.
+
+    Parameters
+    ----------
+    input_dir : str
+        Directory containing HDF5 files to search for sustaining simulations
+
+    Yields
+    ------
+    list
+        A list representation of node configs that will result in sustaining
+        simulations. The initial biomass is set to the final biomass of the
+        corresponding input simulation.
+    """
+
+    for filename in glob.glob(os.path.join(input_dir, '*.h5')):
+        simdata = SimulationData(filename)
+        if simdata.stop_event not in (
+                'CONSTANT_BIOMASS_WITH_CONSUMERS', 'OSCILLATING_STEADY_STATE'):
+            # Not a sustaining simulation
+            continue
+        nodes = parse_node_config(simdata.node_config)
+        for node in nodes:
+            # Set initial biomass to final biomass
+            node['initialBiomass'] = simdata.biomass.iloc[-1][node['nodeId']]
+        yield nodes
+
+
+_generators['filter-sustaining'] = generate_filter_sustaining
 
 
 def generate_uniform(node_ids, param_ranges, count):

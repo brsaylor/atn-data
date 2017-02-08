@@ -343,8 +343,8 @@ def generate_feature_file(set_number, output_file, biomass_files):
         }
         outrow.update(identifiers)
         simdata = SimulationData(infilename)
-        node_config = simdata.node_config_list
-        input_attributes = simdata.node_config_attributes
+        node_config = parse_node_config(simdata.node_config_list)
+        input_attributes = node_config_to_params(node_config_list)
         biomass_data = simdata.biomass
         outrow.update(input_attributes)
         output_attributes = get_output_attributes(
