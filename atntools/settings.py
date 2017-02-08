@@ -12,6 +12,15 @@ import os.path
 def filter_path(path):
     return os.path.expanduser(path)
 
+
+def filter_positive_int(number):
+    try:
+        number = max(1, int(number))
+    except ValueError:
+        number = 1
+    return number
+
+
 """
 Valid properties that may be included in configuration files.
 Key: name of valid property
@@ -29,6 +38,9 @@ valid_properties = {
     'WOB_SERVER_HOME': {
         'filter': filter_path
     },
+    'DEFAULT_SIMULATION_THREADS': {
+        'filter': filter_positive_int
+    }
 }
 
 # Check that the configuration file exists
@@ -41,7 +53,7 @@ if not os.path.isfile(conf_file_path):
 # Open and parse the configuration file
 conf_file = open(conf_file_path)
 for line in conf_file:
-    line = line.strip();
+    line = line.strip()
     if line == '' or line.startswith('#'):
         continue
     split_line = [s.strip() for s in line.split('=')]

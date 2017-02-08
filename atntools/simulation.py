@@ -9,7 +9,9 @@ import re
 from atntools import settings, util, nodeconfigs
 
 
-def atn_engine_batch_runner(timesteps, node_config_file, use_webservices=False, use_csv=False, output_dir=None):
+def atn_engine_batch_runner(
+        timesteps, node_config_file,
+        use_webservices=False, use_csv=False, output_dir=None, threads=None):
     """ Run ATNEngineBatchRunner from WoB Server with the given arguments. """
 
     node_config_file = os.path.abspath(os.path.expanduser(node_config_file))
@@ -21,7 +23,11 @@ def atn_engine_batch_runner(timesteps, node_config_file, use_webservices=False, 
         args.append('--use-csv')
     if output_dir:
         output_dir = os.path.abspath(os.path.expanduser(output_dir))
+        os.makedirs(output_dir, exist_ok=True)
         args.extend(['--output-dir', output_dir])
+    if threads is None:
+        threads = settings.DEFAULT_SIMULATION_THREADS
+    args.extend(['--threads', str(threads)])
 
     process = subprocess.Popen(args, cwd=settings.WOB_SERVER_HOME,
                                stdout=subprocess.PIPE, universal_newlines=True, bufsize=1)  # for reading stdout

@@ -17,6 +17,7 @@ parser.add_argument('--use-webservices', action='store_true',
 parser.add_argument('--use-csv', action='store_true',
                     help="Save output data in CSV format instead of HDF5 format")
 parser.add_argument('--output-dir', help="Output directory (default: $WOB_SERVER_HOME/src/log/(atn|sim)")
+parser.add_argument('--threads', type=int, help="Number of simulation threads to run (default: 1)")
 args = parser.parse_args()
 
 atn_engine_batch_runner(**vars(args))
