@@ -23,9 +23,7 @@ import pandas as pd
 import h5py
 
 from .nodeconfigs import parse_node_config, node_config_to_params
-from .simulationdata import SimulationData
-
-NO_EXTINCTION = 99999999
+from .simulationdata import SimulationData, EXTINCT
 
 
 def get_sim_number(filename):
@@ -207,7 +205,7 @@ def get_output_attributes(species_data, node_config, biomass_data):
     ---------------------------
     avgBiomass: average pre-extinction biomass over all timesteps
     avgBiomass2: average biomass, regardless of extinction, over all timesteps
-    extinction: timestep at which the species' biomass first reached 0
+    extinction: timestep at which the species' biomass reached extinction threshold
 
     Non-species-specific attributes
     -------------------------------
@@ -228,17 +226,20 @@ def get_output_attributes(species_data, node_config, biomass_data):
     amplitudes_sd_log_n = []
 
     for node_id, biomass_series in biomass_data.items():
-        min_biomass_t = biomass_series.argmin()
-        if biomass_series[min_biomass_t] > 0:
-            extinction = NO_EXTINCTION
+
+        # Get first time step at which biomass reaches extinction threshold
+        extinct_timesteps = biomass_series[biomass_series <= EXTINCT]
+        if len(extinct_timesteps) > 0:
+            extinction = extinct_timesteps.index[0]
         else:
-            extinction = min_biomass_t
+            extinction = None
+
         out['extinction_' + str(node_id)] = extinction
         out['avgBiomass_' + str(node_id)] = biomass_series[:extinction].sum() / num_timesteps
         out['avgBiomass2_' + str(node_id)] = biomass_series.mean()
-        if extinction <= 20:
+        if extinction is not None and extinction <= 20:
             surviving20 -= 1
-        if extinction <= 1000:
+        if extinction is not None and extinction <= 1000:
             surviving1000 -= 1
         amp = np.std(np.log10(biomass_data[node_id] + 1))
         amplitudes_sd_log_n.append(amp)
@@ -343,12 +344,12 @@ def generate_summary_file(set_number, output_file, biomass_files):
         }
         outrow.update(identifiers)
         simdata = SimulationData(infilename)
-        node_config = parse_node_config(simdata.node_config_list)
+        node_config_list = parse_node_config(simdata.node_config)
         input_attributes = node_config_to_params(node_config_list)
         biomass_data = simdata.biomass
         outrow.update(input_attributes)
         output_attributes = get_output_attributes(
-            species_data, node_config, biomass_data)
+            species_data, node_config_list, biomass_data)
         outrow.update(output_attributes)
 
         if writer is None:
