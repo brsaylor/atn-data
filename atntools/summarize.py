@@ -317,7 +317,7 @@ def get_output_attributes(species_data, node_config, biomass_data):
     return out
 
 
-def generate_feature_file(set_number, output_file, biomass_files):
+def generate_summary_file(set_number, output_file, biomass_files):
     species_data = get_species_data()
 
     outfile = None

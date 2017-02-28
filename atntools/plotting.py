@@ -20,7 +20,7 @@ import numpy as np
 from scipy import stats, signal
 import pandas as pd
 
-from .features import get_species_data, environment_score
+from .summarize import get_species_data, environment_score
 from .simulationdata import SimulationData
 from .nodeconfigs import parse_node_config, node_config_to_params
 

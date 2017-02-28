@@ -1,4 +1,4 @@
-from atntools.features import *
+from atntools.summarize import *
 
 
 def test_get_sim_number():

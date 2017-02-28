@@ -30,6 +30,6 @@ mv $LOGDIR/*.csv $SETDIR/biomass-data/
 echo "Compressing data..."
 gzip $SETDIR/biomass-data/*.csv
 echo "Creating feature file..."
-atn-generate-feature-file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv.gz
+atn-generate-summary-file.py $SET features.set$SET.csv $SETDIR/biomass-data/*.csv.gz
 echo "Assigning labels..."
 atn-assign-labels.py features.set$SET.csv features.set$SET.labeled.csv
