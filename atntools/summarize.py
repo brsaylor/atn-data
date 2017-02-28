@@ -193,10 +193,9 @@ def last_nonzero_timestep(biomass_data):
     return nonzero.sort_index(ascending=False).argmax()
 
 
-def get_output_attributes(species_data, node_config, biomass_data):
+def get_output_attributes(simdata, species_data):
     """
-    Given species_data as returned by get_species_data,
-    node_config and biomass_data as returned by get_simulation_data,
+    Given a SimulationData object and species data as returned by get_species_data,
     return a dictionary of attributes whose keys are
     "<attribute_name>_<node_id>" for species-specific attributes and
     "<attribute_name>"          for non-species-specific attributes
@@ -213,6 +212,9 @@ def get_output_attributes(species_data, node_config, biomass_data):
     surviving1000: number of species surviving at timestep 1000
     avgEcosystemScore: average EcosystemScore over all timesteps
     """
+
+    biomass_data = simdata.biomass
+    node_config_list = parse_node_config(simdata.node_config)
 
     # Output attributes
     out = {}
@@ -251,6 +253,9 @@ def get_output_attributes(species_data, node_config, biomass_data):
     out['amplitude_sdLogN_min'] = min(amplitudes_sd_log_n)
     out['amplitude_sdLogN_mean'] = sum(amplitudes_sd_log_n) / num_species
     out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
+
+    out['stop_event'] = simdata.stop_event
+    out['timesteps'] = len(simdata.biomass)
 
     #
     # Scalar measures of ecosystem health
@@ -291,7 +296,7 @@ def get_output_attributes(species_data, node_config, biomass_data):
 
 
     # Slope of linear regression on environment score
-    scores = environment_score(species_data, node_config, biomass_data)
+    scores = environment_score(species_data, node_config_list, biomass_data)
     #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
     #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
@@ -348,8 +353,7 @@ def generate_summary_file(set_number, output_file, biomass_files):
         input_attributes = node_config_to_params(node_config_list)
         biomass_data = simdata.biomass
         outrow.update(input_attributes)
-        output_attributes = get_output_attributes(
-            species_data, node_config_list, biomass_data)
+        output_attributes = get_output_attributes(simdata, species_data)
         outrow.update(output_attributes)
 
         if writer is None:
