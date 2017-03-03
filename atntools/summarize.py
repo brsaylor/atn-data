@@ -258,15 +258,6 @@ def get_output_attributes(simdata, species_data):
     out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
 
     out['stop_event'] = simdata.stop_event
-    out['timesteps'] = len(simdata.biomass)
-
-    #
-    # Scalar measures of ecosystem health
-    #
-
-    # Average of original environment score formula
-    #out['avgEcosystemScore'] = getAvgEcosystemScore(
-    #        species_data, node_config, biomassData)
 
     t = np.arange(num_timesteps)
 
@@ -299,21 +290,23 @@ def get_output_attributes(simdata, species_data):
 
 
     # Slope of linear regression on environment score
-    scores = environment_score(species_data, node_config_list, biomass_data)
+    #scores = environment_score(species_data, node_config_list, biomass_data)
     #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
     # Slope of log-linear regression on environment score
     #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
 
     # Slope of linear regression on environment score starting at a later
     # time step, allowing for a settling-down period
-    mean_period = 500
-    for start_time, end_time in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
-        out['environmentScoreSlope_{}_{}'.format(start_time, end_time)] = \
-                stats.linregress(t[start_time:end_time],
-                                 scores[start_time:end_time])[0]
-        mean_start_time = end_time - mean_period
-        out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
-            scores[mean_start_time:end_time].mean()
+    #mean_period = 500
+    #for start_time, end_time in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
+    #    if end_time > num_timesteps:
+    #        break
+    #    out['environmentScoreSlope_{}_{}'.format(start_time, end_time)] = \
+    #            stats.linregress(t[start_time:end_time],
+    #                             scores[start_time:end_time])[0]
+    #    mean_start_time = end_time - mean_period
+    #    out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
+    #        scores[mean_start_time:end_time].mean()
 
     last_nonzero_t = last_nonzero_timestep(biomass_data)
     out['timesteps'] = num_timesteps
