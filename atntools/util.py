@@ -196,6 +196,32 @@ def find_set_dir(set_num):
     return None
 
 
+def find_batch_dir(set_identifier, batch_number):
+    """ Find a batch directory for the given set and batch number.
+
+    Parameters
+    ----------
+    set_identifier : int or str
+        Set number or set directory
+    batch_number : int
+        Batch number for the given set
+
+    Returns
+    -------
+    str
+        The path to the requested batch, or None if it doesn't exist
+    """
+    if isinstance(set_identifier, int):
+        set_dir = find_set_dir(set_identifier)
+    else:
+        set_dir = set_identifier
+    batch_dir = os.path.join(set_dir, 'batch-{}'.format(batch_number))
+    if os.path.isdir(batch_dir):
+        return os.path.join(set_dir, batch_dir)
+    else:
+        return None
+
+
 def get_max_set_number():
     """ Find the maximum set number under DATA_HOME.
 
@@ -261,7 +287,8 @@ def create_set_dir(food_web, metaparameter_template):
     os.mkdir(set_dir)
 
     # Generate the metaparameter file from the template
-    with open(os.path.join(food_web_dir, 'food-web.json')) as f:
+    food_web_id = os.path.basename(food_web_dir)
+    with open(os.path.join(food_web_dir, 'foodweb.{}.json'.format(food_web_id))) as f:
         food_web_info = json.load(f)
     node_ids = food_web_info['node_ids']
     metaparameters = copy.copy(metaparameter_template)

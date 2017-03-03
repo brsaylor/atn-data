@@ -11,11 +11,13 @@ calculated from the biomass data.
 FIXME: update description
 """
 
+import sys
 import os.path
 import gzip
 import csv
 from math import log2
 import re
+import glob
 
 import numpy as np
 from scipy import stats, signal
@@ -24,6 +26,7 @@ import h5py
 
 from .nodeconfigs import parse_node_config, node_config_to_params
 from .simulationdata import SimulationData, EXTINCT
+from . import util
 
 
 def get_sim_number(filename):
@@ -373,3 +376,20 @@ def generate_summary_file(set_number, output_file, biomass_files):
 
     if outfile is not None:
         outfile.close()
+
+
+def generate_summary_file_for_batch(set_number, batch_number):
+    set_dir = util.find_set_dir(set_number)
+    if set_dir is None:
+        print("Error: set {} not found".format(set_number), file=sys.stderr)
+        return None
+    batch_dir = util.find_batch_dir(set_dir, batch_number)
+    if batch_dir is None:
+        print(
+            "Error: set {} does not contain batch {}".format(set_number, batch_number),
+            file=sys.stderr)
+        return None
+    generate_summary_file(
+        set_number,
+        os.path.join(batch_dir, 'summary.csv'),
+        glob.iglob(os.path.join(batch_dir, 'biomass-data/*.h5')))
