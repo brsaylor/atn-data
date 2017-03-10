@@ -40,7 +40,10 @@ class SimulationData(object):
         # Read all data other than biomass array
         with h5py.File(filename, 'r') as f:
             self.node_config = f.attrs['node_config'].decode('utf-8')
-            self.stop_event = f.attrs['stop_event'].decode('utf-8')
+            try:
+                self.stop_event = f.attrs['stop_event'].decode('utf-8')
+            except KeyError:
+                self.stop_event = None
 
     # Read biomass data once when first accessed, since it is large and
     # expensive to read
