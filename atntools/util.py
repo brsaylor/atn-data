@@ -290,9 +290,10 @@ def create_set_dir(food_web, metaparameter_template):
     food_web_id = os.path.basename(food_web_dir)
     with open(os.path.join(food_web_dir, 'foodweb.{}.json'.format(food_web_id))) as f:
         food_web_info = json.load(f)
-    node_ids = food_web_info['node_ids']
     metaparameters = copy.copy(metaparameter_template)
-    metaparameters['args']['node_ids'] = node_ids
+    if 'node_ids' in metaparameters['args']:
+        node_ids = food_web_info['node_ids']
+        metaparameters['args']['node_ids'] = node_ids
     with open(os.path.join(set_dir, 'metaparameters.json'), 'w') as f:
         json.dump(metaparameters, f, indent=4, sort_keys=True)
 
