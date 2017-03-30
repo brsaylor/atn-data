@@ -7,6 +7,7 @@ import pdb
 import numpy as np
 
 from . import foodwebs
+from . import util
 from .simulationdata import SimulationData, EXTINCT
 
 # Parameter sliders in Convergence game are bounded by these ranges
@@ -145,6 +146,80 @@ def generate_filter_sustaining(input_dir):
 
 
 _generators['filter-sustaining'] = generate_filter_sustaining
+
+
+def generate_filter_convergence(
+        input_dir=None, input_set=None, input_batch=None,
+        min_peak_ratio=0.05, min_range_ratio=0.0,
+        timesteps_to_analyze=200):
+    """
+    Generate node configs for Convergence game.
+
+    Searches through an existing batch of simulation data for simulations
+    reaching a sustaining steady state and meeting criteria for visual
+    suitability for Convergence.
+
+    Parameters
+    ----------
+    input_dir : str, optional
+        Input directory. Supply either this, or both input_set and input_batch.
+    input_set : int, optional
+    input_batch : int, optional
+    min_peak_ratio : float, optional
+        The minimum acceptable ratio of a species' maximum biomass
+        to the overall maximum biomass
+    min_range_ratio : float, optional
+        The minimum acceptable ratio of a species' biomass range
+        to the overall maximum biomass
+    timesteps_to_analyze : int, optional
+        How much of the end of the simulation data to analyze
+    """
+
+    if input_dir is None:
+        input_dir = os.path.join(util.find_batch_dir(input_set, input_batch), 'biomass-data')
+
+    for filename in glob.glob(os.path.join(input_dir, '*.h5')):
+        simdata = SimulationData(filename)
+
+        # Keep only sustaining simulations
+        if simdata.stop_event not in (
+                'CONSTANT_BIOMASS_WITH_CONSUMERS', 'OSCILLATING_STEADY_STATE'):
+            continue
+
+        # This is the window we're interested in
+        windowed_biomass = simdata.biomass[-timesteps_to_analyze:]
+
+        # Keep only sustaining nodes; set initial biomass and growth rate
+        nodes = parse_node_config(simdata.node_config)
+        sustaining_nodes = []
+        sustaining_node_ids = []
+        for node in nodes:
+            node_id = node['nodeId']
+            final_biomass = windowed_biomass.iloc[-1][node_id]
+            if final_biomass > EXTINCT:
+                node['initialBiomass'] = final_biomass
+                sustaining_nodes.append(node)
+                sustaining_node_ids.append(node_id)
+        windowed_biomass = windowed_biomass[sustaining_node_ids]
+
+        # Keep only simulations where all nodes meet biomass criteria
+        peaks = windowed_biomass.max()
+        greatest_peak = peaks.max()
+        peak_ratios = peaks / greatest_peak
+        if not (peak_ratios >= min_peak_ratio).all():
+            continue
+        ranges = peaks - windowed_biomass.min()
+        range_ratios = ranges / greatest_peak
+        if not (range_ratios >= min_range_ratio).all():
+            continue
+
+        # If we made it this far, there are sustaining nodes and they all meet
+        # the biomass criteria
+
+        yield sustaining_nodes
+
+
+_generators['filter-convergence'] = generate_filter_convergence
 
 
 def generate_uniform(node_ids, param_ranges, count):
