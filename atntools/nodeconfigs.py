@@ -150,6 +150,7 @@ _generators['filter-sustaining'] = generate_filter_sustaining
 
 def generate_filter_convergence(
         input_dir=None, input_set=None, input_batch=None,
+        min_species=0,
         min_peak_ratio=0.05, min_range_ratio=0.0,
         timesteps_to_analyze=200):
     """
@@ -165,6 +166,8 @@ def generate_filter_convergence(
         Input directory. Supply either this, or both input_set and input_batch.
     input_set : int, optional
     input_batch : int, optional
+    min_species : int, optional
+        The minimum acceptable number of surviving species
     min_peak_ratio : float, optional
         The minimum acceptable ratio of a species' maximum biomass
         to the overall maximum biomass
@@ -201,6 +204,9 @@ def generate_filter_convergence(
                 sustaining_nodes.append(node)
                 sustaining_node_ids.append(node_id)
         windowed_biomass = windowed_biomass[sustaining_node_ids]
+
+        if len(sustaining_nodes) < min_species:
+            continue
 
         # Keep only simulations where all nodes meet biomass criteria
         peaks = windowed_biomass.max()
