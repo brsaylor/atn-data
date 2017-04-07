@@ -391,11 +391,17 @@ def food_web_json(graph):
     str
         JSON representation of the food web
     """
-    obj = {'node_ids': sorted(graph.nodes())}
-    return json.dumps(obj)
 
+    node_attributes = {}
+    links = {}
+    for node_id, data in graph.nodes(data=True):
+        if data['organism_type'] == ORGANISM_TYPE_PLANT:
+            node_type = 'PRODUCER'
+        else:
+            node_type = 'CONSUMER'
+        node_attributes[node_id] = {'nodeType': node_type}
+        links[node_id] = graph.successors(node_id)
 
-if __name__ == '__main__':
-    subweb = serengeti_predator_complete_subweb(10, 2)
-    node_ids = sorted(subweb.nodes())
-    print(node_ids)
+    food_web_dict = {'nodeAttributes': node_attributes, 'links': links}
+
+    return json.dumps(food_web_dict, indent=4, sort_keys=True)
