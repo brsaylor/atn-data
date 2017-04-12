@@ -38,6 +38,9 @@ valid_properties = {
     'WOB_SERVER_HOME': {
         'filter': filter_path
     },
+    'ATN_SIMULATOR_HOME': {
+        'filter': filter_path
+    },
     'DEFAULT_SIMULATION_THREADS': {
         'filter': filter_positive_int
     }

@@ -37,6 +37,39 @@ def atn_engine_batch_runner(
             print("\rRunning simulation " + match.group(1), end='', flush=True)
 
 
+def atn_batch_simulator(
+        timesteps, node_config_file, output_dir,
+        node_config_biomass_scale=1000, step_interval=0.1,
+        threads=settings.DEFAULT_SIMULATION_THREADS,
+        no_stop_on_steady_state=False, no_record_biomass=False):
+    """ Run atnsimulator.BatchSimulator with the given arguments.
+    Requires gradle installDist to have been run in ATN_SIMULATOR_HOME. """
+
+    node_config_file = os.path.abspath(os.path.expanduser(node_config_file))
+
+    args = [
+        'bin/atn-simulator',
+        '--timesteps', str(timesteps),
+        '--node-config-file', node_config_file,
+        '--output-dir', output_dir,
+        '--node-config-biomass-scale', str(node_config_biomass_scale),
+        '--step-interval', str(step_interval),
+        '--threads', str(threads),
+    ]
+
+    if no_stop_on_steady_state:
+        args.append('--no-stop-on-steady-state')
+    if no_record_biomass:
+        args.append('--no-record-biomass')
+
+    process = subprocess.Popen(args, cwd=settings.ATN_SIMULATOR_HOME,
+                               stdout=subprocess.PIPE, universal_newlines=True, bufsize=1)  # for reading stdout
+    for line in process.stdout:
+        match = re.match(r'Running simulation (\d+)', line)
+        if match:
+            print("\rRunning simulation " + match.group(1), end='', flush=True)
+
+
 def simulate_batch(set_num, timesteps):
     """ Run a batch of simulations for the given set.
 
@@ -62,4 +95,4 @@ def simulate_batch(set_num, timesteps):
 
     output_dir = os.path.join(batch_dir, 'biomass-data')
     os.mkdir(output_dir)
-    atn_engine_batch_runner(timesteps, node_config_file, output_dir=output_dir)
+    atn_batch_simulator(timesteps, node_config_file, output_dir)

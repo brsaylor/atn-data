@@ -39,11 +39,17 @@ class SimulationData(object):
 
         # Read all data other than biomass array
         with h5py.File(filename, 'r') as f:
-            self.node_config = f.attrs['node_config'].decode('utf-8')
-            try:
-                self.stop_event = f.attrs['stop_event'].decode('utf-8')
-            except KeyError:
-                self.stop_event = None
+            if 'node_config' in f.attrs:
+                self.format_version = 1
+                self.node_config = f.attrs['node_config'].decode('utf-8')
+                try:
+                    self.stop_event = f.attrs['stop_event'].decode('utf-8')
+                except KeyError:
+                    self.stop_event = None
+            else:
+                self.format_version = 2
+                self.node_config = f['node_config'][()].decode('utf-8')
+                self.stop_event = f['stop_event'][()].decode('utf-8')
 
     # Read biomass data once when first accessed, since it is large and
     # expensive to read
@@ -54,4 +60,8 @@ class SimulationData(object):
             _biomass = pd.DataFrame(
                 f['biomass'][:, :],
                 columns=list(f['node_ids']))
+
+            if self.format_version == 2:
+                _biomass *= 1000
+
         return _biomass
