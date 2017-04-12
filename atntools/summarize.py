@@ -202,124 +202,21 @@ def get_output_attributes(simdata, species_data):
     return a dictionary of attributes whose keys are
     "<attribute_name>_<node_id>" for species-specific attributes and
     "<attribute_name>"          for non-species-specific attributes
-
-    Species-specific attributes
-    ---------------------------
-    avgBiomass: average pre-extinction biomass over all timesteps
-    avgBiomass2: average biomass, regardless of extinction, over all timesteps
-    extinction: timestep at which the species' biomass reached extinction threshold
-
-    Non-species-specific attributes
-    -------------------------------
-    surviving20: number of species surviving at timestep 20
-    surviving1000: number of species surviving at timestep 1000
-    avgEcosystemScore: average EcosystemScore over all timesteps
     """
 
-    biomass_data = simdata.biomass
-    node_config_list = parse_node_config(simdata.node_config)
+    out = {
+        'timesteps_simulated': simdata.timesteps_simulated,
+        'stop_event': simdata.stop_event,
+        'extinction_count': simdata.extinction_count,
+    }
 
-    # Output attributes
-    out = {}
-
-    num_species = len(biomass_data.columns)
-    num_timesteps = len(biomass_data)
-    surviving20 = num_species
-    surviving1000 = num_species
-
-    # Store sd(log N) amplitudes for all species
-    amplitudes_sd_log_n = []
-
-    for node_id, biomass_series in biomass_data.items():
-
-        # Get first time step at which biomass reaches extinction threshold
-        extinct_timesteps = biomass_series[biomass_series <= EXTINCT]
-        if len(extinct_timesteps) > 0:
-            extinction = extinct_timesteps.index[0]
-        else:
-            extinction = None
-
-        out['extinction_' + str(node_id)] = extinction
-        out['avgBiomass_' + str(node_id)] = biomass_series[:extinction].sum() / num_timesteps
-        out['avgBiomass2_' + str(node_id)] = biomass_series.mean()
-        if extinction is not None and extinction <= 20:
-            surviving20 -= 1
-        if extinction is not None and extinction <= 1000:
-            surviving1000 -= 1
-        amp = np.std(np.log10(biomass_data[node_id] + 1))
-        amplitudes_sd_log_n.append(amp)
-        out['amplitude_sdLogN_' + str(node_id)] = amp
-
-    out['surviving20'] = surviving20
-    out['surviving1000'] = surviving1000
-
-    out['amplitude_sdLogN_min'] = min(amplitudes_sd_log_n)
-    out['amplitude_sdLogN_mean'] = sum(amplitudes_sd_log_n) / num_species
-    out['amplitude_sdLogN_max'] = max(amplitudes_sd_log_n)
-
-    out['stop_event'] = simdata.stop_event
-
-    t = np.arange(num_timesteps)
-
-    # Slope of linear regression of shannonIndexBiomassProduct
-    #health = shannonIndexBiomassProduct(
-    #        species_data, node_config, biomassData)
-    #slope, intercept, r_value, p_value, std_err = stats.linregress(
-    #        t, health)
-    #out['shannonBiomassSlope'] = slope
-
-    # Slope of linear regression of shannonIndexBiomassProduct
-    #health = shannonIndexBiomassProductNorm(
-    #        species_data, node_config, biomassData)
-    #slope, intercept, r_value, p_value, std_err = stats.linregress(
-    #        t, health)
-    #out['shannonBiomassNormSlope'] = slope
-
-    # Slope of linear regression on local peaks in net production
-    #netProd = netProduction(
-    #        species_data, node_config, biomassData)
-    # Without smoothing, there are many tiny local peaks
-    #smoothedNetProd = np.convolve(netProd, np.hanning(20), mode='same')
-    #maxIndices, = signal.argrelmax(smoothedNetProd)
-    #maxValues = np.take(netProd, maxIndices)
-    #try:
-    #    out['peakNetProductionSlope'] = stats.linregress(maxIndices, maxValues)[0]
-    #except ValueError:
-    #    print("Warning: error calculating peak net production slope")
-    #    out['peakNetProductionSlope'] = ''
-
-
-    # Slope of linear regression on environment score
-    #scores = environment_score(species_data, node_config_list, biomass_data)
-    #out['environmentScoreSlope'] = stats.linregress(t, scores)[0]
-    # Slope of log-linear regression on environment score
-    #out['environmentScoreLogSlope'] = stats.linregress(t, np.log(scores))[0]
-
-    # Slope of linear regression on environment score starting at a later
-    # time step, allowing for a settling-down period
-    #mean_period = 500
-    #for start_time, end_time in ((200, 500), (200, 1000), (200, 5000), (1000, 5000)):
-    #    if end_time > num_timesteps:
-    #        break
-    #    out['environmentScoreSlope_{}_{}'.format(start_time, end_time)] = \
-    #            stats.linregress(t[start_time:end_time],
-    #                             scores[start_time:end_time])[0]
-    #    mean_start_time = end_time - mean_period
-    #    out['environmentScoreMean_{}_{}'.format(mean_start_time, end_time)] = \
-    #        scores[mean_start_time:end_time].mean()
-
-    last_nonzero_t = last_nonzero_timestep(biomass_data)
-    out['timesteps'] = num_timesteps
-    out['lastNonzeroTimestep'] = last_nonzero_t
-    out['lastNonzeroBiomass'] = biomass_data.loc[last_nonzero_t].sum()
-
-    out['maxBiomass'] = biomass_data.max().max()
-    out['minBiomass'] = biomass_data.min().min()
+    for node_id in simdata.node_ids:
+        out['extinction_{}'.format(node_id)] = simdata.extinction_timesteps[node_id]
 
     return out
 
 
-def generate_summary_file(set_number, output_file, biomass_files):
+def generate_summary_file(set_number, batch_number, output_file, biomass_files):
     species_data = get_species_data()
 
     outfile = None
@@ -339,9 +236,9 @@ def generate_summary_file(set_number, output_file, biomass_files):
         # output attributes
         outrow = {}
         identifiers = {
-            'filename': os.path.basename(infilename),
-            'setNumber': set_number,
-            'simNumber': sim_number,
+            'set_number': set_number,
+            'batch_number': batch_number,
+            'sim_number': sim_number,
         }
         outrow.update(identifiers)
         simdata = SimulationData(infilename)
@@ -384,5 +281,6 @@ def generate_summary_file_for_batch(set_number, batch_number):
         return None
     generate_summary_file(
         set_number,
+        batch_number,
         os.path.join(batch_dir, 'summary.csv'),
         glob.iglob(os.path.join(batch_dir, 'biomass-data/*.h5')))

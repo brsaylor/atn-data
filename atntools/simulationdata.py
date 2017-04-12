@@ -48,8 +48,17 @@ class SimulationData(object):
                     self.stop_event = None
             else:
                 self.format_version = 2
+
+            if self.format_version == 2:
+                self.node_ids = f['node_ids'][:]
                 self.node_config = f['node_config'][()].decode('utf-8')
                 self.stop_event = f['stop_event'][()].decode('utf-8')
+                self.extinction_timesteps = pd.Series(
+                    f['extinction_timesteps'][:], index=self.node_ids)
+                self.extinction_count = self.extinction_timesteps[self.extinction_timesteps > -1].count()
+                self.final_biomass = pd.Series(
+                    f['final_biomass'][:], index=self.node_ids)
+                self.timesteps_simulated = f['timesteps_simulated'][()]
 
     # Read biomass data once when first accessed, since it is large and
     # expensive to read
@@ -59,7 +68,7 @@ class SimulationData(object):
         with h5py.File(self.filename, 'r') as f:
             _biomass = pd.DataFrame(
                 f['biomass'][:, :],
-                columns=list(f['node_ids']))
+                columns=self.node_ids)
 
             if self.format_version == 2:
                 _biomass *= 1000
