@@ -10,6 +10,7 @@ dependencies:
     - h5py
     - pytest
     - cached-property
+    - scikit-learn
     - pip:
         - pydotplus
         - pygraphviz
