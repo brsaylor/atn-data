@@ -19,6 +19,8 @@ parser_generate.add_argument('metaparameter_template', help="Template for metapa
 
 parser_regenerate = subparsers.add_parser('iterate', help="Run a search iteration")
 parser_regenerate.add_argument('sequence_num', type=int, help="Search sequence number")
+parser_regenerate.add_argument('--store-biomass', action='store_true',
+                               help="Store biomass data in output files")
 
 args = parser.parse_args()
 
@@ -33,4 +35,5 @@ if args.subparser_name == 'start':
     searchprocess.start_sequence(args.food_web_id, metaparameter_template)
 
 elif args.subparser_name == 'iterate':
-    searchprocess.do_iteration(args.sequence_num)
+    searchprocess.do_iteration(
+        args.sequence_num, no_record_biomass=(not args.store_biomass))

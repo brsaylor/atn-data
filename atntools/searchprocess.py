@@ -45,7 +45,7 @@ def start_sequence(food_web, metaparameter_template):
     print("Started sequence in {}".format(sequence_dir))
 
 
-def do_iteration(sequence_num):
+def do_iteration(sequence_num, no_record_biomass=True):
 
     sequence_dir = get_sequence_dir(sequence_num)
     state_filename = os.path.join(sequence_dir, 'sequence-state.json')
@@ -63,7 +63,8 @@ def do_iteration(sequence_num):
 
     # Simulate and summarize the initial batch
     print("Simulating training batch")
-    training_batch = simulation.simulate_batch(set_num, TIMESTEPS, no_record_biomass=True)
+    training_batch = simulation.simulate_batch(
+        set_num, TIMESTEPS, no_record_biomass=no_record_biomass)
     summarize.generate_summary_file_for_batch(set_num, training_batch)
     log.write("Simulated training batch {}\n".format(training_batch))
     training_df = get_batch_summary(set_dir, training_batch)
@@ -105,7 +106,8 @@ def do_iteration(sequence_num):
     #########
 
     print("Simulating test batch")
-    test_batch = simulation.simulate_batch(set_num, TIMESTEPS, no_record_biomass=True)
+    test_batch = simulation.simulate_batch(
+        set_num, TIMESTEPS, no_record_biomass=no_record_biomass)
     summarize.generate_summary_file_for_batch(set_num, test_batch)
     log.write("Simulated test batch {}\n".format(test_batch))
     test_df = get_batch_summary(set_dir, test_batch)
