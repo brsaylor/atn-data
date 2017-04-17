@@ -275,7 +275,31 @@ def generate_uniform(node_ids, param_ranges, count):
             nodes.append(node)
         yield nodes
 
+
 _generators['uniform'] = generate_uniform
+
+
+def generate_multi_region(regions, count):
+
+    for i in range(count):
+
+        # Choose a region at random
+        # TODO: Use weight attribute
+        region = random.choice(regions)
+        bounds = region['bounds']
+
+        # Draw parameter values from the region bounds
+        nodes = []
+        for node_id, param_bounds in sorted(bounds.items()):
+            node = {'nodeId': int(node_id)}
+            node['perUnitBiomass'] = 1  # Irrelevant at this point
+            for param, (lower, upper) in param_bounds.items():
+                node[param] = random.uniform(lower, upper)
+            nodes.append(node)
+        yield nodes
+
+
+_generators['multi-region'] = generate_multi_region
 
 
 def generate_trophic_level_scaling(node_ids, param_ranges, factor, count):
