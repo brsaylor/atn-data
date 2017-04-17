@@ -70,15 +70,17 @@ def atn_batch_simulator(
             print("\rRunning simulation " + match.group(1), end='', flush=True)
 
 
-def simulate_batch(set_num, timesteps):
+def simulate_batch(set_num, timesteps, **kwargs):
     """ Run a batch of simulations for the given set.
 
     Parameters
     ----------
     set_num : int
         The set number
-    timesteps
+    timesteps : int
         Number of timesteps to run the simulations
+    kwargs
+        Additional arguments to pass to atn_batch_simulator()
     """
     set_dir = util.find_set_dir(set_num)
     if set_dir is None:
@@ -95,4 +97,6 @@ def simulate_batch(set_num, timesteps):
 
     output_dir = os.path.join(batch_dir, 'biomass-data')
     os.mkdir(output_dir)
-    atn_batch_simulator(timesteps, node_config_file, output_dir)
+    atn_batch_simulator(timesteps, node_config_file, output_dir, **kwargs)
+
+    return batch_num

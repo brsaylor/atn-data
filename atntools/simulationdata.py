@@ -66,11 +66,12 @@ class SimulationData(object):
     def biomass(self):
         _biomass = None
         with h5py.File(self.filename, 'r') as f:
-            _biomass = pd.DataFrame(
-                f['biomass'][:, :],
-                columns=self.node_ids)
+            if 'biomass' in f:
+                _biomass = pd.DataFrame(
+                    f['biomass'][:, :],
+                    columns=self.node_ids)
 
-            if self.format_version == 2:
-                _biomass *= 1000
+                if self.format_version == 2:
+                    _biomass *= 1000
 
         return _biomass
