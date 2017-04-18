@@ -2,6 +2,8 @@ import os
 import glob
 import re
 import json
+import csv
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -54,7 +56,7 @@ def do_iteration(sequence_num, no_record_biomass=True):
         sequence_state = json.load(f)
     set_num = sequence_state['sets'][-1]
     set_dir = util.find_set_dir(set_num)
-    iteration_num = len(sequence_state['sets'])
+    iteration_num = len(sequence_state['sets']) - 1
     food_web_id = re.match(r'.*?((\d+-)+\d+).*', set_dir).group(1)
     
     log = open(os.path.join(sequence_dir, 'log.txt'), 'a')
@@ -73,7 +75,8 @@ def do_iteration(sequence_num, no_record_biomass=True):
     log.write(str(training_df['extinction_count'].value_counts(normalize=True).sort_index()))
     log.write("\n")
     log.write("Class counts:\n")
-    log.write(str(training_df['class_label'].value_counts()))
+    class_count_train = training_df['class_label'].value_counts()
+    log.write(str(class_count_train))
     log.write("\n")
 
     # Prepare X_train
@@ -100,8 +103,9 @@ def do_iteration(sequence_num, no_record_biomass=True):
     log.write("Training confusion matrix:\n")
     log.write(str(confusion_matrix(y_train, y_predict)))
     log.write("\n")
-    log.write("Training f1-scores: {}\n".format(
-        f1_score(y_train, y_predict, average=None)))
+
+    f1_train = f1_score(y_train, y_predict, average=None)
+    log.write("Training f1-scores: {}\n".format(f1_train))
 
     #########
 
@@ -116,7 +120,8 @@ def do_iteration(sequence_num, no_record_biomass=True):
     log.write(str(test_df['extinction_count'].value_counts(normalize=True).sort_index()))
     log.write("\n")
     log.write("Class counts:\n")
-    log.write(str(test_df['class_label'].value_counts()))
+    class_count_test = test_df['class_label'].value_counts()
+    log.write(str(class_count_test))
     log.write("\n")
 
     # Evaluate tree on test data
@@ -126,8 +131,8 @@ def do_iteration(sequence_num, no_record_biomass=True):
     log.write("Training confusion matrix:\n")
     log.write(str(confusion_matrix(y_test, y_predict)))
     log.write("\n")
-    log.write("Test f1-scores: {}\n".format(
-        f1_score(y_test, y_predict, average=None)))
+    f1_test = f1_score(y_test, y_predict, average=None)
+    log.write("Test f1-scores: {}\n".format(f1_test))
 
     # Fold test data into training data and re-train the tree
     log.write("Combining train and test data\n")
@@ -135,13 +140,60 @@ def do_iteration(sequence_num, no_record_biomass=True):
     X_combined = combined_df[X_cols]
     y_combined = combined_df['class_label']
     log.write("Extinction count frequencies:\n")
-    log.write(str(combined_df['extinction_count'].value_counts(normalize=True).sort_index()))
+    extinction_freq = combined_df['extinction_count'].value_counts(normalize=True).sort_index()
+    log.write(str(extinction_freq))
     log.write("\n")
     log.write("Class counts:\n")
-    log.write(str(combined_df['class_label'].value_counts()))
+    class_count_combined = combined_df['class_label'].value_counts()
+    log.write(str(class_count_combined))
     log.write("\n")
 
+    # Update extinction count frequency file
+    node_ids = list(map(int, food_web_id.split('-')))
+    node_count = len(node_ids)
+    columns = range(node_count + 1)
+    if iteration_num == 0:
+        # First iteration: Make new dataframe
+        extinction_freq_df = pd.DataFrame(columns=columns)
+    else:
+        # Subsequent iterations: Load file from previous iteration
+        extinction_freq_df = pd.read_csv(
+            os.path.join(sequence_dir, 'extinctions-iteration-{}.csv'.format(
+                iteration_num - 1)),
+            index_col=0)
+        extinction_freq_df.columns = columns  # Workaround for pd not reading column labels as ints
+    extinction_freq_df.loc[iteration_num] = extinction_freq
+    extinction_freq_df.to_csv(
+        os.path.join(sequence_dir, 'extinctions-iteration-{}.csv'.format(iteration_num)))
+
     clf = clf.fit(X_combined, y_combined)
+
+    # Update sequence summary file
+    iteration_data = OrderedDict([
+        ('median_extinction_count', median_extinction_count),
+        ('class_count_train_0', class_count_train[0]),
+        ('class_count_train_1', class_count_train[1]),
+        ('class_count_test_0', class_count_test[0]),
+        ('class_count_test_1', class_count_test[1]),
+        ('class_count_combined_0', class_count_combined[0]),
+        ('class_count_combined_1', class_count_combined[1]),
+        ('f1_train_0', f1_train[0]),
+        ('f1_train_1', f1_train[1]),
+        ('f1_test_0', f1_test[0]),
+        ('f1_test_1', f1_test[1]),
+        ('tree_node_count', clf.tree_.node_count),
+    ])
+    if iteration_num == 0:
+        # First iteration: Make new dataframe
+        sequence_df = pd.DataFrame(columns=list(iteration_data.keys()))
+    else:
+        # Subsequent iterations: Load file from previous iteration
+        sequence_df = pd.read_csv(
+            os.path.join(sequence_dir, 'iteration-{}.csv'.format(iteration_num - 1)),
+            index_col=0,
+            dtype=np.float64)
+    sequence_df.loc[iteration_num] = iteration_data
+    sequence_df.to_csv(os.path.join(sequence_dir, 'iteration-{}.csv'.format(iteration_num)))
 
     # Write final tree it to a PNG
     treefile = os.path.join(sequence_dir, 'tree-iteration-{}.png'.format(iteration_num))
@@ -191,7 +243,10 @@ def create_sequence_dir():
 def get_max_sequence_number():
     max_sequence_number = -1
     for sequence_dir in glob.iglob(os.path.join(settings.DATA_HOME, 'sequences/sequence-*')):
-        sequence_num = int(re.match(r'.+/sequence-(\d+)').group(1))
+        match = re.match(r'.+?/sequence-(\d+)', sequence_dir)
+        if match is None:
+            continue
+        sequence_num = int(match.group(1))
         if sequence_num > max_sequence_number:
             max_sequence_number = sequence_num
     return max_sequence_number

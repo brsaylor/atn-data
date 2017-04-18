@@ -292,7 +292,11 @@ def create_set_dir(food_web, metaparameter_template):
         food_web_info = json.load(f)
     metaparameters = copy.copy(metaparameter_template)
     if 'node_ids' in metaparameters['args']:
-        node_ids = food_web_info['node_ids']
+        try:
+            node_ids = food_web_info['node_ids']
+        except KeyError:
+            # ATN Simulator format
+            node_ids = sorted(list(map(int, food_web_info['nodeAttributes'].keys())))
         metaparameters['args']['node_ids'] = node_ids
     with open(os.path.join(set_dir, 'metaparameters.json'), 'w') as f:
         json.dump(metaparameters, f, indent=4, sort_keys=True)
