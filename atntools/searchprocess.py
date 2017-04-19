@@ -70,12 +70,20 @@ def do_iteration(sequence_num, no_record_biomass=True):
     summarize.generate_summary_file_for_batch(set_num, training_batch)
     log.write("Simulated training batch {}\n".format(training_batch))
     training_df = get_batch_summary(set_dir, training_batch)
-    training_df, median_extinction_count = label_dataset(training_df)
+    training_df, extinction_count_threshold = label_dataset(training_df)
     log.write("Extinction count frequencies:\n")
     log.write(str(training_df['extinction_count'].value_counts(normalize=True).sort_index()))
     log.write("\n")
-    log.write("Class counts:\n")
     class_count_train = training_df['class_label'].value_counts()
+
+    if 1 not in class_count_train.index:
+        log.write("No samples in '1' class - raising threshold")
+        extinction_count_threshold += 1
+        training_df, _ = label_dataset(training_df, extinction_count_threshold)
+        class_count_train = training_df['class_label'].value_counts()
+
+    log.write("Class counts:\n")
+
     log.write(str(class_count_train))
     log.write("\n")
 
@@ -115,12 +123,16 @@ def do_iteration(sequence_num, no_record_biomass=True):
     summarize.generate_summary_file_for_batch(set_num, test_batch)
     log.write("Simulated test batch {}\n".format(test_batch))
     test_df = get_batch_summary(set_dir, test_batch)
-    test_df, _ = label_dataset(test_df, median_extinction_count)
+    test_df, _ = label_dataset(test_df, extinction_count_threshold)
     log.write("Extinction count frequencies:\n")
     log.write(str(test_df['extinction_count'].value_counts(normalize=True).sort_index()))
     log.write("\n")
     log.write("Class counts:\n")
     class_count_test = test_df['class_label'].value_counts()
+
+    if 1 not in class_count_test.index:
+        class_count_test.loc[1] = 0
+
     log.write(str(class_count_test))
     log.write("\n")
 
@@ -170,7 +182,7 @@ def do_iteration(sequence_num, no_record_biomass=True):
 
     # Update sequence summary file
     iteration_data = OrderedDict([
-        ('median_extinction_count', median_extinction_count),
+        ('median_extinction_count', extinction_count_threshold),
         ('class_count_train_0', class_count_train[0]),
         ('class_count_train_1', class_count_train[1]),
         ('class_count_test_0', class_count_test[0]),
@@ -261,22 +273,22 @@ def get_batch_summary(set_dir, batch_num):
     return pd.read_csv(summary_file)
 
 
-def label_dataset(df, median_extinction_count=None):
+def label_dataset(df, extinction_count_threshold=None):
     """
     - filters out non-steady-state simulations
-    - calculates median extinction count
-    - assigns class labels based on medians
+    - calculates threshold as median extinction count
+    - assigns class labels based on threshold
     """
     df = df[
         (df['stop_event'] != 'NONE') &
         (df['stop_event'] != 'UNKNOWN_EVENT')].copy()
     
-    if median_extinction_count is None:
-        median_extinction_count = df['extinction_count'].median()
+    if extinction_count_threshold is None:
+        extinction_count_threshold = df['extinction_count'].median()
     
-    df['class_label'] = df['extinction_count'].map(lambda x: 1 if x < median_extinction_count else 0)
+    df['class_label'] = df['extinction_count'].map(lambda x: 1 if x < extinction_count_threshold else 0)
     
-    return df, median_extinction_count
+    return df, extinction_count_threshold
 
 
 def save_tree_image(classifier, feature_names, outfile):
