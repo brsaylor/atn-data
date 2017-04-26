@@ -82,13 +82,7 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     if logy:
         ax1.set_yscale('log')
 
-    # Make a cycle of line colors and styles
-    if grayscale:
-        line_colors = ('0.0', '0.5')
-    else:
-        line_colors = 'g b r m y c'.split()
-    line_styles = ('-', '--', '-.', ':')  # These are all the line styles supported by pyplot
-    line_style_cycle = itertools.cycle(itertools.product(line_styles, line_colors))
+    line_style_cycle = get_line_style_cycle(grayscale)
 
     legend = []
     for node_id, series in sorted(biomass_data.items()):
@@ -186,6 +180,20 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
 
     print("\nSPECIES DATA:")
     print_species_data(species_data, node_config)
+
+
+def get_line_style_cycle(grayscale=False):
+    """
+    Returns an iterator over Matplotlib (style, color) pairs
+    to help make lines distinguishable in plots with many lines.
+    """
+    if grayscale:
+        line_colors = ('0.0', '0.5')
+    else:
+        line_colors = 'g b r m y c'.split()
+    line_styles = ('-', '--', '-.', ':')  # These are all the line styles supported by pyplot
+    line_style_cycle = itertools.cycle(itertools.product(line_styles, line_colors))
+    return line_style_cycle
 
 
 def print_species_data(species_data, node_config):
