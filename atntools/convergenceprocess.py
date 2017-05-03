@@ -57,10 +57,8 @@ def run_sequence(food_web, initial_metaparameter_template, cvg_metaparameter_tem
         food_web, sustaining_metaparameter_template)
     logging.info("Created sustaining set {}".format(sustaining_set))
 
-    logging.info("Simulating sustaining batch, saving {} timesteps of biomass data"
-                 .format(cvg_timesteps))
-    sustaining_batch = simulation.simulate_batch(
-        sustaining_set, cvg_timesteps, no_stop_on_steady_state=True)
+    logging.info("Simulating sustaining batch to steady state, saving biomass data")
+    sustaining_batch = simulation.simulate_batch(sustaining_set, MAX_TIMESTEPS)
     print()
 
     #
@@ -68,8 +66,8 @@ def run_sequence(food_web, initial_metaparameter_template, cvg_metaparameter_tem
     #
 
     cvg_metaparameter_template = copy.deepcopy(cvg_metaparameter_template)
-    cvg_metaparameter_template['input_set'] = sustaining_set
-    cvg_metaparameter_template['input_batch'] = sustaining_batch
+    cvg_metaparameter_template['args']['input_set'] = sustaining_set
+    cvg_metaparameter_template['args']['input_batch'] = sustaining_batch
     cvg_set, cvg_set_dir = util.create_set_dir(food_web, cvg_metaparameter_template)
     logging.info("Created convergence set {}".format(cvg_set))
 
