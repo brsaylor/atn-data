@@ -137,7 +137,7 @@ def generate_filter_sustaining(input_dir):
         sustaining_nodes = []
         for node in nodes:
             # Set initial biomass to final biomass
-            final_biomass = simdata.biomass.iloc[-1][node['nodeId']]
+            final_biomass = simdata.final_biomass[node['nodeId']]
             if final_biomass > EXTINCT:
                 node['initialBiomass'] = final_biomass
                 sustaining_nodes.append(node)

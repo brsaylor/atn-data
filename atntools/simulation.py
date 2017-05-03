@@ -78,9 +78,14 @@ def simulate_batch(set_num, timesteps, **kwargs):
     set_num : int
         The set number
     timesteps : int
-        Number of timesteps to run the simulations
+        Maximum number of timesteps to run the simulations
     kwargs
         Additional arguments to pass to atn_batch_simulator()
+
+    Returns
+    -------
+    int
+        The new batch number
     """
     set_dir = util.find_set_dir(set_num)
     if set_dir is None:
