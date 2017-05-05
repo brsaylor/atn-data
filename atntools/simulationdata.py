@@ -49,8 +49,9 @@ class SimulationData(object):
             else:
                 self.format_version = 2
 
+            self.node_ids = f['node_ids'][:]
+
             if self.format_version == 2:
-                self.node_ids = f['node_ids'][:]
                 self.node_config = f['node_config'][()].decode('utf-8')
                 self.stop_event = f['stop_event'][()].decode('utf-8')
                 self.extinction_timesteps = pd.Series(
