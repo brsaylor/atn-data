@@ -26,7 +26,7 @@ import h5py
 
 from .nodeconfigs import parse_node_config, node_config_to_params
 from .simulationdata import SimulationData, EXTINCT
-from . import util
+from . import util, foodwebs
 
 
 def get_sim_number(filename):
@@ -101,7 +101,9 @@ def environment_score(species_data, node_config, biomass_data):
 
     # 1-D Arrays of per_unit_biomass and trophic_level, lined up to the columns in the dataframe
     per_unit_biomass = np.array([node_config_dict[node_id]['perUnitBiomass'] for node_id in biomass_data.columns])
-    trophic_level = np.array([species_data[node_id]['trophicLevel'] for node_id in biomass_data.columns])
+
+    serengeti = foodwebs.get_serengeti()
+    trophic_level = np.array([serengeti.node[node_id]['trophic_level'] for node_id in biomass_data.columns])
 
     clipped_biomass = np.array(biomass_data).clip(0)
     num_species = (clipped_biomass > 0).sum(axis=1)
@@ -112,10 +114,6 @@ def environment_score(species_data, node_config, biomass_data):
     scores = np.round(scores ** 2 + num_species ** 2)
 
     return scores
-
-
-def get_avg_ecosystem_score(species_data, node_config, biomass_data):
-    return environment_score(species_data, node_config, biomass_data).mean()
 
 
 def total_biomass(speciesData, node_config, biomass_data):
