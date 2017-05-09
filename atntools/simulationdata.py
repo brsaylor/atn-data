@@ -7,6 +7,8 @@ from cached_property import cached_property
 # It scales biomass by 1000 for output, so our extinction threshold is:
 EXTINCT = 1e-12
 
+BIOMASS_SCALE = 1000
+
 
 class SimulationData(object):
     """ ATN simulation data from an HDF5 file produced by WoB Server.
@@ -57,8 +59,9 @@ class SimulationData(object):
                 self.extinction_timesteps = pd.Series(
                     f['extinction_timesteps'][:], index=self.node_ids)
                 self.extinction_count = self.extinction_timesteps[self.extinction_timesteps > -1].count()
+                self.survivor_count = self.extinction_timesteps[self.extinction_timesteps == -1].count()
                 self.final_biomass = pd.Series(
-                    f['final_biomass'][:], index=self.node_ids)
+                    f['final_biomass'][:], index=self.node_ids) * BIOMASS_SCALE
                 self.timesteps_simulated = f['timesteps_simulated'][()]
 
     # Read biomass data once when first accessed, since it is large and
@@ -73,6 +76,6 @@ class SimulationData(object):
                     columns=self.node_ids)
 
                 if self.format_version == 2:
-                    _biomass *= 1000
+                    _biomass *= BIOMASS_SCALE
 
         return _biomass
