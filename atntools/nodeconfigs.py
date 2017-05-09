@@ -108,6 +108,49 @@ def node_config_to_params(node_config):
 _generators = {}
 
 
+def generate_filter_steady_state_with_survivors(
+        input_dir=None, input_set=None, input_batch=None):
+    """
+    Generate node configs that will result in steady states with surviving species,
+    based on a previous batch of simulations.
+
+    Parameters
+    ----------
+    input_dir : str, optional
+        Input directory. Supply either this, or both input_set and input_batch.
+    input_set : int, optional
+    input_batch : int, optional
+
+    Yields
+    ------
+    list
+        A list representation of node configs that will result in
+        steady-state simulations including some surviving species.
+        The initial biomass is set to the final biomass of the
+        corresponding input simulation.
+    """
+
+    if input_dir is None:
+        input_dir = os.path.join(util.find_batch_dir(input_set, input_batch), 'biomass-data')
+
+    for filename in glob.glob(os.path.join(input_dir, '*.h5')):
+        simdata = SimulationData(filename)
+
+        # Keep only stopped simulations with survivors
+        if simdata.stop_event == 'NONE' or simdata.survivor_count == 0:
+            continue
+
+        nodes = parse_node_config(simdata.node_config)
+        for node in nodes:
+            final_biomass = simdata.final_biomass[node['nodeId']]
+            node['initialBiomass'] = final_biomass
+
+        yield nodes
+
+
+_generators['filter-steady-state-with-survivors'] = generate_filter_steady_state_with_survivors
+
+
 def generate_filter_sustaining(input_dir):
     """ Generate node configs that will result in sustaining simulations.
 
