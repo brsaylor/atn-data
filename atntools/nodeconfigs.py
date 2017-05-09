@@ -143,6 +143,8 @@ def generate_filter_steady_state_with_survivors(
         nodes = parse_node_config(simdata.node_config)
         for node in nodes:
             final_biomass = simdata.final_biomass[node['nodeId']]
+            if final_biomass < EXTINCT:
+                final_biomass = 0.0
             node['initialBiomass'] = final_biomass
 
         yield nodes
