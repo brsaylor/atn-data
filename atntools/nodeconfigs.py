@@ -3,6 +3,7 @@ import json
 import glob
 import os.path
 import pdb
+from collections import Counter
 
 import numpy as np
 
@@ -172,6 +173,12 @@ def generate_filter_sustaining(input_dir):
         corresponding input simulation.
     """
 
+    serengeti = foodwebs.get_serengeti()
+
+    # key: frozenset of node IDs in a distinct food web
+    # value: number of node configs produced
+    output_nodeconfig_count_by_nodeset = Counter()
+
     for filename in glob.glob(os.path.join(input_dir, '*.h5')):
         simdata = SimulationData(filename)
         if simdata.stop_event not in (
@@ -179,16 +186,34 @@ def generate_filter_sustaining(input_dir):
             # Not a sustaining simulation
             continue
         nodes = parse_node_config(simdata.node_config)
-        sustaining_nodes = []
+        sustaining_nodes = {}  # node dicts indexed by node ID
+        all_node_ids = []
         for node in nodes:
+            all_node_ids.append(node['nodeId'])
             # Set initial biomass to final biomass
             final_biomass = simdata.final_biomass[node['nodeId']]
             if final_biomass > EXTINCT:
                 node['initialBiomass'] = final_biomass
-                sustaining_nodes.append(node)
+                sustaining_nodes[node['nodeId']] = node
 
-        yield sustaining_nodes
+        # Generate separate node configs for separate food webs
+        # that are not connected to each other
+        subweb = serengeti.subgraph(sustaining_nodes.keys())
+        nodesets = foodwebs.connected_components(subweb)
+        for nodeset in nodesets:
+            output_nodeconfig_count_by_nodeset[nodeset] += 1
+            yield [sustaining_nodes[node_id]
+                   for node_id in sorted(nodeset)]
 
+    print("Generated {} node configs for {} distinct sustaining food webs:".format(
+        sum(output_nodeconfig_count_by_nodeset.values()),
+        len(output_nodeconfig_count_by_nodeset)))
+    for nodeset, count in sorted(
+            output_nodeconfig_count_by_nodeset.items(),
+            key=lambda t: -t[1]):
+        food_web_id = '-'.join(map(str, sorted(nodeset)))
+        print("{:4d} {}".format(count, food_web_id))
+        
 
 _generators['filter-sustaining'] = generate_filter_sustaining
 

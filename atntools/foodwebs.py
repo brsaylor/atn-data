@@ -77,11 +77,9 @@ def get_serengeti():
     return _serengeti
 
 
-def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
-    """
-    Note: Does not draw cannibalism loops
-    """
-    plt.figure()
+def draw_food_web(graph, show_names=False, show_legend=False, output_file=None, figsize=None):
+
+    #plt.figure(figsize=figsize)
 
     # pos = nx.spring_layout(graph)
 
@@ -163,8 +161,9 @@ def draw_food_web(graph, show_names=False, show_legend=False, output_file=None):
                         bbox_inches='tight', dpi=dpi)
         else:
             plt.savefig(output_file, dpi=dpi)
-    else:
-        plt.show()
+    #else:
+    #    plt.show()
+    return cur_axes
 
 
 def random_subgraph(graph, N):
@@ -261,6 +260,9 @@ def get_plant_eaters(graph):
     return plant_eaters
 
 
+# This is a hack
+_predator_complete_subweb_retry_count = 0
+
 def predator_complete_subweb(G, N, seed_nodes=None, seed_size=1, retry=1):
     """
     A version of random_successor_subgraph with the following addition: Each
@@ -277,6 +279,7 @@ def predator_complete_subweb(G, N, seed_nodes=None, seed_size=1, retry=1):
     seed_nodes: list of nodes from which to randomly choose seed_size starting
     nodes
     """
+    global _predator_complete_subweb_retry_count
 
     if seed_nodes is None:
         seed_nodes = G.nodes()
@@ -317,13 +320,14 @@ def predator_complete_subweb(G, N, seed_nodes=None, seed_size=1, retry=1):
         neighbors = neighbors - nodes  # Exclude nodes already in the subgraph
 
         if len(neighbors) == 0:
-            print("predator_complete_subweb: no candidate neighbors found. ", end='')
+            #print("predator_complete_subweb: no candidate neighbors found. ", end='')
             if (retry > 0):
-                print("Retrying.")
+                #print("Retrying.")
+                _predator_complete_subweb_retry_count += 1
                 return predator_complete_subweb(G, N, seed_nodes, seed_size=seed_size,
                                                 retry=retry - 1)
             else:
-                print("Giving up.")
+                #print("Giving up.")
                 return None
 
         # Add a random neighbor to the subgraph
@@ -332,14 +336,15 @@ def predator_complete_subweb(G, N, seed_nodes=None, seed_size=1, retry=1):
     subgraph = G.subgraph(list(nodes))
     num_components = nx.number_connected_components(subgraph.to_undirected())
     if num_components > 1:
-        print("random_successor_subgraph: {} connected components. ".format(num_components),
-              end='')
+        #print("random_successor_subgraph: {} connected components. ".format(num_components),
+        #     end='')
         if (retry > 0):
-            print("Retrying.")
+        #   print("Retrying.")
+            _predator_complete_subweb_retry_count += 1
             return predator_complete_subweb(G, N, seed_nodes, seed_size=seed_size,
                                             retry=retry - 1)
         else:
-            print("Giving up.")
+        #   print("Giving up.")
             return None
 
     return subgraph
@@ -377,6 +382,13 @@ def species_node_id_map(graph):
         id_map[species_id] = node_id
     return id_map
 
+
+def connected_components(graph):
+    """ Return a list of the separate connected components of `graph`.
+    Each component in the list is a frozenset of node IDs.
+    """
+    return list(map(frozenset, nx.connected_components(graph.to_undirected())))
+    
 
 def food_web_json(graph):
     """ Generate a JSON representation of the given food web.
