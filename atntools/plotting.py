@@ -23,6 +23,7 @@ import pandas as pd
 from .summarize import get_species_data, environment_score
 from .simulationdata import SimulationData
 from .nodeconfigs import parse_node_config, node_config_to_params
+from .foodwebs import get_serengeti
 
 species_data = None
 
@@ -85,10 +86,12 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     line_style_cycle = get_line_style_cycle(grayscale)
 
     legend = []
+    serengeti = get_serengeti()
     for node_id, series in sorted(biomass_data.items()):
         linestyle, color = next(line_style_cycle)
         plt.plot(biomass_data[node_id], color=color, linestyle=linestyle)
-        legend.append("[{}] {}".format(node_id, species_data[node_id]['name']))
+        node_name = serengeti.node[node_id]['name']
+        legend.append("[{}] {}".format(node_id, node_name))
     if show_legend:
         lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
