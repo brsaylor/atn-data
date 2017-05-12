@@ -395,7 +395,7 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
                 default_x = serengeti.node[node_id]['metabolism']
                 low_x = default_x * param_ranges['X'][0]
                 high_x = default_x * param_ranges['X'][1]
-                node['X'] = random.choice([low_x, high_x]) #random.uniform(low_x, high_x)
+                node['X'] = random.uniform(low_x, high_x)
             else:
                 node['K'] = random.uniform(*param_ranges['K'])
                 if 'R' in param_ranges:
