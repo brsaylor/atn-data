@@ -10,6 +10,14 @@ from atntools.summarize import generate_summary_file_for_batch
 parser = argparse.ArgumentParser(description=globals()['__doc__'])
 parser.add_argument('set_number', type=int)
 parser.add_argument('batch_number', type=int)
+parser.add_argument(
+    '--optional',
+    nargs='*',
+    choices=['environment_score_slope'],
+    help="List of optional output attributes to include")
 args = parser.parse_args()
 
-generate_summary_file_for_batch(args.set_number, args.batch_number)
+generate_summary_file_for_batch(
+    args.set_number,
+    args.batch_number,
+    args.optional)

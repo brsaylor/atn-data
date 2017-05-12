@@ -92,10 +92,11 @@ def rmse(df1, df2):
 
 def environment_score(species_data, node_config, biomass_data):
     """
-    Compute the Environment Score for all timesteps for the given data and
+    Compute the original Environment Score for all timesteps for the given data and
     return the score time series.  The calculations are taken from
     model.Ecosystem.updateEcosystemScore() in WoB_Server.
     """
+    # FIXME: remove species_data argument
 
     node_config_dict = {n['nodeId']: n for n in node_config}
 
@@ -114,6 +115,17 @@ def environment_score(species_data, node_config, biomass_data):
     scores = np.round(scores ** 2 + num_species ** 2)
 
     return scores
+
+
+def environment_score_slope(simdata):
+    """ Return the linear regression slope of the original WoB environment score
+    for all timesteps of the given simulation data. """
+    parsed_node_config = parse_node_config(simdata.node_config)
+    scores = environment_score(None, parsed_node_config, simdata.biomass)
+    slope = stats.linregress(
+        simdata.biomass.index,
+        scores)[0]
+    return slope
 
 
 def total_biomass(speciesData, node_config, biomass_data):
@@ -194,13 +206,14 @@ def last_nonzero_timestep(biomass_data):
     return nonzero.sort_index(ascending=False).argmax()
 
 
-def get_output_attributes(simdata, species_data):
+def get_output_attributes(simdata, species_data, optional_output_attributes=[]):
     """
     Given a SimulationData object and species data as returned by get_species_data,
     return a dictionary of attributes whose keys are
     "<attribute_name>_<node_id>" for species-specific attributes and
     "<attribute_name>"          for non-species-specific attributes
     """
+    # FIXME: remove species_data argument
 
     out = {
         'timesteps_simulated': simdata.timesteps_simulated,
@@ -211,10 +224,14 @@ def get_output_attributes(simdata, species_data):
     for node_id in simdata.node_ids:
         out['extinction_{}'.format(node_id)] = simdata.extinction_timesteps[node_id]
 
+    if 'environment_score_slope' in optional_output_attributes:
+        out['environment_score_slope'] = environment_score_slope(simdata)
+
     return out
 
 
-def generate_summary_file(set_number, batch_number, output_file, biomass_files):
+def generate_summary_file(set_number, batch_number, output_file, biomass_files,
+                          optional_output_attributes=[]):
     species_data = get_species_data()
 
     outfile = None
@@ -244,7 +261,8 @@ def generate_summary_file(set_number, batch_number, output_file, biomass_files):
         input_attributes = node_config_to_params(node_config_list)
         biomass_data = simdata.biomass
         outrow.update(input_attributes)
-        output_attributes = get_output_attributes(simdata, species_data)
+        output_attributes = get_output_attributes(simdata, species_data,
+                                                  optional_output_attributes)
         outrow.update(output_attributes)
 
         if writer is None:
@@ -266,7 +284,7 @@ def generate_summary_file(set_number, batch_number, output_file, biomass_files):
         outfile.close()
 
 
-def generate_summary_file_for_batch(set_number, batch_number):
+def generate_summary_file_for_batch(set_number, batch_number, optional_output_attributes=[]):
     set_dir = util.find_set_dir(set_number)
     if set_dir is None:
         print("Error: set {} not found".format(set_number), file=sys.stderr)
@@ -281,4 +299,5 @@ def generate_summary_file_for_batch(set_number, batch_number):
         set_number,
         batch_number,
         os.path.join(batch_dir, 'summary.csv'),
-        glob.iglob(os.path.join(batch_dir, 'biomass-data/*.h5')))
+        glob.iglob(os.path.join(batch_dir, 'biomass-data/*.h5')),
+        optional_output_attributes)
