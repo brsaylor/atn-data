@@ -397,7 +397,7 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
             if isinstance(param_ranges['initialBiomass'], dict):
                 initialBiomass = param_ranges['initialBiomass'][str(node_id)]
             else:
-                initialBiomass = random.uniform(*param_ranges['initialBiomass']),
+                initialBiomass = random.uniform(*param_ranges['initialBiomass'])
             node = {
                 'nodeId': node_id,
                 'initialBiomass': initialBiomass,
@@ -406,7 +406,7 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
             if serengeti.node[node_id]['organism_type'] == foodwebs.ORGANISM_TYPE_ANIMAL:
                 default_x = serengeti.node[node_id]['metabolism']
                 low_x = default_x * param_ranges['X'][0]
-                high_x = default_x * param_ranges['X'][1]
+                high_x = min(1.0, default_x * param_ranges['X'][1])
                 node['X'] = random.uniform(low_x, high_x)
             else:
                 node['K'] = random.uniform(*param_ranges['K'])
