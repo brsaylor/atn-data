@@ -349,6 +349,64 @@ def generate_uniform(node_ids, param_ranges, count):
 _generators['uniform'] = generate_uniform
 
 
+def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
+    """
+    Like generate_uniform(), but interpret ranges for the X parameter
+    as multipliers for the node's default X value.
+
+    Parameters
+    ----------
+    node_ids : list
+        Node IDs of nodes to include in the generated node configs
+    param_ranges : dict
+        Ranges of values to use for each parameter.
+        The values are interpreted differently depending on the parameter:
+        - For the X parameter, the values are multipliers for the default WoB
+          value for the species.
+        - For other parameters, the values are just bounds for the parameter value.
+        Key: parameter name
+        Value: [low, high] (or a single fixed value)
+    count : int
+        Number of node configs to generate
+
+    Yields
+    -------
+    str
+        Node config string
+    """
+
+    serengeti = foodwebs.get_serengeti()
+    
+    # Handle fixed parameter values
+    # (convert single values into lists with the same value for low and high)
+    for k, v in param_ranges.items():
+        if not isinstance(v, list):
+            param_ranges[k] = [v, v]
+
+    for i in range(count):
+        nodes = []
+        for node_id in node_ids:
+            node = {
+                'nodeId': node_id,
+                'initialBiomass': random.uniform(*param_ranges['initialBiomass']),
+                'perUnitBiomass': serengeti.node[node_id]['biomass']
+            }
+            if serengeti.node[node_id]['organism_type'] == foodwebs.ORGANISM_TYPE_ANIMAL:
+                default_x = serengeti.node[node_id]['metabolism']
+                low_x = default_x * param_ranges['X'][0]
+                high_x = default_x * param_ranges['X'][1]
+                node['X'] = random.choice([low_x, high_x]) #random.uniform(low_x, high_x)
+            else:
+                node['K'] = random.uniform(*param_ranges['K'])
+                if 'R' in param_ranges:
+                    node['R'] = random.uniform(*param_ranges['R'])
+            nodes.append(node)
+        yield nodes
+
+
+_generators['uniform-centered-on-default-x'] = generate_uniform_centered_on_default_x
+
+
 def generate_multi_region(regions, count):
 
     for i in range(count):
@@ -505,6 +563,13 @@ def generate_node_configs_from_metaparameter_file(metaparameter_filename, food_w
     if food_web_filename is not None:
         with open(food_web_filename) as f:
             food_web_data = json.load(f)
-            kwargs.update(food_web_data)
+            if 'node_ids' in food_web_data:
+                # Old food web JSON format
+                kwargs['node_ids'] = food_web_data['node_ids']
+            else:
+                # atn-simulator food web JSON format
+                kwargs['node_ids'] = sorted(map(
+                    int,
+                    food_web_data['nodeAttributes'].keys()))
 
     return (node_config_to_string(nc) for nc in generator_function(**kwargs))
