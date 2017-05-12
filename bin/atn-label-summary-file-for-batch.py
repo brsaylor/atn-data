@@ -31,4 +31,4 @@ df.loc[df[args.measure_col] >= args.good_threshold, 'label'] = 'good'
 
 # Save labeled summary file
 labeled_summary_file = os.path.join(batch_dir, 'summary-labeled.csv')
-df.to_csv(labeled_summary_file)
+df.to_csv(labeled_summary_file, index=False)
