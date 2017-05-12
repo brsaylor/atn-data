@@ -13,7 +13,7 @@ parser.add_argument('batch_number', type=int)
 parser.add_argument(
     '--optional',
     nargs='*',
-    choices=['environment_score_slope'],
+    choices=['environment_score_slope', 'environment_score_slope_skip200'],
     help="List of optional output attributes to include")
 args = parser.parse_args()
 

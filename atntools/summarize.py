@@ -117,13 +117,13 @@ def environment_score(species_data, node_config, biomass_data):
     return scores
 
 
-def environment_score_slope(simdata):
-    """ Return the linear regression slope of the original WoB environment score
-    for all timesteps of the given simulation data. """
+def environment_score_slope(simdata, skip=0):
+    """ Return the linear regression slope of the original WoB environment score,
+    excluding the initial `skip` timesteps of data. """
     parsed_node_config = parse_node_config(simdata.node_config)
-    scores = environment_score(None, parsed_node_config, simdata.biomass)
+    scores = environment_score(None, parsed_node_config, simdata.biomass[skip:])
     slope = stats.linregress(
-        simdata.biomass.index,
+        simdata.biomass.index[skip:],
         scores)[0]
     return slope
 
@@ -226,6 +226,8 @@ def get_output_attributes(simdata, species_data, optional_output_attributes=[]):
 
     if 'environment_score_slope' in optional_output_attributes:
         out['environment_score_slope'] = environment_score_slope(simdata)
+    elif 'environment_score_slope_skip200' in optional_output_attributes:
+        out['environment_score_slope_skip200'] = environment_score_slope(simdata, skip=200)
 
     return out
 
