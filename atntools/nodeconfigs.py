@@ -363,9 +363,15 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
         The values are interpreted differently depending on the parameter:
         - For the X parameter, the values are multipliers for the default WoB
           value for the species.
+        - For the initialBiomass parameter, values can be a dict
+          of initial biomass by node ID.
         - For other parameters, the values are just bounds for the parameter value.
         Key: parameter name
-        Value: [low, high] (or a single fixed value)
+        Value: one of the following:
+            - a scalar value
+            - a list [low, high]
+            - For the initialBiomass parameter, values can be
+              a dict for node-specific values: {node_id: value, ...}
     count : int
         Number of node configs to generate
 
@@ -376,19 +382,25 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
     """
 
     serengeti = foodwebs.get_serengeti()
+
+    # Convert ranges to
     
     # Handle fixed parameter values
     # (convert single values into lists with the same value for low and high)
     for k, v in param_ranges.items():
-        if not isinstance(v, list):
+        if not isinstance(v, list) and not isinstance(v, dict):
             param_ranges[k] = [v, v]
 
     for i in range(count):
         nodes = []
         for node_id in node_ids:
+            if isinstance(param_ranges['initialBiomass'], dict):
+                initialBiomass = param_ranges['initialBiomass'][str(node_id)]
+            else:
+                initialBiomass = random.uniform(*param_ranges['initialBiomass']),
             node = {
                 'nodeId': node_id,
-                'initialBiomass': random.uniform(*param_ranges['initialBiomass']),
+                'initialBiomass': initialBiomass,
                 'perUnitBiomass': serengeti.node[node_id]['biomass']
             }
             if serengeti.node[node_id]['organism_type'] == foodwebs.ORGANISM_TYPE_ANIMAL:
