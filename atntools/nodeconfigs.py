@@ -438,6 +438,12 @@ def generate_hint_bot(node_ids, initial_biomass, range_weights, default_ranges, 
 
     Otherwise, the parameter values are drawn from default_ranges.
 
+    Control group
+    -------------
+    To generate node configs representing a control group of players
+    who are _not_ given parameter range hints,
+    simply pass an empty dictionary for the `range_weights` parameter.
+
     Parameters
     ----------
     node_ids : list
