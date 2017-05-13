@@ -26,9 +26,20 @@ summary_file = os.path.join(batch_dir, 'summary.csv')
 df = pd.read_csv(summary_file)
 
 # Assign labels based on assigned threshold
-df.loc[df[args.measure_col] <= args.bad_threshold, 'label'] = 'bad'
-df.loc[df[args.measure_col] >= args.good_threshold, 'label'] = 'good'
+df.loc[df[args.measure_col] <= args.bad_threshold, 'class'] = 'bad'
+df.loc[df[args.measure_col] >= args.good_threshold, 'class'] = 'good'
 
-# Save labeled summary file
-labeled_summary_file = os.path.join(batch_dir, 'summary-labeled.csv')
-df.to_csv(labeled_summary_file, index=False)
+# Drop unlabeled rows, and keep only the columns we're using for classification
+df = df[[col for col in df.columns
+         if col.startswith('X')
+         or col.startswith('K')
+         or col == 'class']]
+df.dropna(axis=0, subset=['class'], inplace=True)
+
+labeled_summary_file = os.path.join(batch_dir, 'summary-labeled.arff')
+util.dataframe_to_arff(
+    df,
+    relation_name='summary-labeled',
+    class_column='class',
+    class_values=['bad', 'good'],
+    filename=labeled_summary_file)

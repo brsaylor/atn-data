@@ -328,3 +328,19 @@ def create_batch_dir(set_num):
     batch_dir = os.path.join(set_dir, 'batch-{}'.format(batch_num))
     os.mkdir(batch_dir)
     return batch_num, batch_dir
+
+
+def dataframe_to_arff(df, relation_name, class_column, class_values, filename):
+    """ Save a DataFrame as an ARFF file. Requires a column with class labels.
+    Assumes all columns except the class column are numeric. """
+
+    with open(filename, 'w') as f:
+        f.write('@RELATION {}\n\n'.format(relation_name))
+        for column in df.columns:
+            if column == class_column:
+                f.write('@ATTRIBUTE class {{{}}}\n'.format(','.join(class_values)))
+            else:
+                f.write('@ATTRIBUTE {} NUMERIC\n'.format(column))
+
+        f.write('\n@DATA\n')
+        f.write(df.to_csv(index=False, header=False))
