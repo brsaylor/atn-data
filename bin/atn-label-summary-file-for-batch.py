@@ -29,6 +29,10 @@ df = pd.read_csv(summary_file)
 df.loc[df[args.measure_col] <= args.bad_threshold, 'class'] = 'bad'
 df.loc[df[args.measure_col] >= args.good_threshold, 'class'] = 'good'
 
+# Save CSV file including all rows and columns from summary file
+labeled_summary_file = os.path.join(batch_dir, 'summary-labeled.csv')
+df.to_csv(labeled_summary_file, index=False)
+
 # Drop unlabeled rows, and keep only the columns we're using for classification
 df = df[[col for col in df.columns
          if col.startswith('X')
