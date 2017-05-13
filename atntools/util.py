@@ -10,6 +10,8 @@ import json
 import copy
 import glob
 
+import numpy as np
+
 from atntools import settings
 
 WOB_DB_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
@@ -344,3 +346,12 @@ def dataframe_to_arff(df, relation_name, class_column, class_values, filename):
 
         f.write('\n@DATA\n')
         f.write(df.to_csv(index=False, header=False))
+
+
+def weighted_random_choice(seq, weights):
+    """ Return a random element from the non-empty sequence `seq`
+    with probabilities proportional to `weights`, which must be the same length as `seq`. """
+    sum_weights = sum(weights)
+    p = [w / sum_weights for w in weights]
+    i = np.random.choice(len(seq), p=p)
+    return seq[i]

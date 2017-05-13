@@ -3,7 +3,8 @@ import json
 import glob
 import os.path
 import pdb
-from collections import Counter
+from collections import Counter, defaultdict
+import pprint
 
 import numpy as np
 
@@ -417,6 +418,90 @@ def generate_uniform_centered_on_default_x(node_ids, param_ranges, count):
 
 
 _generators['uniform-centered-on-default-x'] = generate_uniform_centered_on_default_x
+
+
+def generate_hint_bot(node_ids, initial_biomass, range_weights, default_ranges, count):
+    """
+    Generate node configs based on how a player might explore the parameter space
+    in Convergence given parameter range hints
+    generated from `range_weights`.
+
+    The parameters are initialBiomass, which is fixed,
+    X and K, which are variable,
+    and R, which is fixed at 1.
+
+    If a node-parameter pair is present in range_weights
+    and there are promising ranges (ranges with positive weight)
+    for that node-parameter pair,
+    then the parameter values for that node-parameter pair
+    are drawn uniformly from those promising ranges.
+
+    Otherwise, the parameter values are drawn from default_ranges.
+
+    Parameters
+    ----------
+    node_ids : list
+        Node IDs of nodes to include in the generated node configs
+    initial_biomass : dict
+        Key: node ID
+        Value: initial biomass
+    range_weights : dict
+        Tree range weights as returned by tree_ranges.get_range_weights()
+    default_ranges : dict
+        Default ranges to use when node-parameter pair is not present in range_weights
+        Key: parameter name
+        Value: [low, high]
+    count : int
+        Number of node configs to generate
+
+    Yields
+    -------
+    str
+        Node config string
+    """
+
+    serengeti = foodwebs.get_serengeti()
+
+    # promising_ranges[param][node_id] = [(low, high), (low, high), ...]
+    promising_ranges = defaultdict(lambda: defaultdict(list))
+    for param_node_str, weighted_ranges in range_weights.items():
+        # Assumption: parameter name is one letter
+        param = param_node_str[0]
+        node_id = int(param_node_str[1:])
+        for low, high, weight in weighted_ranges:
+            if weight > 0:
+                promising_ranges[param][node_id].append((low, high))
+    print("promising_ranges = ")
+    pprint.pprint(promising_ranges)
+
+    for i in range(count):
+        nodes = []
+        for node_id in node_ids:
+            node = {
+                'nodeId': node_id,
+                'initialBiomass': initial_biomass[str(node_id)],
+                'perUnitBiomass': serengeti.node[node_id]['biomass']
+            }
+            if serengeti.node[node_id]['organism_type'] == foodwebs.ORGANISM_TYPE_ANIMAL:
+                param = 'X'
+            else:
+                param = 'K'
+                node['R'] = 1.0
+            hint_bounds = promising_ranges[param][node_id]
+            if len(hint_bounds) > 0:
+                # Draw from hint ranges,
+                # choosing a range with probability proportional to (high - low)
+                ranges = [(high - low) for low, high in hint_bounds]
+                low, high = util.weighted_random_choice(hint_bounds, ranges)
+            else:
+                # Draw from default ranges
+                low, high = default_ranges[param]
+            node[param] = random.uniform(low, high)
+            nodes.append(node)
+        yield nodes
+
+
+_generators['hint-bot'] = generate_hint_bot
 
 
 def generate_multi_region(regions, count):
