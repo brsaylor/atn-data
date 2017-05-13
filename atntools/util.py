@@ -130,7 +130,7 @@ def get_food_web_dir(identifier):
     return os.path.join(settings.DATA_HOME, '{}-species'.format(len(node_ids)), food_web_id)
 
 
-_set_dir_pattern = re.compile(r'set-(\d+)')
+_set_dir_pattern = re.compile(r'^set-(\d+)$')
 
 
 def list_set_dirs():
