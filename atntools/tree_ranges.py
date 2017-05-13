@@ -185,7 +185,7 @@ def get_distributions(tree, instances):
         The decision tree.
     instances : DataFrame
         Labeled instances used to train the decision tree. Must have a column
-        for each attribute in the tree, and a 'label' column with values 'good',
+        for each attribute in the tree, and a 'class' column with values 'good',
         'bad', or NaN (unlabeled).
 
     Returns
@@ -227,7 +227,7 @@ def get_distributions(tree, instances):
                 df2 = df[df[param] <= high]
             else:
                 df2 = df[(df[param] > low) & (df[param] <= high)]
-            counts = df2['label'].value_counts(dropna=False)
+            counts = df2['class'].value_counts(dropna=False)
             good = counts.loc['good'] if 'good' in counts.index else 0
             bad = counts.loc['bad'] if 'bad' in counts.index else 0
             unlabeled = counts.loc[np.nan] if np.nan in counts.index else 0
