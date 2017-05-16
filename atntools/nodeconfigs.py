@@ -222,7 +222,7 @@ _generators['filter-sustaining'] = generate_filter_sustaining
 def generate_filter_convergence(
         input_dir=None, input_set=None, input_batch=None,
         min_species=0,
-        min_peak_ratio=0.05, min_range_ratio=0.0,
+        min_peak_ratio=0.05, min_range_ratio=0.05,
         timesteps_to_analyze=200):
     """
     Generate node configs for Convergence game.
@@ -240,10 +240,10 @@ def generate_filter_convergence(
     min_species : int, optional
         The minimum acceptable number of surviving species
     min_peak_ratio : float, optional
-        The minimum acceptable ratio of a species' maximum biomass
+        The minimum acceptable ratio of each species' maximum biomass
         to the overall maximum biomass
     min_range_ratio : float, optional
-        The minimum acceptable ratio of a species' biomass range
+        The minimum acceptable ratio of at least one species' biomass range
         to the overall maximum biomass
     timesteps_to_analyze : int, optional
         How much of the end of the simulation data to analyze
@@ -279,15 +279,15 @@ def generate_filter_convergence(
         if len(sustaining_nodes) < min_species:
             continue
 
-        # Keep only simulations where all nodes meet biomass criteria
+        # Keep only simulations meeting biomass criteria
         peaks = windowed_biomass.max()
         greatest_peak = peaks.max()
         peak_ratios = peaks / greatest_peak
-        if not (peak_ratios >= min_peak_ratio).all():
+        if not (peak_ratios >= min_peak_ratio).all():  # All nodes have min_peak_ratio
             continue
         ranges = peaks - windowed_biomass.min()
         range_ratios = ranges / greatest_peak
-        if not (range_ratios >= min_range_ratio).all():
+        if not (range_ratios >= min_range_ratio).any():  # At least one node has min_range_ratio
             continue
 
         # If we made it this far, there are sustaining nodes and they all meet
