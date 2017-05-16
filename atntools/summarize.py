@@ -224,6 +224,8 @@ def get_output_attributes(simdata, species_data, optional_output_attributes=[]):
     for node_id in simdata.node_ids:
         out['extinction_{}'.format(node_id)] = simdata.extinction_timesteps[node_id]
 
+    if optional_output_attributes is None:
+        optional_output_attributes = []
     if 'environment_score_slope' in optional_output_attributes:
         out['environment_score_slope'] = environment_score_slope(simdata)
     elif 'environment_score_slope_skip200' in optional_output_attributes:
