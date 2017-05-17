@@ -1,0 +1,8 @@
+{
+    "args": {
+        "input_dir": null,
+        "input_set": 0,
+        "input_batch": 0
+    },
+    "generator": "filter-steady-state-with-survivors"
+}

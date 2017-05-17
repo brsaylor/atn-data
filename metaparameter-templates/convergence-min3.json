@@ -1,0 +1,12 @@
+{
+    "args": {
+        "input_dir": null,
+        "input_set": 0,
+        "input_batch": 0,
+        "min_species": 3,
+        "min_peak_ratio": 0.05,
+        "min_range_ratio": 0.05,
+        "timesteps_to_analyze": 600
+    },
+    "generator": "filter-convergence"
+}

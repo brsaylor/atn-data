@@ -1,0 +1,15 @@
+{
+    "generator": "hint-bot",
+    "args": {
+        "node_ids": null,
+        "initial_biomass": {
+        },
+        "range_weights": {
+        },
+        "default_ranges": {
+            "X": [0, 1],
+            "K": [1000, 15000]
+        },
+        "count": 1000
+    }
+}

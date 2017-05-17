@@ -1,0 +1,13 @@
+{
+    "generator": "uniform",
+    "args": {
+        "node_ids": null,
+        "param_ranges": {
+            "initialBiomass": [100, 5000],
+            "X": [0, 1],
+            "R": 1,
+            "K": [1000, 15000]
+        },
+        "count": 1000
+    }
+}

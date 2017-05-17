@@ -1,0 +1,12 @@
+{
+    "generator": "parallel_sweep",
+    "args": {
+        "param_ranges": {
+            "initialBiomass": [100, 5000],
+            "X": [0, 1],
+            "R": 1,
+            "K": [100, 10000]
+        },
+        "count": 1000
+    }
+}
