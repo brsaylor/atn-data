@@ -28,8 +28,11 @@ from .foodwebs import get_serengeti
 species_data = None
 
 
-def plot_biomass_data(filename, score_function, show_legend=False, figsize=None, output_file=None, xlim=None, ylim=None,
-                      grayscale=False, logx=False, logy=False):
+def plot_biomass_data(filename, score_function, show_legend=False,
+                      figsize=None, output_file=None, output_dpi=300,
+                      xlim=None, ylim=None,
+                      grayscale=False, logx=False, logy=False,
+                      title=None):
     """ Plot the given biomass file produced by WoB Server.
 
     Parameters
@@ -71,12 +74,6 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
     ax1.set_xlabel("timestep")
     ax1.set_ylabel("biomass")
 
-    # Set x-axis and y-axis limits if requested
-    if xlim:
-        plt.xlim(xlim)
-    if ylim:
-        plt.ylim(ylim)
-
     if logx:
         ax1.set_xscale('log')
 
@@ -94,6 +91,12 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
         legend.append("[{}] {}".format(node_id, node_name))
     if show_legend:
         lgd = ax1.legend(legend, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+    # Set x-axis and y-axis limits if requested
+    if xlim:
+        plt.xlim(xlim)
+    if ylim:
+        ax1.set_ylim(*ylim)
 
     if score_function and node_config:
         scores = score_function(species_data, node_config, biomass_data)
@@ -149,15 +152,15 @@ def plot_biomass_data(filename, score_function, show_legend=False, figsize=None,
         t = np.arange(len(scores))
         #ax2.plot(t, np.e**(mLogSlope*t + mLogIntercept), 'r:')
 
-    #plt.title(filename)
+    if title:
+        plt.title(title)
 
     if output_file:
-        dpi=200
         if show_legend:
             plt.savefig(output_file, bbox_extra_artists=(lgd,),
-                        bbox_inches='tight', dpi=dpi)
+                        bbox_inches='tight', dpi=output_dpi)
         else:
-            plt.savefig(output_file, dpi=dpi)
+            plt.savefig(output_file, dpi=output_dpi)
     else:
         plt.show()
 
