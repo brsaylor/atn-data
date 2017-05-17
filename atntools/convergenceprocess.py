@@ -11,7 +11,7 @@ from collections import OrderedDict, Counter
 import json
 import pprint
 
-from atntools import settings, util, simulation, nodeconfigs, foodwebs
+from atntools import settings, util, simulation, nodeconfigs, foodwebs, plotting
 
 MAX_TIMESTEPS = 100000
 
@@ -163,6 +163,18 @@ def compile_data():
                 simdata_filename(new_sim_number))
             os.symlink(original_datafile, new_datafile)
 
+            # Generate a plot
+            plotting.plot_biomass_data(
+                new_datafile,
+                None,
+                title='{} #{}'.format(food_web_id, new_sim_number),
+                ylim=(0, None),
+                show_legend=True,
+                output_file=os.path.join(
+                    cvg_food_web_dir, 'biomass-plots',
+                    plot_filename(new_sim_number)),
+                output_dpi=80)
+
     logging.info("\nSimulation count by food web:")
     logging.info('\n' + pprint.pformat(dict(sim_count_by_food_web)))
     logging.info("\nSimulation count by food web size:")
@@ -211,6 +223,11 @@ def init_food_web_dir(food_web_dir, node_ids):
     for datafile in glob.iglob(os.path.join(biomass_dir, '*.h5')):
         os.remove(datafile)
 
+    plot_dir = os.path.join(food_web_dir, 'biomass-plots')
+    os.makedirs(plot_dir, exist_ok=True)
+    for plotfile in glob.iglob(os.path.join(biomass_dir, '*.png')):
+        os.remove(plotfile)
+
     # Create empty node config file (emptying any existing file)
     open(os.path.join(food_web_dir, 'node-configs.txt'), 'w').close()
 
@@ -228,6 +245,10 @@ def init_food_web_dir(food_web_dir, node_ids):
 
 def simdata_filename(sim_number):
     return 'ATN.h5' if sim_number == 0 else 'ATN_{}.h5'.format(sim_number)
+
+
+def plot_filename(sim_number):
+    return 'ATN.png' if sim_number == 0 else 'ATN_{}.png'.format(sim_number)
 
 
 def get_cvg_data_dir():
