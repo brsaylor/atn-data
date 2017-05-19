@@ -11,6 +11,8 @@ from collections import OrderedDict, Counter
 import json
 import pprint
 
+import matplotlib.pyplot as plt
+
 from atntools import settings, util, simulation, nodeconfigs, foodwebs, plotting
 
 MAX_TIMESTEPS = 100000
@@ -240,6 +242,7 @@ def init_food_web_dir(food_web_dir, node_ids):
     serengeti = foodwebs.get_serengeti()
     subweb = serengeti.subgraph(node_ids)
     food_web_id = '-'.join(map(str, node_ids))
+    plt.figure()
     foodwebs.draw_food_web(
         subweb,
         show_legend=True,
