@@ -6,6 +6,7 @@ import random
 
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -77,9 +78,9 @@ def get_serengeti():
     return _serengeti
 
 
-def draw_food_web(graph, show_names=False, show_legend=False, output_file=None, figsize=None):
+def draw_food_web(graph, show_names=False, show_legend=False, output_file=None, figsize=None, dpi=100):
 
-    #plt.figure(figsize=figsize)
+    plt.figure(figsize=figsize)
 
     # pos = nx.spring_layout(graph)
 
@@ -138,24 +139,15 @@ def draw_food_web(graph, show_names=False, show_legend=False, output_file=None, 
     # plt.axis('off')
 
     if show_legend:
-        # Build text of legend, adding 1 character of padding all around
-        # ('pad' in bbox arg below adds padding inside and outside border,
-        # interfering with alignment)
-        template = " {:>7}  {:<31}  {} "
-        header = template.format("Node ID", "Name", "Trophic level")
-        divider = template.format("-" * 7, "-" * 31, "-" * 13)
-        rows = []
-        for node, data in sorted(graph.nodes(data=True), reverse=True,
-                                 key=lambda t: t[1]['trophic_level']):
-            rows.append(template.format(node, data['name'], data['trophic_level']))
-        table_text = "\n{}\n{}\n{}\n".format(header, divider, "\n".join(rows))
-
-        lgd = plt.text(plt.gca().get_xlim()[1] * 1.02, plt.gca().get_ylim()[1], table_text, family='monospace',
-                 bbox={'edgecolor': 'black', 'facecolor': 'white', 'pad': 0},
-                 verticalalignment='top')
+        invisible_handle = Rectangle((0, 0), 0, 0, alpha=0.0)
+        lgd = plt.legend(
+            [invisible_handle] * graph.number_of_nodes(),
+            ['[{}] {}'.format(node_id, graph.node[node_id]['name'])
+             for node_id in sorted(graph.nodes())],
+            frameon=False,
+            bbox_to_anchor=(0.9, 1), loc=2, borderaxespad=0.)
 
     if output_file:
-        dpi=200
         if show_legend:
             plt.savefig(output_file, bbox_extra_artists=(lgd,),
                         bbox_inches='tight', dpi=dpi)

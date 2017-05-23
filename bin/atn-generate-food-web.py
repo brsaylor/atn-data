@@ -18,6 +18,10 @@ from atntools import util
 
 parser = argparse.ArgumentParser(description=globals()['__doc__'])
 parser.add_argument('--parent-dir', help="Parent directory to use instead of automatically-determined directory under DATA_HOME")
+parser.add_argument('--figsize', nargs=2, type=int, default=[4, 3],
+                    help="Width and height of the food web plot, in inches (combine with --dpi)")
+parser.add_argument('--dpi', type=int, default=100,
+                    help="Image resolution (dots per inch)")
 subparsers = parser.add_subparsers(dest='subparser_name')
 
 # 'generate' sub-command
@@ -77,7 +81,8 @@ elif args.subparser_name == 'from-node-ids':
     os.makedirs(food_web_dir)
 
 foodwebs.draw_food_web(subweb, show_legend=True,
-                       output_file=os.path.join(food_web_dir, 'foodweb.{}.png'.format(food_web_id)))
+                       output_file=os.path.join(food_web_dir, 'foodweb.{}.png'.format(food_web_id)),
+                       figsize=args.figsize, dpi=args.dpi)
 
 with open(os.path.join(food_web_dir, 'foodweb.{}.json'.format(food_web_id)), 'w') as f:
     print(foodwebs.food_web_json(subweb), file=f)
